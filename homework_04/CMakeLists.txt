@@ -7,4 +7,4 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_executable(ugv_odometry src/main.cpp src/functions.cpp)
 target_compile_options(ugv_odometry PRIVATE -Wall -Wextra -pedantic)
-target_include_directories(ugv_odometry PRIVATE include)
+target_include_directories(ugv_odometry PRIVATE src/include)

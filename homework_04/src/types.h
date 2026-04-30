@@ -1,7 +1,13 @@
 #ifndef TYPES_H
 #define TYPES_H
+#pragma once
 #include <cmath>
 #include <iostream>
+#include <stdlib.h>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 
 struct NrkStep {
@@ -23,7 +29,7 @@ struct NrkStep {
 };
  
 
-typedef struct {
+struct NrkConfig {
     // iмпульсiв на один оберт колеса  
     int ticks_per_revolution;
 
@@ -32,7 +38,17 @@ typedef struct {
 
     // вiдстань мiж лiвим i правим бортом, у метрах
     float wheelbase_m;
-} NrkConfig;
+
+    // дистанція в метрах за один імпульс на колесо
+    double distance_per_tick;
+
+    // Викликаємо після того, як заповнили структуру
+    void updateCalculatedParams() {
+        distance_per_tick = 2.0 * M_PI * wheel_radius_m / ticks_per_revolution;
+    }
+
+};
+
 
 
 struct Coord {
@@ -40,6 +56,7 @@ struct Coord {
     double y;
 
     // Додавання координат
+    // поки що не використовуємо 
 	Coord operator+(const Coord& other) const {
     	Coord result;
         result.x = x + other.x;
@@ -47,37 +64,12 @@ struct Coord {
         return result;
 	}
  
-	// Віднімання координат
-	Coord operator-(const Coord& other) const {
-    	Coord result;
-        result.x = x - other.x;
-        result.y = y - other.y;
-        return result;
-	}
- 
-	// Множення на скаляр
-	Coord operator*(float s) const {
-    	Coord result;
-        result.x = x * s;
-        result.y = y * s;
-        return result;
-	}
+};
 
-    // Ділення на скаляр
-    Coord operator/(float s) const {
-        if (std::abs(s) < 1e-6f) return {0, 0};
-        return { x / s, y / s };
-    }
-
-    // Оператор порівняння
-    bool operator==(const Coord& other) const {
-        // Визначаємо точність (5 знаків після коми)
-        const double eps = 1e-6f; 
-            
-        // Перевіряємо, чи різниця по обох осях в межах норми
-        return (std::abs(x - other.x) < eps) && (std::abs(y - other.y) < eps);
-    }
-
+struct position {
+    int timestamp_ms; // час в мілісекундах
+    Coord pos;        // позиція нрк
+    double theta;
 };
 
 #endif

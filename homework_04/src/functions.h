@@ -10,4 +10,6 @@
 
 bool loadNrkSteps(std::vector<NrkStep> &steps, const std::string& fileName);
 
+void calculateOdometry(const std::vector<NrkStep>& steps, double wheel_radius, double wheelbase, int ticks_per_rev);
+
 #endif
