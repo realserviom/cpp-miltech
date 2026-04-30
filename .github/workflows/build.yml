@@ -49,6 +49,8 @@ jobs:
           # action пробує push у registry і падає з "imageName is required"
           # бо ми не конфігуруємо registry. Image потрібен тільки локально
           # на runner-і для runCmd.
+          imageName: ghcr.io/${{ github.repository }}/cpp-miltech-dev # Вказуємо назву образу
+          cacheFrom: ghcr.io/${{ github.repository }}/cpp-miltech-dev # Використовуємо кеш з реєстру
           push: never
           runCmd: |
             cmake -S . -B build -G Ninja

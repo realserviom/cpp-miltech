@@ -1,0 +1,33 @@
+name: Publish Dev Container Image
+
+on:
+  workflow_dispatch: # Ручний запуск
+  push:
+    branches: [main]
+    paths:
+      - '.devcontainer/**' # Запуск лише при зміні налаштувань контейнера
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: devcontainers/ci@v0.3
+        with:
+          imageName: ghcr.io/${{ github.repository }}/cpp-miltech-dev
+          cacheFrom: ghcr.io/${{ github.repository }}/cpp-miltech-dev
+          push: always # Тепер ми публікуємо образ
