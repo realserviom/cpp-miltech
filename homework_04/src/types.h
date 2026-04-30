@@ -69,7 +69,7 @@ struct Coord {
 struct position {
     int timestamp_ms; // час в мілісекундах
     Coord pos;        // позиція нрк
-    double theta;
+    double theta;     // кут повороту нрк
 };
 
 #endif
