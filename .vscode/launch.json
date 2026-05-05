@@ -54,7 +54,7 @@
     },
     {
       // Локальний debug стартера ДЗ 5. preLaunchTask збирає debug preset.
-      "name": "Debug homework_05: telemetry_app",
+      "name": "Debug homework_05: telemetry",
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/build/debug/homework_05/telemetry",
