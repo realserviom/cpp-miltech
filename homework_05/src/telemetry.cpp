@@ -108,7 +108,7 @@ int read_frames(const char* path, Frame frames[], int max_frames) {
     char line[MAX_LINE_LENGTH];
 
     int cur_seq = 0;
-    int cur_timestamp = 0;
+    int cur_timestamp = -1;
 
     while (input.getline(line, MAX_LINE_LENGTH)) {
         if (line[0] == '\0') {
@@ -133,7 +133,7 @@ int read_frames(const char* path, Frame frames[], int max_frames) {
                 return -1;
             }
 
-            if (f.gps_fix != 0 &&  f.gps_fix != 1) {
+            if (f.gps_fix != 0 && f.gps_fix != 1) {
                 std::cerr << "error: gps_fix should be 0 or 1, value: " << f.gps_fix << '\n';
                 return -1;
             }
@@ -148,7 +148,7 @@ int read_frames(const char* path, Frame frames[], int max_frames) {
                 return -1;
             }
 
-            if(cur_timestamp != 0 && f.timestamp_ms - cur_timestamp <= 0) {
+            if(cur_timestamp != -1 && f.timestamp_ms - cur_timestamp <= 0) {
                  std::cerr << "error: timestamp_ms must be greater than the preceding value, value: " << f.timestamp_ms << '\n';
                 return -1;
             }

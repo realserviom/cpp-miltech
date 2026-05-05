@@ -16,6 +16,11 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+    if (frame_count == 0) {
+        std::cerr << "error: frame_count is zero. File empty\n";
+        return 1;
+    }
+
     const Summary summary = summarize(frames, frame_count);
     print_summary(summary);
 
