@@ -2,6 +2,7 @@
 
 // Fixed-size storage keeps the starter close to the topics from block 1.
 const int MAX_TELEMETRY_FRAMES = 128;
+const int INVALID_VALUE = -1;
 
 // One telemetry sample from the input log.
 struct Frame {
@@ -12,6 +13,12 @@ struct Frame {
     double temperature_c;
     int gps_fix;
     int satellites;
+
+    bool operator!() const {
+        return timestamp_ms == INVALID_VALUE || seq == INVALID_VALUE || voltage_v == INVALID_VALUE || 
+               current_a == INVALID_VALUE || temperature_c == INVALID_VALUE || 
+               gps_fix == INVALID_VALUE || satellites == INVALID_VALUE;
+    }
 };
 
 // Aggregated values printed by the executable.
