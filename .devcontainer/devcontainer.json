@@ -35,6 +35,9 @@
     ".devcontainer/scripts/initialize"
   ],
 
+  // Enable autocompletion for BASH
+  "postCreateCommand": "echo 'source /usr/share/bash-completion/completions/git' >> ~/.bashrc",
+
   // host network спрощує SSH/debug сценарії для занять з target-пристроями.
   // SYS_PTRACE і seccomp=unconfined потрібні для стабільної роботи GDB
   // всередині контейнера, особливо коли debug-сесія attach-иться до процесу.
@@ -57,6 +60,7 @@
       // Extensions встановлюються в devcontainer, щоб tooling був однаковий
       // у всіх студентів незалежно від host VS Code.
       "extensions": [
+        "ms-vscode.cmake-tools",
         "josetr.cmake-language-support-vscode",
         "cheshirekow.cmake-format",
         "ms-vscode.cpptools",
