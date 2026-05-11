@@ -87,9 +87,12 @@ void saveFireCoordinates(double fireX, double fireY, double xd_i = 0, double yd_
     
 }
 
-
-int main()
-{
+int main(int argc, char** argv) {
+  
+    if (argc != 2) {
+        std::cerr << "usage: drone_attack <input_path>\n";
+        return 1;
+    }
     
     const double GRAVIT = 9.81; // Стандартне значення в м/с²
 
@@ -124,7 +127,7 @@ int main()
     
 
     // Відкриваємо файл для читання ("r" - read)
-    FILE *file = fopen("input.txt", "r");
+    FILE *file = fopen(argv[1], "r");
 
     // Перевірка, чи файл відкрився
     if (file == NULL) {
