@@ -41,5 +41,18 @@
       "description": "Зібрати ARM64 debug preset після cross-configure.",
       "configurePreset": "aarch64-debug"
     }
+  ],
+  "testPresets": [
+    {
+      "name": "debug",
+      "configurePreset": "debug",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
+    }
   ]
 }
