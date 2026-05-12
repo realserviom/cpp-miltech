@@ -1,5 +1,9 @@
 {
     "editor.formatOnSave": true,
     "C_Cpp.clang_format_style": "file",
-    "cmake-format.exePath": "cmake-format"
+    "cmake-format.exePath": "cmake-format",
+    "files.associations": {
+        "*.h": "cpp",
+        "*.hpp": "cpp"
+    }
 }
