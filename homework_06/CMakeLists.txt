@@ -1,9 +1,9 @@
 project(drone_attack CXX)
 
 add_library(
-    ballistics STATIC
-    src/ballistics.cpp include/ballistics.hpp # 'include/ballistics.hpp' можна прибрати але з ним
-                                              # IDE краще розуміє навігацію по проекту хоча не факт
+    ballistics STATIC src/ballistics.cpp include/types.hpp include/ballistics.hpp
+    # 'include/ballistics.hpp' можна прибрати але з ним
+    # IDE краще розуміє навігацію по проекту хоча не факт
 )
 
 target_include_directories(ballistics PUBLIC include)
