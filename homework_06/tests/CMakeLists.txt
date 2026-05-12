@@ -19,6 +19,10 @@ add_executable(ballistics_test ballistics_test.cpp)
 # Лінкуємо нашу лібу + GTest
 target_link_libraries(ballistics_test PRIVATE ballistics GTest::gtest_main)
 
+# Передаємо шлях до папки з даними (те, що ми обговорювали)
+target_compile_definitions(ballistics_test
+                           PRIVATE DATA_PATH="${CMAKE_SOURCE_DIR}/homework_06/data/")
+
 # Реєструємо функції автоматизації щоб можна було реєструвати тести в системі CTest
 include(GoogleTest)
 
