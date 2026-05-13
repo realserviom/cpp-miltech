@@ -122,6 +122,10 @@ double calculateFlightTime(const Ammunition* selectedAmmo, const DroneInput& inp
   if (!selectedAmmo)
     return -1.0;
 
+  if (input.zd < 1e-3) {
+    return 0.0;
+  }
+
   double a, b, c;
   // Обчислення параметрів a, b, c
   a = (selectedAmmo->d * gravit * selectedAmmo->m) - (2 * std::pow(selectedAmmo->d, 2) * selectedAmmo->l * input.V0);

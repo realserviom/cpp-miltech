@@ -27,8 +27,6 @@ int main(int argc, char** argv)
 
   std::string outputPath = argv[2];
 
-  const double GRAVIT = 9.81;  // Стандартне значення в м/с²
-
   setlocale(LC_ALL, "");
 
   DroneInput input;
@@ -50,23 +48,12 @@ int main(int argc, char** argv)
 
   double t_pol = calculateFlightTime(selectedAmmo, input, GRAVIT);
 
-  std::cout << "\n-----------------------------------" << std::endl;
-  std::cout << "Результат (час польоту t_pol): " << t_pol << " сек." << std::endl;
-  std::cout << "-----------------------------------" << std::endl;
+  double dist = t_pol > 0 ? calculateDist(t_pol, input.V0, selectedAmmo->m, selectedAmmo->d, selectedAmmo->l, GRAVIT) : 0.00;  // h в умові
 
-  if (t_pol <= 0) {
-    std::cout << "Час повинен бути додатній." << std::endl;
-    return 1;
-  }
-
-  double dist = calculateDist(t_pol, input.V0, selectedAmmo->m, selectedAmmo->d, selectedAmmo->l, GRAVIT);  // h в умові
+  if (dist < 0)
+    dist = 0.0;
 
   std::cout << "Горизонтальна дистанція яку проходить дрон за час " << t_pol << " сек. рівна " << dist << " м." << std::endl;
-
-  if (dist <= 0) {
-    std::cout << "Горизонтальна дистанція повинна бути додатня" << std::endl;
-    return 1;
-  }
 
   double length = calculateLength(input.targetX, input.targetY, input.xd, input.yd);  // D в умові
 
@@ -78,11 +65,16 @@ int main(int argc, char** argv)
   double fireX;
   double fireY;
 
-  if (length == 0.0) {
-    xd_i = input.targetX - dist - input.accelerationPath;
-    yd_i = 0;
+  // у випадку якщо в нас дрон над цілю
+  if (std::abs(length) < EPSILON) {
+    // координати проміжної точки
+    // якщо висота 0 ми не повинні враховувати input.accelerationPath
+    xd_i = input.targetX - dist - ((dist > 0) ? input.accelerationPath : 0);
+    yd_i = input.targetY;
+
+    // координати скиду
     fireX = input.targetX - dist;
-    fireY = 0;
+    fireY = input.targetY;
 
     std::cout << "Проміжна точка xd_i, yd_i " << xd_i << ", " << yd_i << std::endl;
     std::cout << "Точка скиду fireX, fireY " << fireX << ", " << fireY << std::endl;
