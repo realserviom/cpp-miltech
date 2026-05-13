@@ -5,6 +5,8 @@
 #include <string.h>
 #include <fstream>
 #include "types.hpp"
+#include <unistd.h>  // Для getcwd
+#include <limits.h>  // Для PATH_MAX
 
 double calculateLength(float targetX, float targetY, float xd, float yd)
 {
@@ -84,7 +86,15 @@ bool readInputData(const char* filename, DroneInput& data)
 {
   FILE* file = fopen(filename, "r");
   if (file == nullptr) {
-    printf("Помилка: Не вдалося відкрити файл %s\n", filename);
+    char cwd[PATH_MAX];
+    if (getcwd(cwd, sizeof(cwd)) != nullptr) {
+      printf("Помилка: Не вдалося відкрити файл %s\n", filename);
+      printf("Поточна робоча директорія: %s\n", cwd);
+    }
+    else {
+      // perror("getcwd() error");
+      return false;
+    }
     return false;
   }
 

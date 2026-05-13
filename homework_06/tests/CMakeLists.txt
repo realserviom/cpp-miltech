@@ -3,7 +3,7 @@ add_test(NAME IntegrationDroneAttack
          COMMAND drone_attack "${CMAKE_SOURCE_DIR}/homework_06/data/fixtures/test_ammo.txt"
                  "${CMAKE_SOURCE_DIR}/homework_06/data/output.txt")
 
-# Додатковий тест, який порівнює результат із файлом очікування expected_output.txt
+# # Додатковий тест, який порівнює результат із файлом очікування expected_output.txt
 add_test(
     NAME CheckOutputFiles
     COMMAND ${CMAKE_COMMAND} -E compare_files "${CMAKE_SOURCE_DIR}/homework_06/data/output.txt"
@@ -27,6 +27,22 @@ add_test(
 add_test(NAME IntegrationDroneAttackLengthEqZero
          COMMAND drone_attack "${CMAKE_SOURCE_DIR}/homework_06/data/fixtures/test_ammo_length0.txt"
                  "${CMAKE_SOURCE_DIR}/homework_06/data/output.txt")
+
+# Тестуємо програму за допомогою тесту CMake. Це тест який показує що файл працездатний при
+# проміжній точці для дрона
+add_test(
+    NAME IntegrationDroneAttackMiddlePoint
+    COMMAND drone_attack "${CMAKE_SOURCE_DIR}/homework_06/data/fixtures/test_ammo_middle_point.txt"
+            "${CMAKE_SOURCE_DIR}/homework_06/data/fixtures/output_middle_point.txt")
+
+# Додатковий тест, який порівнює результат output_middle_point із файлом очікування
+# test_expected_middle_output.txt
+add_test(
+    NAME CheckOutputFilesMiddlePoint
+    COMMAND
+        ${CMAKE_COMMAND} -E compare_files
+        "${CMAKE_SOURCE_DIR}/homework_06/data/fixtures/output_middle_point.txt"
+        "${CMAKE_SOURCE_DIR}/homework_06/data/fixtures/test_expected_middle_output.txt")
 
 set_tests_properties(CheckOutputFiles PROPERTIES DEPENDS IntegrationDroneAttack)
 

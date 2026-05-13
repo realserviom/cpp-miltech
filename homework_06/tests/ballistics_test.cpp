@@ -100,8 +100,3 @@ TEST(BallisticsMath, ZD_LESS_ZERO)
 
   EXPECT_EQ(flightTime, 0);
 }
-
-TEST(BallisticsMath, ZeroVelocity3)
-{
-  // EXPECT_EQ(calculateDistance(0, 45), 0);
-}
