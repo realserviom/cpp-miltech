@@ -1,27 +1,33 @@
+#include <stdlib.h>
+#include <array>
 
 #ifndef TYPES_HPP
 #define TYPES_HPP
 
 const double EPSILON = 1e-9;  // або інша точність, яка вам потрібна
 const double GRAVIT = 9.81;   // Стандартне значення в м/с²
+const int COUNT_NAME_AMMO = 50;
+const int COUNT_TYPE_AMMO = 30;
 
-typedef char def_name_ammo[50];
-typedef char def_type_ammo[30];
+using def_name_ammo = std::array<char, COUNT_NAME_AMMO>;
+using def_type_ammo = std::array<char, COUNT_TYPE_AMMO>;
 
-typedef struct {
+struct Ammunition {
   def_name_ammo name;  // Назва
   float m;             // m (кг)
   float d;             // d (drag)
   float l;             // l (lift)
   def_type_ammo type;  // Тип (Вільне падіння / Планеруючий)
-} Ammunition;
+};
 
-inline const Ammunition ammoTable[] = {{"VOG-17", 0.35, 0.07, 0.0, "Вільний"},
-                                       {"M67", 0.6, 0.10, 0.0, "Вільний"},
-                                       {"RKG-3", 1.2, 0.10, 0.0, "Вільний"},
-                                       {"GLIDING-VOG", 0.45, 0.10, 1.0, "Планеруючий"},
-                                       {"GLIDING-RKG", 1.4, 0.10, 1.0, "Планеруючий"},
-                                       {"TEST-AMMO", 1.4, 0.10, 1.0, "Планеруючий"}};
+constexpr size_t AMMO_TABLE_SIZE = 6;
+
+inline const std::array<Ammunition, AMMO_TABLE_SIZE> ammoTable = {{{{"VOG-17"}, 0.35f, 0.07f, 0.0f, {"Вільний"}},
+                                                                   {{"M67"}, 0.6f, 0.10f, 0.0f, {"Вільний"}},
+                                                                   {{"RKG-3"}, 1.2f, 0.10f, 0.0f, {"Вільний"}},
+                                                                   {{"GLIDING-VOG"}, 0.45f, 0.10f, 1.0f, {"Планеруючий"}},
+                                                                   {{"GLIDING-RKG"}, 1.4f, 0.10f, 1.0f, {"Планеруючий"}},
+                                                                   {{"TEST-AMMO"}, 1.4f, 0.10f, 1.0f, {"Планеруючий"}}}};
 
 // Структрура для повернення зчитаних даних
 struct DroneInput {

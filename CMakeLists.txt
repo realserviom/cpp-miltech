@@ -14,18 +14,23 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # що й реальна CMake-збірка.
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-include(FetchContent)
+# set(CMAKE_CXX_CLANG_TIDY
+# "clang-tidy;-checks=-*,bugprone-*,modernize-*,readability-*,performance-*")
 
-# Описуємо, звідки качати
-FetchContent_Declare(
-    googletest URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
-                   DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
+if(NOT CMAKE_CROSSCOMPILING)
+    include(FetchContent)
 
-# Робимо бібліотеку доступною для проєкту
-FetchContent_MakeAvailable(googletest)
+    # Описуємо, звідки качати
+    FetchContent_Declare(
+        googletest URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
+                       DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
 
-# Вмикаємо тестування на глобальному рівні
-enable_testing()
+    # Робимо бібліотеку доступною для проєкту
+    FetchContent_MakeAvailable(googletest)
+
+    # Вмикаємо тестування на глобальному рівні
+    enable_testing()
+endif()
 
 # Домашні роботи. По мірі появи додаємо кожну окремим add_subdirectory.
 add_subdirectory(homework_04)

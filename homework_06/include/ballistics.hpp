@@ -6,16 +6,16 @@
 #include <stdlib.h>
 #include <string>
 
-const Ammunition* findAmmunition(const char* name);
+auto findAmmunition(std::string_view name) -> const Ammunition*;
 
-bool readInputData(const char* filename, DroneInput& data);
+auto readInputData(std::string_view filename, DroneInput& data) -> bool;
 
-double calculateDist(double t, double V0, double m, double d, double l, double g = 9.81);
+auto calculateDist(double t, double V0, double m, double d, double l, double g = GRAVIT) -> double;
 
-double calculateLength(float targetX, float targetY, float xd, float yd);
+auto calculateLength(float targetX, float targetY, float xd, float yd) -> double;
 
 void saveFireCoordinates(std::string outputPath, double fireX, double fireY, double xd_i = 0, double yd_i = 0);
 
-double calculateFlightTime(const Ammunition* selectedAmmo, const DroneInput& input, double gravit = 9.81);
+auto calculateFlightTime(const Ammunition* selectedAmmo, const DroneInput& input, double gravit = GRAVIT) -> double;
 
 #endif

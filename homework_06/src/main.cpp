@@ -7,42 +7,47 @@ Code, Compile, Run and Debug online from anywhere in world.
 
 *******************************************************************************/
 #include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <cmath>
 #include "types.hpp"
 #include "ballistics.hpp"
+#include <iomanip>
+#include <span>
 
 // Визначення константи Пі, якщо її немає в cmath
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
 
-int main(int argc, char** argv)
+auto main(int argc, char** argv) -> int
 {
+  auto args = std::span(argv, static_cast<size_t>(argc));
+
   if (argc < 3) {
-    std::cerr << "Usage: " << argv[0] << " <input_path> <output_path>" << std::endl;
+    std::cerr << "Usage: " << args[0] << " <input_path> <output_path>" << "\n";
     return 1;
   }
 
-  std::string outputPath = argv[2];
+  std::string outputPath = args[2];
 
   setlocale(LC_ALL, "");
 
-  DroneInput input;
+  DroneInput input{};
 
-  if (!readInputData(argv[1], input)) {
+  if (!readInputData(args[1], input)) {
     return 1;
   }
 
-  const Ammunition* selectedAmmo = findAmmunition(input.name_ammo);
+  const Ammunition* selectedAmmo = findAmmunition(input.name_ammo.data());
 
   if (selectedAmmo) {
-    printf("Знайдено боєприпас: %s\n", selectedAmmo->name);
-    printf("Параметри: m=%.2f, d=%.2f, l=%.2f\n", selectedAmmo->m, selectedAmmo->d, selectedAmmo->l);
+    std::cout << "Знайдено боєприпас: " << selectedAmmo->name.data() << "\n";
+    std::cout << std::fixed << std::setprecision(2);
+    std::cout << "Параметри: m=" << selectedAmmo->m << ", d=" << selectedAmmo->d << ", l=" << selectedAmmo->l << "\n";
   }
   else {
-    printf("Помилка: боєприпас %s не знайдено в базі!\n", input.name_ammo);
+    std::cout << "Помилка: боєприпас " << input.name_ammo.data() << " не знайдено!" << "\n";
     return 1;
   }
 
@@ -53,17 +58,17 @@ int main(int argc, char** argv)
   if (dist < 0)
     dist = 0.0;
 
-  std::cout << "Горизонтальна дистанція яку проходить дрон за час " << t_pol << " сек. рівна " << dist << " м." << std::endl;
+  std::cout << "Горизонтальна дистанція яку проходить дрон за час " << t_pol << " сек. рівна " << dist << " м." << "\n";
 
   double length = calculateLength(input.targetX, input.targetY, input.xd, input.yd);  // D в умові
 
-  std::cout << "Відстань до цілі pівна " << length << " м." << std::endl;
+  std::cout << "Відстань до цілі pівна " << length << " м." << "\n";
 
-  double ratio;
-  double xd_i = 0;
-  double yd_i = 0;
-  double fireX;
-  double fireY;
+  double ratio = 0.0;
+  double xd_i = 0.0;
+  double yd_i = 0.0;
+  double fireX = 0.0;
+  double fireY = 0.0;
 
   // у випадку якщо в нас дрон над цілю
   if (std::abs(length) < EPSILON) {
@@ -76,8 +81,8 @@ int main(int argc, char** argv)
     fireX = input.targetX - dist;
     fireY = input.targetY;
 
-    std::cout << "Проміжна точка xd_i, yd_i " << xd_i << ", " << yd_i << std::endl;
-    std::cout << "Точка скиду fireX, fireY " << fireX << ", " << fireY << std::endl;
+    std::cout << "Проміжна точка xd_i, yd_i " << xd_i << ", " << yd_i << "\n";
+    std::cout << "Точка скиду fireX, fireY " << fireX << ", " << fireY << "\n";
 
     saveFireCoordinates(outputPath, fireX, fireY, xd_i, yd_i);
   }
@@ -87,14 +92,14 @@ int main(int argc, char** argv)
       xd_i = input.targetX - (input.targetX - input.xd) * ratio;
       yd_i = input.targetY - (input.targetY - input.yd) * ratio;
 
-      std::cout << "Проміжна точка xd_i, yd_i " << xd_i << ", " << yd_i << std::endl;
+      std::cout << "Проміжна точка xd_i, yd_i " << xd_i << ", " << yd_i << "\n";
     }
 
     ratio = (length - dist) / length;                       // ~ (140 - 60) / 140
     fireX = input.xd + (input.targetX - input.xd) * ratio;  // 100 + (200 - 100) * ratio = 157
     fireY = input.yd + (input.targetY - input.yd) * ratio;  // 100 + (200 - 100) * ratio = 157
 
-    std::cout << "Точка скиду fireX, fireY " << fireX << ", " << fireY << std::endl;
+    std::cout << "Точка скиду fireX, fireY " << fireX << ", " << fireY << "\n";
 
     saveFireCoordinates(outputPath, fireX, fireY, xd_i, yd_i);
   }

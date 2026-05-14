@@ -7,8 +7,14 @@
 #include "types.hpp"
 #include <unistd.h>  // Для getcwd
 #include <limits.h>  // Для PATH_MAX
+#include <filesystem>
+#include <fstream>
+#include <string>
+#include <string_view>
+#include <algorithm>
+#include <iomanip>
 
-double calculateLength(float targetX, float targetY, float xd, float yd)
+auto calculateLength(float targetX, float targetY, float xd, float yd) -> double
 {
   return std::sqrt(std::pow((targetX - xd), 2) + std::pow((targetY - yd), 2));
 }
@@ -23,7 +29,7 @@ double calculateLength(float targetX, float targetY, float xd, float yd)
  * @param g  - гравітація (за замовчуванням 9.81)
  * @return   - відстань
  */
-double calculateDist(double t, double V0, double m, double d, double l, double g = 9.81)
+auto calculateDist(double t, double V0, double m, double d, double l, double g = 9.81) -> double
 {
   // Допоміжні змінні для швидкості та чистоти коду
   double l2 = l * l;
@@ -71,58 +77,47 @@ void saveFireCoordinates(std::string outputPath, double fireX, double fireY, dou
   }
 }
 
-const Ammunition* findAmmunition(const char* name)
+auto findAmmunition(std::string_view name) -> const Ammunition*
 {
-  int tableSize = sizeof(ammoTable) / sizeof(ammoTable[0]);
-  for (int i = 0; i < tableSize; i++) {
-    if (strcmp(ammoTable[i].name, name) == 0) {
-      return &ammoTable[i];
+  for (const auto& ammo : ammoTable) {
+    if (ammo.name.data() == name) {
+      return &ammo;
     }
   }
   return nullptr;
 }
 
-bool readInputData(const char* filename, DroneInput& data)
+auto readInputData(std::string_view filename, DroneInput& data) -> bool
 {
-  FILE* file = fopen(filename, "r");
-  if (file == nullptr) {
-    char cwd[PATH_MAX];
-    if (getcwd(cwd, sizeof(cwd)) != nullptr) {
-      printf("Помилка: Не вдалося відкрити файл %s\n", filename);
-      printf("Поточна робоча директорія: %s\n", cwd);
-    }
-    else {
-      // perror("getcwd() error");
-      return false;
-    }
+  // 1. Відкриваємо файл
+  std::ifstream file(filename.data());
+
+  if (!file.is_open()) {
+    std::cerr << "Помилка: Не вдалося відкрити файл " << filename << "\n";
+    std::cerr << "Поточна робоча директорія: " << std::filesystem::current_path() << "\n";
     return false;
   }
 
-  int count = fscanf(file,
-                     "%f %f %f %f %f %f %f %s",
-                     &data.xd,
-                     &data.yd,
-                     &data.zd,
-                     &data.targetX,
-                     &data.targetY,
-                     &data.V0,
-                     &data.accelerationPath,
-                     data.name_ammo);
+  // 2. Зчитуємо дані
+  // Тимчасовий рядок для назви, щоб безпечно перенести її в std::array
+  std::string temp_ammo_name;
 
-  fclose(file);
-
-  if (count != 8) {
-    printf("Помилка: Файл має неправильний формат.\n");
+  if (!(file >> data.xd >> data.yd >> data.zd >> data.targetX >> data.targetY >> data.V0 >> data.accelerationPath >> temp_ammo_name)) {
+    std::cerr << "Помилка: Файл має неправильний формат або неповні дані.\n";
     return false;
   }
 
-  // Вивід розшифрованих параметрів (опціонально)
-  printf("=== Вхідні дані з файлу ===\n");
-  printf("Дрон (xd, yd, zd): %.2f, %.2f, %.2f м\n", data.xd, data.yd, data.zd);
-  printf("Ціль (targetX, Y): %.2f, %.2f\n", data.targetX, data.targetY);
-  printf("Швидкість V0: %.2f м/с, Розгін: %.2f м\n", data.V0, data.accelerationPath);
-  printf("Боєприпас: %s\n", data.name_ammo);
-  printf("===========================\n");
+  // 3. Безпечно копіюємо назву в std::array (name_ammo)
+  data.name_ammo.fill('\0');  // Очищуємо масив
+  std::copy_n(temp_ammo_name.begin(), std::min(temp_ammo_name.size(), data.name_ammo.size() - 1), data.name_ammo.begin());
+
+  // 4. Вивід даних (використовуємо iomanip для точності)
+  std::cout << "=== Вхідні дані з файлу ===\n" << std::fixed << std::setprecision(2);
+  std::cout << "Дрон (xd, yd, zd): " << data.xd << ", " << data.yd << ", " << data.zd << " м\n";
+  std::cout << "Ціль (targetX, Y): " << data.targetX << ", " << data.targetY << "\n";
+  std::cout << "Швидкість V0: " << data.V0 << " м/с, Розгін: " << data.accelerationPath << " м\n";
+  std::cout << "Боєприпас: " << data.name_ammo.data() << "\n";
+  std::cout << "===========================\n";
 
   return true;
 }
@@ -175,3 +170,9 @@ double calculateFlightTime(const Ammunition* selectedAmmo, const DroneInput& inp
 
   return t_pol;
 }
+
+// void test()
+// {
+//   int* p = NULL;                     // Старий стиль, modernize-use-nullptr має спрацювати
+//   char* buffer = (char*)malloc(10);  // C-style cast та malloc
+// }

@@ -3,7 +3,7 @@ add_test(NAME IntegrationDroneAttack
          COMMAND drone_attack "${CMAKE_SOURCE_DIR}/homework_06/data/fixtures/test_ammo.txt"
                  "${CMAKE_SOURCE_DIR}/homework_06/data/output.txt")
 
-# # Додатковий тест, який порівнює результат із файлом очікування expected_output.txt
+# Додатковий тест, який порівнює результат із файлом очікування expected_output.txt
 add_test(
     NAME CheckOutputFiles
     COMMAND ${CMAKE_COMMAND} -E compare_files "${CMAKE_SOURCE_DIR}/homework_06/data/output.txt"
@@ -44,9 +44,11 @@ add_test(
         "${CMAKE_SOURCE_DIR}/homework_06/data/fixtures/output_middle_point.txt"
         "${CMAKE_SOURCE_DIR}/homework_06/data/fixtures/test_expected_middle_output.txt")
 
-set_tests_properties(CheckOutputFiles PROPERTIES DEPENDS IntegrationDroneAttack)
+# set_tests_properties(CheckOutputFiles PROPERTIES DEPENDS IntegrationDroneAttack)
+# set_tests_properties(IntegrationDroneAttack PROPERTIES COST 100)
 
-set_tests_properties(IntegrationDroneAttack PROPERTIES COST 100)
+set_tests_properties(IntegrationDroneAttack PROPERTIES FIXTURES_SETUP DroneData)
+set_tests_properties(CheckOutputFiles PROPERTIES FIXTURES_REQUIRED DroneData)
 
 # --- Додаємо тести бібліотеки ballistics ---
 add_executable(ballistics_test ballistics_test.cpp)
@@ -64,4 +66,4 @@ include(GoogleTest)
 
 # gtest_discover_tests аналізує скомпільований бінарник, автоматично витягує з нього список усіх
 # TEST() і реєструє кожен із них у CTest як окремий тест.
-gtest_discover_tests(ballistics_test)
+gtest_discover_tests(ballistics_test DISCOVERY_MODE PRE_TEST)
