@@ -1,0 +1,41 @@
+name: C++ CI
+
+on:
+  push:
+    branches: [ main, feature/* ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    # 1. Додаємо права доступу (це важливо для завантаження образу з GHCR)
+    permissions:
+      contents: read
+      packages: read
+    
+    # Вказуємо GitHub використовувати твій опублікований образ
+    container:
+      image: ghcr.io/${{ github.repository }}/cpp-miltech-dev:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Додамо створення папки build про всяк випадок, 
+      # хоча cmake -B це робить автоматично
+
+      - name: Configure CMake
+        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build Project
+        run: cmake --build build
+
+      - name: Run Tests
+        run: |
+          cd build
+          ctest --output-on-failure
