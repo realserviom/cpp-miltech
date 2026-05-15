@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Отримуємо список файлів .cpp та .hpp, які підготовлені до коміту (staged)
+FILES=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.(cpp|hpp)$' || true)
+
+if [ -z "$FILES" ]; then
+    exit 0
+fi
+
+echo "Перевірка форматування (clang-format)..."
+
+for FILE in $FILES; do
+    # Форматуємо файл
+    clang-format -i "$FILE"
+    # Додаємо виправлений файл назад у staged (щоб правки потрапили в цей же коміт)
+    git add "$FILE"
+done
+
+# Дозволяємо коміт
+exit 0

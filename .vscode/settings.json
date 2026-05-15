@@ -1,5 +1,6 @@
 {
     "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "modifications",
     "C_Cpp.clang_format_style": "file",
     "cmake-format.exePath": "cmake-format",
     "files.associations": {
