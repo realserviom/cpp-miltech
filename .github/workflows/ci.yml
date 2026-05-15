@@ -18,6 +18,7 @@ jobs:
     # Вказуємо GitHub використовувати твій опублікований образ
     container:
       image: ghcr.io/${{ github.repository }}/cpp-miltech-dev:latest
+      options: --user root
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
