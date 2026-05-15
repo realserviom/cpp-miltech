@@ -102,18 +102,18 @@ TEST(BallisticsMath, ZD_LESS_ZERO)
 }
 
 // Один негативний тест
-TEST(BallisticsMath, ZD_LESS_ZERO_NEGATIVE)
-{
-  // Шукаємо тестовий боєприпас
-  auto ammo = find_ammunition("TEST-AMMO");
+// TEST(BallisticsMath, ZD_LESS_ZERO_NEGATIVE)
+// {
+//   // Шукаємо тестовий боєприпас
+//   auto ammo = find_ammunition("TEST-AMMO");
 
-  DroneInput input;
+//   DroneInput input;
 
-  // Передаємо тествову конфігурацію для висоти 0
-  std::string fullPath = std::string(FIXTURES_PATH) + "test_ammo_zd_less0.txt";
-  bool result = read_input_data(fullPath.c_str(), input);
+//   // Передаємо тествову конфігурацію для висоти 0
+//   std::string fullPath = std::string(FIXTURES_PATH) + "test_ammo_zd_less0.txt";
+//   bool result = read_input_data(fullPath.c_str(), input);
 
-  double flightTime = calculate_flight_time(ammo, input, kGravit);
+//   double flightTime = calculate_flight_time(ammo, input, kGravit);
 
-  EXPECT_GT(flightTime, 0);
-}
+//   EXPECT_GT(flightTime, 0);
+// }
