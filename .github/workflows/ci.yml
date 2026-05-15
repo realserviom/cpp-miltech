@@ -27,14 +27,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Додамо створення папки build про всяк випадок, 
-      # хоча cmake -B це робить автоматично
-
+        # робим Build типу Release (в машинний код) найбільша швидкість
       - name: Configure CMake
         run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
 
       - name: Build Project
         run: cmake --build build
+
+      - name: Lint changed files
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            # Для PR порівнюємо з гілкою, в яку вливаємо (напр. main)
+            BASE_SHA="origin/${{ github.base_ref }}"
+            git fetch origin ${{ github.base_ref }} --depth=1
+          else
+            # Для звичайного push порівнюємо з тим, що було в цій гілці ДО пушу
+            BASE_SHA="${{ github.event.before }}"
+            git fetch origin $BASE_SHA --depth=1
+          fi
+
+          git diff -U0 $BASE_SHA...HEAD | clang-tidy-diff -p1 -path build
 
       - name: Run Tests
         run: |
