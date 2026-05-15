@@ -4,38 +4,38 @@
 #ifndef TYPES_HPP
 #define TYPES_HPP
 
-const double EPSILON = 1e-9;  // або інша точність, яка вам потрібна
-const double GRAVIT = 9.81;   // Стандартне значення в м/с²
-const int COUNT_NAME_AMMO = 50;
-const int COUNT_TYPE_AMMO = 30;
+const double kEpsilon = 1e-9;  // або інша точність, яка вам потрібна
+const double kGravit = 9.81;   // Стандартне значення в м/с²
+const int kCountNameAmmo = 50;
+const int kCountTypeAmmo = 30;
 
-using def_name_ammo = std::array<char, COUNT_NAME_AMMO>;
-using def_type_ammo = std::array<char, COUNT_TYPE_AMMO>;
+using def_name_ammo = std::array<char, kCountNameAmmo>;
+using def_type_ammo = std::array<char, kCountTypeAmmo>;
 
 struct Ammunition {
-  def_name_ammo name;  // Назва
-  float m;             // m (кг)
-  float d;             // d (drag)
-  float l;             // l (lift)
-  def_type_ammo type;  // Тип (Вільне падіння / Планеруючий)
+  def_name_ammo name_;  // Назва
+  float m_;             // m_ (кг)
+  float d_;             // d_ (drag)
+  float l_;             // l_ (lift)
+  def_type_ammo type_;  // Тип (Вільне падіння / Планеруючий)
 };
 
-constexpr size_t AMMO_TABLE_SIZE = 6;
+constexpr size_t kAmmoTableSize = 6;
 
-inline const std::array<Ammunition, AMMO_TABLE_SIZE> ammoTable = {{{{"VOG-17"}, 0.35f, 0.07f, 0.0f, {"Вільний"}},
-                                                                   {{"M67"}, 0.6f, 0.10f, 0.0f, {"Вільний"}},
-                                                                   {{"RKG-3"}, 1.2f, 0.10f, 0.0f, {"Вільний"}},
-                                                                   {{"GLIDING-VOG"}, 0.45f, 0.10f, 1.0f, {"Планеруючий"}},
-                                                                   {{"GLIDING-RKG"}, 1.4f, 0.10f, 1.0f, {"Планеруючий"}},
-                                                                   {{"TEST-AMMO"}, 1.4f, 0.10f, 1.0f, {"Планеруючий"}}}};
+inline const std::array<Ammunition, kAmmoTableSize> kAmmoTable = {{{{"VOG-17"}, 0.35F, 0.07F, 0.0F, {"Вільний"}},
+                                                                   {{"M67"}, 0.6F, 0.10F, 0.0F, {"Вільний"}},
+                                                                   {{"RKG-3"}, 1.2F, 0.10F, 0.0F, {"Вільний"}},
+                                                                   {{"GLIDING-VOG"}, 0.45F, 0.10F, 1.0F, {"Планеруючий"}},
+                                                                   {{"GLIDING-RKG"}, 1.4F, 0.10F, 1.0F, {"Планеруючий"}},
+                                                                   {{"TEST-AMMO"}, 1.4F, 0.10F, 1.0F, {"Планеруючий"}}}};
 
 // Структрура для повернення зчитаних даних
 struct DroneInput {
-  float xd, yd, zd;
-  float targetX, targetY;
-  float V0;
-  float accelerationPath;
-  def_name_ammo name_ammo;
+  float xd_, yd_, zd_;
+  float target_x_, target_y_;
+  float v0_;
+  float acceleration_path_;
+  def_name_ammo name_ammo_;
 };
 
 #endif

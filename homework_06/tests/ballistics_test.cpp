@@ -21,7 +21,7 @@ TEST(BallisticsInputTest, FileNotFound)
   DroneInput input;
 
   // Передаємо неіснуючий шлях
-  bool result = readInputData("non_existent.txt", input);
+  bool result = read_input_data("non_existent.txt", input);
 
   EXPECT_FALSE(result);
 }
@@ -32,19 +32,19 @@ TEST(BallisticsInputTest, ReadCorruptedFile)
   DroneInput input;
 
   // FIXTURES_PATH прилетить із CMake
-  std::string fullPath = std::string(FIXTURES_PATH) + "test_corrupted.txt";
+  std::string full_path = std::string(FIXTURES_PATH) + "test_corrupted.txt";
 
-  printf("Помилка: fullPath файл %s\n", fullPath.c_str());
+  printf("Помилка: fullPath файл %s\n", full_path.c_str());
 
   // Очікуємо, що метод поверне помилку або кине виключення
-  EXPECT_FALSE(readInputData(fullPath.c_str(), input));
+  EXPECT_FALSE(read_input_data(full_path.c_str(), input));
 }
 
 // Тест на випадок, якщо боєприпас не існує
 TEST(BallisticsInputTest, UnknownAmmunitionType)
 {
   // Шукаємо те, чого точно немає (поки що)
-  auto result = findAmmunition("Nuclear_Bomb");
+  auto result = find_ammunition("Nuclear_Bomb");
 
   // Якщо повертає nullptr тест виконується
   EXPECT_EQ(result, nullptr);
@@ -54,32 +54,32 @@ TEST(BallisticsInputTest, UnknownAmmunitionType)
 TEST(BallisticsMath, calculateFlightTime)
 {
   // Шукаємо тестовий боєприпас
-  auto ammo = findAmmunition("TEST-AMMO");
+  auto ammo = find_ammunition("TEST-AMMO");
 
   DroneInput input;
 
   // Передаємо тествову конфігурацію
   std::string fullPath = std::string(FIXTURES_PATH) + "test_ammo.txt";
-  bool result = readInputData(fullPath.c_str(), input);
+  bool result = read_input_data(fullPath.c_str(), input);
 
-  double flightTime = calculateFlightTime(ammo, input, GRAVIT);
+  double flight_time = calculate_flight_time(ammo, input, kGravit);
 
-  EXPECT_GT(flightTime, 0);
+  EXPECT_GT(flight_time, 0);
 }
 
 // Тест провірка на обробку даних при висоті дрона = 0
 TEST(BallisticsMath, ZD_EQ_ZERO)
 {
   // Шукаємо тестовий боєприпас
-  auto ammo = findAmmunition("TEST-AMMO");
+  auto ammo = find_ammunition("TEST-AMMO");
 
   DroneInput input;
 
   // Передаємо тествову конфігурацію для висоти 0
   std::string fullPath = std::string(FIXTURES_PATH) + "test_ammo_zd0.txt";
-  bool result = readInputData(fullPath.c_str(), input);
+  bool result = read_input_data(fullPath.c_str(), input);
 
-  double flightTime = calculateFlightTime(ammo, input, GRAVIT);
+  double flightTime = calculate_flight_time(ammo, input, kGravit);
 
   EXPECT_EQ(flightTime, 0);
 }
@@ -88,15 +88,15 @@ TEST(BallisticsMath, ZD_EQ_ZERO)
 TEST(BallisticsMath, ZD_LESS_ZERO)
 {
   // Шукаємо тестовий боєприпас
-  auto ammo = findAmmunition("TEST-AMMO");
+  auto ammo = find_ammunition("TEST-AMMO");
 
   DroneInput input;
 
   // Передаємо тествову конфігурацію для висоти 0
   std::string fullPath = std::string(FIXTURES_PATH) + "test_ammo_zd_less0.txt";
-  bool result = readInputData(fullPath.c_str(), input);
+  bool result = read_input_data(fullPath.c_str(), input);
 
-  double flightTime = calculateFlightTime(ammo, input, GRAVIT);
+  double flightTime = calculate_flight_time(ammo, input, kGravit);
 
   EXPECT_EQ(flightTime, 0);
 }

@@ -13,7 +13,7 @@ Code, Compile, Run and Debug online from anywhere in world.
 #include "types.hpp"
 #include "ballistics.hpp"
 #include <iomanip>
-#include <span>
+#include <vector>
 
 // Визначення константи Пі, якщо її немає в cmath
 #ifndef M_PI
@@ -22,86 +22,88 @@ Code, Compile, Run and Debug online from anywhere in world.
 
 auto main(int argc, char** argv) -> int
 {
-  auto args = std::span(argv, static_cast<size_t>(argc));
+  std::vector<std::string> args(argv, argv + argc);  // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
 
   if (argc < 3) {
     std::cerr << "Usage: " << args[0] << " <input_path> <output_path>" << "\n";
     return 1;
   }
 
-  std::string outputPath = args[2];
+  std::string output_path = args[2];
 
   setlocale(LC_ALL, "");
 
   DroneInput input{};
 
-  if (!readInputData(args[1], input)) {
+  if (!read_input_data(args[1], input)) {
     return 1;
   }
 
-  const Ammunition* selectedAmmo = findAmmunition(input.name_ammo.data());
+  const Ammunition* selected_ammo = find_ammunition(input.name_ammo_.data());
 
-  if (selectedAmmo) {
-    std::cout << "Знайдено боєприпас: " << selectedAmmo->name.data() << "\n";
+  if (selected_ammo != nullptr) {
+    std::cout << "Знайдено боєприпас: " << selected_ammo->name_.data() << "\n";
     std::cout << std::fixed << std::setprecision(2);
-    std::cout << "Параметри: m=" << selectedAmmo->m << ", d=" << selectedAmmo->d << ", l=" << selectedAmmo->l << "\n";
+    std::cout << "Параметри: m=" << selected_ammo->m_ << ", d=" << selected_ammo->d_ << ", l=" << selected_ammo->l_ << "\n";
   }
   else {
-    std::cout << "Помилка: боєприпас " << input.name_ammo.data() << " не знайдено!" << "\n";
+    std::cout << "Помилка: боєприпас " << input.name_ammo_.data() << " не знайдено!" << "\n";
     return 1;
   }
 
-  double t_pol = calculateFlightTime(selectedAmmo, input, GRAVIT);
+  double t_pol = calculate_flight_time(selected_ammo, input, kGravit);
 
-  double dist = t_pol > 0 ? calculateDist(t_pol, input.V0, selectedAmmo->m, selectedAmmo->d, selectedAmmo->l, GRAVIT) : 0.00;  // h в умові
+  double dist =
+    t_pol > 0 ? calculate_dist(t_pol, input.v0_, selected_ammo->m_, selected_ammo->d_, selected_ammo->l_, kGravit) : 0.00;  // h в умові
 
-  if (dist < 0)
+  if (dist < 0) {
     dist = 0.0;
+  }
 
   std::cout << "Горизонтальна дистанція яку проходить дрон за час " << t_pol << " сек. рівна " << dist << " м." << "\n";
 
-  double length = calculateLength(input.targetX, input.targetY, input.xd, input.yd);  // D в умові
+  double length = calculate_length(input.target_x_, input.target_y_, input.xd_, input.yd_);  // D в умові
 
   std::cout << "Відстань до цілі pівна " << length << " м." << "\n";
 
   double ratio = 0.0;
   double xd_i = 0.0;
   double yd_i = 0.0;
-  double fireX = 0.0;
-  double fireY = 0.0;
+  double fire_x = 0.0;
+  double fire_y = 0.0;
 
   // у випадку якщо в нас дрон над цілю
-  if (std::abs(length) < EPSILON) {
+  if (std::abs(length) < kEpsilon) {
     // координати проміжної точки
     // якщо висота 0 ми не повинні враховувати input.accelerationPath
-    xd_i = input.targetX - dist - ((dist > 0) ? input.accelerationPath : 0);
-    yd_i = input.targetY;
+    xd_i = input.target_x_ - dist - ((dist > 0) ? input.acceleration_path_ : 0);
+    yd_i = input.target_y_;
 
     // координати скиду
-    fireX = input.targetX - dist;
-    fireY = input.targetY;
+    fire_x = input.target_x_ - dist;
+    fire_y = input.target_y_;
 
     std::cout << "Проміжна точка xd_i, yd_i " << xd_i << ", " << yd_i << "\n";
-    std::cout << "Точка скиду fireX, fireY " << fireX << ", " << fireY << "\n";
+    std::cout << "Точка скиду fireX, fireY " << fire_x << ", " << fire_y << "\n";
 
-    saveFireCoordinates(outputPath, fireX, fireY, xd_i, yd_i);
+    save_fire_coordinates(output_path, fire_x, fire_y, xd_i, yd_i);
   }
   else {
-    if (dist + input.accelerationPath > length) {
-      ratio = (dist + input.accelerationPath) / length;
-      xd_i = input.targetX - (input.targetX - input.xd) * ratio;
-      yd_i = input.targetY - (input.targetY - input.yd) * ratio;
+    if (dist + input.acceleration_path_ > length) {
+      ratio = (dist + input.acceleration_path_) / length;
+      xd_i = input.target_x_ - (input.target_x_ - input.xd_) * ratio;
+      yd_i = input.target_y_ - (input.target_y_ - input.yd_) * ratio;
 
       std::cout << "Проміжна точка xd_i, yd_i " << xd_i << ", " << yd_i << "\n";
     }
 
-    ratio = (length - dist) / length;                       // ~ (140 - 60) / 140
-    fireX = input.xd + (input.targetX - input.xd) * ratio;  // 100 + (200 - 100) * ratio = 157
-    fireY = input.yd + (input.targetY - input.yd) * ratio;  // 100 + (200 - 100) * ratio = 157
+    ratio = (length - dist) / length;                            // ~ (140 - 60) / 140
+    fire_x = input.xd_ + (input.target_x_ - input.xd_) * ratio;  // 100 + (200 - 100) * ratio = 157
+    fire_y = input.yd_ + (input.target_y_ - input.yd_) * ratio;  // 100 + (200 - 100) * ratio = 157
 
-    std::cout << "Точка скиду fireX, fireY " << fireX << ", " << fireY << "\n";
+    std::cout << "Точка скиду fireX, fireY " << fire_x << ", " << fire_y << "\n";
 
-    saveFireCoordinates(outputPath, fireX, fireY, xd_i, yd_i);
+    save_fire_coordinates(output_path, fire_x, fire_y, xd_i, yd_i);
   }
 
   return 0;

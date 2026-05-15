@@ -1,23 +1,22 @@
 #include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <cmath>
-#include <string.h>
 #include <fstream>
 #include "types.hpp"
 #include <unistd.h>  // Для getcwd
-#include <limits.h>  // Для PATH_MAX
+#include <climits>   // Для PATH_MAX
 #include <filesystem>
-#include <fstream>
-#include <string>
+#include <cstring>
 #include <string_view>
 #include <algorithm>
 #include <iomanip>
 
-auto calculateLength(float targetX, float targetY, float xd, float yd) -> double
+// NOLINTBEGIN(readability-magic-numbers, cppcoreguidelines-avoid-magic-numbers)
+auto calculate_length(float target_x, float target_y, float x_d, float y_d) -> double
 {
-  return std::sqrt(std::pow((targetX - xd), 2) + std::pow((targetY - yd), 2));
+  return std::sqrt(std::pow((target_x - x_d), 2) + std::pow((target_y - y_d), 2));
 }
+// NOLINTEND(readability-magic-numbers, cppcoreguidelines-avoid-magic-numbers)
 
 /**
  * Функція для відстані що проходить боєприпас після скиду за розширеною моделлю 5-го степеня
@@ -29,7 +28,8 @@ auto calculateLength(float targetX, float targetY, float xd, float yd) -> double
  * @param g  - гравітація (за замовчуванням 9.81)
  * @return   - відстань
  */
-auto calculateDist(double t, double V0, double m, double d, double l, double g = 9.81) -> double
+// NOLINTBEGIN(readability-magic-numbers, cppcoreguidelines-avoid-magic-numbers, readability-identifier-length)
+auto calculate_dist(double t, double v0, double m, double d, double l, double g = kGravit) -> double
 {
   // Допоміжні змінні для швидкості та чистоти коду
   double l2 = l * l;
@@ -43,51 +43,52 @@ auto calculateDist(double t, double V0, double m, double d, double l, double g =
   double d4 = d3 * d;
 
   // Розрахунок окремих доданків (термів)
-  double term_t1 = t * V0;
-  double term_t2 = -(d * std::pow(t, 2) * V0) / (2.0 * m);
-  double term_t3 = (std::pow(t, 3) * (6.0 * d * g * l * m - 6.0 * d2 * (l2 - 1.0) * V0)) / (36.0 * m2);
+  double term_t1 = t * v0;
+  double term_t2 = -(d * std::pow(t, 2) * v0) / (2.0 * m);
+  double term_t3 = (std::pow(t, 3) * (6.0 * d * g * l * m - 6.0 * d2 * (l2 - 1.0) * v0)) / (36.0 * m2);
 
   double num_t4 =
-    3.0 * d3 * l2_plus_1 * l2 * V0 + 6.0 * d3 * l2_plus_1 * std::pow(l, 4) * V0 - 6.0 * d2 * g * (std::pow(l, 4) + l2 + 1.0) * l * m;
+    3.0 * d3 * l2_plus_1 * l2 * v0 + 6.0 * d3 * l2_plus_1 * std::pow(l, 4) * v0 - 6.0 * d2 * g * (std::pow(l, 4) + l2 + 1.0) * l * m;
 
   double term_t4 = (std::pow(t, 4) * num_t4) / (36.0 * std::pow(l2_plus_1, 2) * m3);
 
-  double term_t5 = (std::pow(t, 5) * (3.0 * d3 * g * std::pow(l, 3) * m - 3.0 * d4 * l2 * l2_plus_1 * V0)) / (36.0 * l2_plus_1 * m4);
+  double term_t5 = (std::pow(t, 5) * (3.0 * d3 * g * std::pow(l, 3) * m - 3.0 * d4 * l2 * l2_plus_1 * v0)) / (36.0 * l2_plus_1 * m4);
 
   // Повертаємо суму всіх частин
   return term_t3 + term_t5 + term_t4 + term_t2 + term_t1;
 }
+// NOLINTEND(readability-magic-numbers, cppcoreguidelines-avoid-magic-numbers, readability-identifier-length)
 
-void saveFireCoordinates(std::string outputPath, double fireX, double fireY, double xd_i = 0, double yd_i = 0)
+void save_fire_coordinates(std::string& output_path, double fire_x, double fire_y, double xd_i = 0, double yd_i = 0)
 {
-  std::ofstream outFile(outputPath);
+  std::ofstream out_file(output_path);
 
-  if (outFile.is_open()) {
-    if (xd_i) {
-      outFile << xd_i << " " << yd_i << " ";
+  if (out_file.is_open()) {
+    if (xd_i != 0.0) {
+      out_file << xd_i << " " << yd_i << " ";
     }
 
-    outFile << fireX << " " << fireY << std::endl;
+    out_file << fire_x << " " << fire_y << '\n';
 
-    outFile.close();
-    std::cout << "Дані успішно збережено у файл output.txt" << std::endl;
+    out_file.close();
+    std::cout << "Дані успішно збережено у файл output.txt" << '\n';
   }
   else {
-    std::cerr << "Помилка: не вдалося відкрити файл для запису!" << std::endl;
+    std::cerr << "Помилка: не вдалося відкрити файл для запису!" << '\n';
   }
 }
 
-auto findAmmunition(std::string_view name) -> const Ammunition*
+auto find_ammunition(std::string_view name) -> const Ammunition*
 {
-  for (const auto& ammo : ammoTable) {
-    if (ammo.name.data() == name) {
+  for (const auto& ammo : kAmmoTable) {
+    if (ammo.name_.data() == name) {
       return &ammo;
     }
   }
   return nullptr;
 }
 
-auto readInputData(std::string_view filename, DroneInput& data) -> bool
+auto read_input_data(std::string_view filename, DroneInput& data) -> bool
 {
   // 1. Відкриваємо файл
   std::ifstream file(filename.data());
@@ -102,43 +103,49 @@ auto readInputData(std::string_view filename, DroneInput& data) -> bool
   // Тимчасовий рядок для назви, щоб безпечно перенести її в std::array
   std::string temp_ammo_name;
 
-  if (!(file >> data.xd >> data.yd >> data.zd >> data.targetX >> data.targetY >> data.V0 >> data.accelerationPath >> temp_ammo_name)) {
+  if (!(file >> data.xd_ >> data.yd_ >> data.zd_ >> data.target_x_ >> data.target_y_ >> data.v0_ >> data.acceleration_path_ >>
+        temp_ammo_name)) {
     std::cerr << "Помилка: Файл має неправильний формат або неповні дані.\n";
     return false;
   }
 
   // 3. Безпечно копіюємо назву в std::array (name_ammo)
-  data.name_ammo.fill('\0');  // Очищуємо масив
-  std::copy_n(temp_ammo_name.begin(), std::min(temp_ammo_name.size(), data.name_ammo.size() - 1), data.name_ammo.begin());
+  data.name_ammo_.fill('\0');  // Очищуємо масив
+  std::copy_n(temp_ammo_name.begin(), std::min(temp_ammo_name.size(), data.name_ammo_.size() - 1), data.name_ammo_.begin());
 
   // 4. Вивід даних (використовуємо iomanip для точності)
   std::cout << "=== Вхідні дані з файлу ===\n" << std::fixed << std::setprecision(2);
-  std::cout << "Дрон (xd, yd, zd): " << data.xd << ", " << data.yd << ", " << data.zd << " м\n";
-  std::cout << "Ціль (targetX, Y): " << data.targetX << ", " << data.targetY << "\n";
-  std::cout << "Швидкість V0: " << data.V0 << " м/с, Розгін: " << data.accelerationPath << " м\n";
-  std::cout << "Боєприпас: " << data.name_ammo.data() << "\n";
+  std::cout << "Дрон (xd, yd, zd): " << data.xd_ << ", " << data.yd_ << ", " << data.zd_ << " м\n";
+  std::cout << "Ціль (targetX, Y): " << data.target_x_ << ", " << data.target_y_ << "\n";
+  std::cout << "Швидкість V0: " << data.v0_ << " м/с, Розгін: " << data.acceleration_path_ << " м\n";
+  std::cout << "Боєприпас: " << data.name_ammo_.data() << "\n";
   std::cout << "===========================\n";
 
   return true;
 }
 
-double calculateFlightTime(const Ammunition* selectedAmmo, const DroneInput& input, double gravit)
+// NOLINTBEGIN(readability-magic-numbers, cppcoreguidelines-avoid-magic-numbers, readability-identifier-length)
+auto calculate_flight_time(const Ammunition* selected_ammo, const DroneInput& input, double gravit) -> double
 {
-  if (!selectedAmmo)
+  if (selected_ammo == nullptr) {
     return -1.0;
+  }
 
-  if (input.zd < 1e-3) {
+  if (input.zd_ < 1e-3) {
     return 0.0;
   }
 
-  double a, b, c;
+  double a = 0.00;
+  double b = 0.00;
+  double c = 0.00;
+
   // Обчислення параметрів a, b, c
-  a = (selectedAmmo->d * gravit * selectedAmmo->m) - (2 * std::pow(selectedAmmo->d, 2) * selectedAmmo->l * input.V0);
-  b = -3.0 * gravit * std::pow(selectedAmmo->m, 2) + 3.0 * selectedAmmo->d * selectedAmmo->l * selectedAmmo->m * input.V0;
-  c = 6.0 * std::pow(selectedAmmo->m, 2) * input.zd;
+  a = (selected_ammo->d_ * gravit * selected_ammo->m_) - (2 * std::pow(selected_ammo->d_, 2) * selected_ammo->l_ * input.v0_);
+  b = -3.0 * gravit * std::pow(selected_ammo->m_, 2) + 3.0 * selected_ammo->d_ * selected_ammo->l_ * selected_ammo->m_ * input.v0_;
+  c = 6.0 * std::pow(selected_ammo->m_, 2) * input.zd_;
 
   if (std::abs(a) < 1e-12) {
-    std::cerr << "Помилка: Це не кубічне рівняння (a = 0)." << std::endl;
+    std::cerr << "Помилка: Це не кубічне рівняння (a = 0)." << '\n';
     return -1.0;
   }
 
@@ -148,7 +155,7 @@ double calculateFlightTime(const Ammunition* selectedAmmo, const DroneInput& inp
 
   // Перевірка умови для трьох дійсних коренів (p < 0)
   if (p >= -1e-12) {
-    std::cerr << "Помилка: p має бути < 0 для даного методу." << std::endl;
+    std::cerr << "Помилка: p має бути < 0 для даного методу." << '\n';
     return -1.0;
   }
 
@@ -156,7 +163,7 @@ double calculateFlightTime(const Ammunition* selectedAmmo, const DroneInput& inp
 
   // Перевірка діапазону для acos [-1; 1]
   if (arg < -1.0 || arg > 1.0) {
-    std::cerr << "Помилка: Аргумент acos (" << arg << ") поза діапазоном [-1, 1]." << std::endl;
+    std::cerr << "Помилка: Аргумент acos (" << arg << ") поза діапазоном [-1, 1]." << '\n';
     return -1.0;
   }
 
@@ -164,12 +171,13 @@ double calculateFlightTime(const Ammunition* selectedAmmo, const DroneInput& inp
   double t_pol = 2.0 * std::sqrt(-p / 3.0) * std::cos((std::acos(arg) + 4.0 * M_PI) / 3.0) - (b / (3.0 * a));
 
   if (t_pol <= 0) {
-    std::cerr << "Помилка: Розрахований час польоту від'ємний або нуль." << std::endl;
+    std::cerr << "Помилка: Розрахований час польоту від'ємний або нуль." << '\n';
     return -1.0;
   }
 
   return t_pol;
 }
+// NOLINTEND(readability-magic-numbers, cppcoreguidelines-avoid-magic-numbers, readability-identifier-length)
 
 // void test()
 // {

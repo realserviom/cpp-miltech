@@ -32,6 +32,90 @@
         "panel": "dedicated",
         "clear": true
       }
+    },
+    {
+      "label": "Run Quality Check (All)",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/check-all.sh",
+      "args": [
+        "${input:homeworkFolder}"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+        "focus": true,
+        "close": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Check Format",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/check-format.sh",
+      "args": [
+        "${input:homeworkFolder}"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+        "focus": true,
+        "close": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Check Quality",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/check-quality.sh",
+      "args": [
+        "${input:homeworkFolder}"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+        "focus": true,
+        "close": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Check Test",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/check-test.sh",
+      "args": [
+        "${input:homeworkFolder}"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+        "focus": true,
+        "close": true
+      },
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "homeworkFolder",
+      "type": "promptString",
+      "description": "Введіть назву папки (напр. homework_06)",
+      "default": "homework_06"
     }
   ]
 }

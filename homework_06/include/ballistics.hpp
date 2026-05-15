@@ -6,16 +6,18 @@
 #include <stdlib.h>
 #include <string>
 
-auto findAmmunition(std::string_view name) -> const Ammunition*;
+auto find_ammunition(std::string_view name) -> const Ammunition*;
 
-auto readInputData(std::string_view filename, DroneInput& data) -> bool;
+auto read_input_data(std::string_view filename, DroneInput& data) -> bool;
 
-auto calculateDist(double t, double V0, double m, double d, double l, double g = GRAVIT) -> double;
+// NOLINTBEGIN(readability-magic-numbers, cppcoreguidelines-avoid-magic-numbers, readability-identifier-length)
+auto calculate_dist(double t, double v0, double m, double d, double l, double g = kGravit) -> double;
+// NOLINTEND(readability-magic-numbers, cppcoreguidelines-avoid-magic-numbers, readability-identifier-length)
 
-auto calculateLength(float targetX, float targetY, float xd, float yd) -> double;
+auto calculate_length(float target_x, float target_y, float x_d, float y_d) -> double;
 
-void saveFireCoordinates(std::string outputPath, double fireX, double fireY, double xd_i = 0, double yd_i = 0);
+void save_fire_coordinates(std::string& output_path, double fire_x, double fire_y, double xd_i = 0, double yd_i = 0);
 
-auto calculateFlightTime(const Ammunition* selectedAmmo, const DroneInput& input, double gravit = GRAVIT) -> double;
+auto calculate_flight_time(const Ammunition* selected_ammo, const DroneInput& input, double gravit = kGravit) -> double;
 
 #endif
