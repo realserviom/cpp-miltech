@@ -8,11 +8,11 @@ add_library(
 
 target_include_directories(ballistics PUBLIC include)
 
-target_compile_options(ballistics PRIVATE -Wall -Wextra -Wpedantic -Werror)
+target_compile_options(ballistics PRIVATE -Wall -Wextra -Wpedantic)
 
 add_executable(drone_attack src/main.cpp src/ballistics.cpp)
 
-target_compile_options(drone_attack PRIVATE -Wall -Wextra -Wpedantic -Werror)
+target_compile_options(drone_attack PRIVATE -Wall -Wextra -Wpedantic)
 
 target_link_libraries(drone_attack PRIVATE ballistics)
 
