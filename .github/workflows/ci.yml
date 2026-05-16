@@ -36,7 +36,9 @@ jobs:
 
       - name: Lint changed files
         run: |
-          if [ "${{ github.event_name }}" == "pull_request" ]; then
+          git config --global --add safe.directory /__w/cpp-miltech/cpp-miltech
+
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
             # Для PR порівнюємо з гілкою, в яку вливаємо (напр. main)
             BASE_SHA="origin/${{ github.base_ref }}"
             git fetch origin ${{ github.base_ref }} --depth=1
