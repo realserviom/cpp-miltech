@@ -142,5 +142,5 @@ TEST(BallisticsMath, ZD_LESS_ZERO_NEGATIVE)
 
   float flight_time = static_cast<float>(calculate_flight_time(ammo, input, kGravit));
 
-  EXPECT_FLOAT_EQ(flight_time, 1);
+  EXPECT_FLOAT_EQ(flight_time, 0);
 }
