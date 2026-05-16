@@ -12,9 +12,9 @@
 #include <iomanip>
 
 // NOLINTBEGIN(readability-magic-numbers, cppcoreguidelines-avoid-magic-numbers)
-auto calculate_length(float target_x, float target_y, float x_d, float y_d) -> double
+auto calculate_length(DroneInput& input) -> double
 {
-  return std::sqrt(std::pow((target_x - x_d), 2) + std::pow((target_y - y_d), 2));
+  return std::sqrt(std::pow((input.target_x_ - input.xd_), 2) + std::pow((input.target_y_ - input.yd_), 2));
 }
 // NOLINTEND(readability-magic-numbers, cppcoreguidelines-avoid-magic-numbers)
 
@@ -31,6 +31,10 @@ auto calculate_length(float target_x, float target_y, float x_d, float y_d) -> d
 // NOLINTBEGIN(readability-magic-numbers, cppcoreguidelines-avoid-magic-numbers, readability-identifier-length)
 auto calculate_dist(double t, double v0, double m, double d, double l, double g = kGravit) -> double
 {
+  if (t <= 0.00) {
+    return 0.00;
+  }
+
   // Допоміжні змінні для швидкості та чистоти коду
   double l2 = l * l;
   double l2_plus_1 = l2 + 1.0;
@@ -55,20 +59,22 @@ auto calculate_dist(double t, double v0, double m, double d, double l, double g 
   double term_t5 = (std::pow(t, 5) * (3.0 * d3 * g * std::pow(l, 3) * m - 3.0 * d4 * l2 * l2_plus_1 * v0)) / (36.0 * l2_plus_1 * m4);
 
   // Повертаємо суму всіх частин
-  return term_t3 + term_t5 + term_t4 + term_t2 + term_t1;
+  double dist = term_t3 + term_t5 + term_t4 + term_t2 + term_t1;
+
+  return (dist <= 0.00) ? 0.00 : dist;
 }
 // NOLINTEND(readability-magic-numbers, cppcoreguidelines-avoid-magic-numbers, readability-identifier-length)
 
-void save_fire_coordinates(std::string& output_path, double fire_x, double fire_y, double xd_i = 0, double yd_i = 0)
+void save_fire_coordinates(std::string& output_path, DropPoints& points)
 {
   std::ofstream out_file(output_path);
 
   if (out_file.is_open()) {
-    if (xd_i != 0.0) {
-      out_file << xd_i << " " << yd_i << " ";
+    if (points.is_middle_point_) {
+      out_file << points.xd_i_ << " " << points.yd_i_ << " ";
     }
 
-    out_file << fire_x << " " << fire_y << '\n';
+    out_file << points.fire_x_ << " " << points.fire_y_ << '\n';
 
     out_file.close();
     std::cout << "Дані успішно збережено у файл output.txt" << '\n';
@@ -179,8 +185,38 @@ auto calculate_flight_time(const Ammunition* selected_ammo, const DroneInput& in
 }
 // NOLINTEND(readability-magic-numbers, cppcoreguidelines-avoid-magic-numbers, readability-identifier-length)
 
-// void test()
-// {
-//   int* p = NULL;                     // Старий стиль, modernize-use-nullptr має спрацювати
-//   char* buffer = (char*)malloc(10);  // C-style cast та malloc
-// }
+// Нова оптимізована функція розрахунку координатів скиду
+auto calculate_drop_points(const DroneInput& input, double dist, double length, double epsilon) -> DropPoints
+{
+  DropPoints points;
+
+  // Перевіряємо, чи дрон безпосередньо над ціллю
+  if (std::abs(length) < epsilon) {
+    // Якщо висота 0 (або дрон на місці), acceleration_path_ не враховуємо
+    double accel = (dist > 0) ? input.acceleration_path_ : 0.0;
+
+    points.xd_i_ = input.target_x_ - dist - accel;
+    points.yd_i_ = input.target_y_;
+    points.fire_x_ = input.target_x_ - dist;
+    points.fire_y_ = input.target_y_;
+    points.is_middle_point_ = true;
+  }
+  else {
+    // Ініціалізуємо дефолтні значення для xd_i, yd_i (на випадок, якщо умова if нижче не виконається)
+    points.xd_i_ = input.xd_;
+    points.yd_i_ = input.yd_;
+
+    if (dist + input.acceleration_path_ > length) {
+      double ratio_i = (dist + input.acceleration_path_) / length;
+      points.xd_i_ = input.target_x_ - (input.target_x_ - input.xd_) * ratio_i;
+      points.yd_i_ = input.target_y_ - (input.target_y_ - input.yd_) * ratio_i;
+      points.is_middle_point_ = true;
+    }
+
+    double ratio_fire = (length - dist) / length;
+    points.fire_x_ = input.xd_ + (input.target_x_ - input.xd_) * ratio_fire;
+    points.fire_y_ = input.yd_ + (input.target_y_ - input.yd_) * ratio_fire;
+  }
+
+  return points;
+}

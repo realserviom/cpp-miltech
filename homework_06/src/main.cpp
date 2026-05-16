@@ -62,49 +62,18 @@ auto main(int argc, char** argv) -> int
 
   std::cout << "Горизонтальна дистанція яку проходить дрон за час " << t_pol << " сек. рівна " << dist << " м." << "\n";
 
-  double length = calculate_length(input.target_x_, input.target_y_, input.xd_, input.yd_);  // D в умові
+  double length = calculate_length(input);  // D в умові
 
   std::cout << "Відстань до цілі pівна " << length << " м." << "\n";
 
-  double ratio = 0.0;
-  double xd_i = 0.0;
-  double yd_i = 0.0;
-  double fire_x = 0.0;
-  double fire_y = 0.0;
+  DropPoints points = calculate_drop_points(input, dist, length, kEpsilon);
 
-  // у випадку якщо в нас дрон над цілю
-  if (std::abs(length) < kEpsilon) {
-    // координати проміжної точки
-    // якщо висота 0 ми не повинні враховувати input.accelerationPath
-    xd_i = input.target_x_ - dist - ((dist > 0) ? input.acceleration_path_ : 0);
-    yd_i = input.target_y_;
-
-    // координати скиду
-    fire_x = input.target_x_ - dist;
-    fire_y = input.target_y_;
-
-    std::cout << "Проміжна точка xd_i, yd_i " << xd_i << ", " << yd_i << "\n";
-    std::cout << "Точка скиду fireX, fireY " << fire_x << ", " << fire_y << "\n";
-
-    save_fire_coordinates(output_path, fire_x, fire_y, xd_i, yd_i);
+  if (points.is_middle_point_) {
+    std::cout << "Проміжна точка xd_i, yd_i " << points.xd_i_ << ", " << points.yd_i_ << "\n";
   }
-  else {
-    if (dist + input.acceleration_path_ > length) {
-      ratio = (dist + input.acceleration_path_) / length;
-      xd_i = input.target_x_ - (input.target_x_ - input.xd_) * ratio;
-      yd_i = input.target_y_ - (input.target_y_ - input.yd_) * ratio;
+  std::cout << "Точка скиду fireX, fireY " << points.fire_x_ << ", " << points.fire_y_ << "\n";
 
-      std::cout << "Проміжна точка xd_i, yd_i " << xd_i << ", " << yd_i << "\n";
-    }
-
-    ratio = (length - dist) / length;                            // ~ (140 - 60) / 140
-    fire_x = input.xd_ + (input.target_x_ - input.xd_) * ratio;  // 100 + (200 - 100) * ratio = 157
-    fire_y = input.yd_ + (input.target_y_ - input.yd_) * ratio;  // 100 + (200 - 100) * ratio = 157
-
-    std::cout << "Точка скиду fireX, fireY " << fire_x << ", " << fire_y << "\n";
-
-    save_fire_coordinates(output_path, fire_x, fire_y, xd_i, yd_i);
-  }
+  save_fire_coordinates(output_path, points);
 
   return 0;
 }

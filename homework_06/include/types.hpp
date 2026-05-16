@@ -31,11 +31,23 @@ inline const std::array<Ammunition, kAmmoTableSize> kAmmoTable = {{{{"VOG-17"}, 
 
 // Структрура для повернення зчитаних даних
 struct DroneInput {
-  float xd_, yd_, zd_;
-  float target_x_, target_y_;
+  float xd_;
+  float yd_;
+  float zd_;
+  float target_x_;
+  float target_y_;
   float v0_;
   float acceleration_path_;
   def_name_ammo name_ammo_;
+};
+
+// Структура для повернення результатів
+struct DropPoints {
+  double fire_x_{};
+  double fire_y_{};
+  double xd_i_{};
+  double yd_i_{};
+  bool is_middle_point_ = false;
 };
 
 #endif

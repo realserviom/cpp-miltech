@@ -101,19 +101,46 @@ TEST(BallisticsMath, ZD_LESS_ZERO)
   EXPECT_EQ(flightTime, 0);
 }
 
+// тест для порівняння результатів через EXPECT_FLOAT_EQ
+TEST(BallisticsMath, CALCULATE_POINTS)
+{
+  auto ammo = find_ammunition("M67");
+
+  DroneInput input;
+
+  std::string fullPath = std::string(FIXTURES_PATH) + "test_ammo.txt";
+  bool result = read_input_data(fullPath.c_str(), input);
+
+  if (!result) {
+    FAIL() << "Не вдалося зчитати вхідні дані з файлу: " << fullPath;
+  }
+
+  double t_pol = calculate_flight_time(ammo, input, kGravit);
+
+  double dist = calculate_dist(t_pol, input.v0_, ammo->m_, ammo->d_, ammo->l_, kGravit);
+
+  double length = calculate_length(input);
+
+  DropPoints points = calculate_drop_points(input, dist, length, kEpsilon);
+
+  EXPECT_FLOAT_EQ(points.fire_x_, 173.859);
+  EXPECT_FLOAT_EQ(points.fire_y_, 173.859);
+  EXPECT_FALSE(points.is_middle_point_);
+}
+
 // Один негативний тест
-// TEST(BallisticsMath, ZD_LESS_ZERO_NEGATIVE)
-// {
-//   // Шукаємо тестовий боєприпас
-//   auto ammo = find_ammunition("TEST-AMMO");
+TEST(BallisticsMath, ZD_LESS_ZERO_NEGATIVE)
+{
+  // Шукаємо тестовий боєприпас
+  auto ammo = find_ammunition("TEST-AMMO");
 
-//   DroneInput input;
+  DroneInput input;
 
-//   // Передаємо тествову конфігурацію для висоти 0
-//   std::string fullPath = std::string(FIXTURES_PATH) + "test_ammo_zd_less0.txt";
-//   bool result = read_input_data(fullPath.c_str(), input);
+  // Передаємо тествову конфігурацію для висоти 0
+  std::string fullPath = std::string(FIXTURES_PATH) + "test_ammo_zd_less0.txt";
+  bool result = read_input_data(fullPath.c_str(), input);
 
-//   double flightTime = calculate_flight_time(ammo, input, kGravit);
+  float flight_time = static_cast<float>(calculate_flight_time(ammo, input, kGravit));
 
-//   EXPECT_GT(flightTime, 0);
-// }
+  EXPECT_FLOAT_EQ(flight_time, 1);
+}
