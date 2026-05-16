@@ -2,15 +2,10 @@
 
 set -e
 
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-NC='\033[0m'
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/includes/check.sh"
 
-if [ -z "$1" ]; then
-    echo -e "\033[0;31mПомилка: Не вказано папку домашнього завдання!${NC}"
-    echo "Використання: $0 homework_06"
-    exit 1
-fi
+validate_homework_arg "$1"
 
 TARGET_DIR=$1
 
