@@ -128,7 +128,7 @@ TEST(BallisticsMath, CALCULATE_POINTS)
   EXPECT_FALSE(points.is_middle_point_);
 }
 
-// Один негативний тест
+// Тест коли висота в нас задана -10 метрів
 TEST(BallisticsMath, ZD_LESS_ZERO_NEGATIVE)
 {
   // Шукаємо тестовий боєприпас
