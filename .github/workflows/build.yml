@@ -39,9 +39,10 @@ jobs:
       # 4. Монтує checkout у workspaceFolder.
       # 5. Виконує runCmd від імені remoteUser.
       #
-      # -G Ninja: явно обираємо Ninja-генератор. ninja-build уже є у
-      # devcontainer-і, швидший за Make на проєктах з багатьма файлами
-      # (кращий паралелізм, менше overhead-у на запуск shell-команд).
+      # CMake preset debug тримає локальну і CI-збірку в одному місці:
+      # build/debug. Це також збігається з clangd compile_commands і
+      # VS Code debug launch config. ARM64 preset додатково перевіряє,
+      # що demo-код можна крос-компілювати для SBC target-а.
       - name: Build inside dev container
         uses: devcontainers/ci@v0.3
         with:
@@ -49,9 +50,9 @@ jobs:
           # action пробує push у registry і падає з "imageName is required"
           # бо ми не конфігуруємо registry. Image потрібен тільки локально
           # на runner-і для runCmd.
-          imageName: ghcr.io/${{ github.repository }}/cpp-miltech-dev # Вказуємо назву образу
-          cacheFrom: ghcr.io/${{ github.repository }}/cpp-miltech-dev # Використовуємо кеш з реєстру
           push: never
           runCmd: |
-            cmake -S . -B build -G Ninja
-            cmake --build build
+            cmake --preset debug
+            cmake --build --preset debug
+            cmake --preset aarch64-debug
+            cmake --build --preset aarch64-debug
