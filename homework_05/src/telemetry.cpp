@@ -38,15 +38,25 @@ int split_line(char line[], char* fields[], int max_fields)
   return count;
 }
 
+bool is_valid_conversion(const char* text, char* end)
+{
+  if (end == text) {
+    std::cerr << "Error: No digits found in field: " << text << "\n";
+    return false;
+  }
+  if (*end != '\0') {
+    std::cerr << "Error: Field contains non-numeric characters: " << text << "\n";
+    return false;
+  }
+  return true;
+}
+
 long parse_long(const char* text)
 {
   char* end = nullptr;
   const long value = std::strtol(text, &end, 10);
-
-  if (end == text) {
-    std::abort();
-  }
-
+  if (!is_valid_conversion(text, end))
+    return -1;
   return value;
 }
 
@@ -59,11 +69,8 @@ double parse_double(const char* text)
 {
   char* end = nullptr;
   const double value = std::strtod(text, &end);
-
-  if (end == text) {
-    std::abort();
-  }
-
+  if (!is_valid_conversion(text, end))
+    return -1;
   return value;
 }
 
@@ -71,9 +78,15 @@ Frame parse_frame(char line[])
 {
   char* fields[EXPECTED_FIELD_COUNT] = {};
   const int field_count = split_line(line, fields, EXPECTED_FIELD_COUNT);
-  (void)field_count;
 
   Frame frame{};
+
+  if (field_count < EXPECTED_FIELD_COUNT) {
+    std::cerr << "Error: Invalid telemetry frame. Expected at least 7 fields, but got " << field_count << "\n";
+    frame.timestamp_ms = INVALID_VALUE;
+    return frame;
+  }
+
   frame.timestamp_ms = parse_long(fields[0]);
   frame.seq = parse_int(fields[1]);
   frame.voltage_v = parse_double(fields[2]);
@@ -102,13 +115,54 @@ int read_frames(const char* path, Frame frames[], int max_frames)
   int frame_count = 0;
   char line[MAX_LINE_LENGTH];
 
+  int cur_seq = 0;
+  int cur_timestamp = -1;
+
   while (input.getline(line, MAX_LINE_LENGTH)) {
     if (line[0] == '\0') {
       continue;
     }
 
     if (frame_count < max_frames) {
-      frames[frame_count] = parse_frame(line);
+      Frame f = parse_frame(line);
+
+      if (!f) {
+        return -1;
+      }
+
+      if (f.voltage_v <= 0) {
+        std::cerr << "error: voltage_v is non-positive, value: " << f.voltage_v << '\n';
+        return -1;
+      }
+
+      if (f.temperature_c < -40 || f.temperature_c > 120) {
+        std::cerr << "error: temperature_c should be in [-40, 120], value: " << f.temperature_c << '\n';
+        return -1;
+      }
+
+      if (f.gps_fix != 0 && f.gps_fix != 1) {
+        std::cerr << "error: gps_fix should be 0 or 1, value: " << f.gps_fix << '\n';
+        return -1;
+      }
+
+      if (f.satellites < 0) {
+        std::cerr << "error: satellites is less than zero, value: " << f.satellites << '\n';
+        return -1;
+      }
+
+      if (cur_seq != 0 && f.seq - cur_seq != 1) {
+        std::cerr << "error: seq must be exactly one greater than the preceding value, value: " << f.seq << '\n';
+        return -1;
+      }
+
+      if (cur_timestamp != -1 && f.timestamp_ms - cur_timestamp <= 0) {
+        std::cerr << "error: timestamp_ms must be greater than the preceding value, value: " << f.timestamp_ms << '\n';
+        return -1;
+      }
+
+      frames[frame_count] = f;
+      cur_seq = f.seq;
+      cur_timestamp = f.timestamp_ms;
       ++frame_count;
     }
   }
