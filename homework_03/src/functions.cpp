@@ -64,7 +64,7 @@ const AmmoParams* getAmmoParameters(AmmoParams* ammoTable, int tableSize, const 
 
 bool getDataFromInputTxtFile(DroneConfig &config) {
 
-    std::ifstream fin("config.json");
+    std::ifstream fin("../data/config.json");
 
     if (!fin.is_open()) {
         std::cout << "Помилка: Не вдалося відкрити файл config.json! Перевірте, чи він існує." << std::endl;
@@ -75,7 +75,7 @@ bool getDataFromInputTxtFile(DroneConfig &config) {
     try {
         fin >> j;
     } catch (const json::parse_error& e) {
-        std::cout << "Помилка парсингу JSON: " << e.what() << std::endl;
+        std::cout << "Помилка парсингу config.json: " << e.what() << std::endl;
         return false;
     }
 
@@ -114,7 +114,7 @@ bool getDataFromInputTxtFile(DroneConfig &config) {
 
 Coord** loadTargetCoordinates(int &targetCount) {
 
-    std::ifstream fin("targets.json");
+    std::ifstream fin("../data/targets.json");
 
     if (!fin.is_open()) {
         std::cout << "Помилка: Не вдалося відкрити файл targets.json! Перевірте, чи він існує." << std::endl;
@@ -125,7 +125,7 @@ Coord** loadTargetCoordinates(int &targetCount) {
     try {
         fin >> j;
     } catch (const json::parse_error& e) {
-        std::cout << "Помилка парсингу JSON: " << e.what() << std::endl;
+        std::cout << "Помилка парсингу targets.json: " << e.what() << std::endl;
         return nullptr;
     }
 
@@ -282,7 +282,7 @@ double calculateDistDuringFall(double t, double V0, double m, double d, double l
 
 void saveFireCoordinates(double fireX, double fireY, double xd_i = 0, double yd_i = 0) {
     
-    std::ofstream outFile("output.txt");
+    std::ofstream outFile("../data/output.txt");
 
     if (outFile.is_open()) {
         
@@ -424,7 +424,7 @@ void saveOutputFileByStep(int length, SimStep* steps)
         out["steps"].push_back(stepEntry);
     }
 
-    std::ofstream fout("output.json");
+    std::ofstream fout("../data/output.json");
     fout << out.dump(2);
     fout.close();
 }

@@ -102,7 +102,7 @@ inline bool updateRotation(float targetAngle, float &curAngularState, float radI
 }
 
 // провіряємо чи треба дрон обертати
-inline bool needDroneRotation(float targetAngle, float curAngularState, float radInIteration, float turnThreshold) {
+inline bool needDroneRotation(float targetAngle, float curAngularState, float turnThreshold) {
     return (targetAngle - curAngularState) > turnThreshold || (curAngularState - targetAngle) > turnThreshold;
 }
 

@@ -11,8 +11,6 @@ Code, Compile, Run and Debug online from anywhere in world.
 #include <stdlib.h>
 #include <cmath>
 #include <iomanip>
-#include <string.h>
-#include <fstream>
 #include "constants.h"
 #include "types.h"
 #include "functions.h"
@@ -30,9 +28,6 @@ int main()
     // лічильник
     int counter = 0;
       
-    // поточний напрямок дрона в радіанах відносто осі X
-    float curAngularState = 0;
-    
     // масив який містить час підльоту до кожної цілі
     float targetTimes[NUMBER_OF_TARGETS];
     
@@ -48,6 +43,7 @@ int main()
         return 1;
     }
 
+    
     // запускаємо для розрахунку додаткових параметрів
     myDrone.updateCalculatedParams();
 
@@ -81,9 +77,6 @@ int main()
 
     // ключ що відповідає за переключання цілей дрона
     bool keyChangeTarget = true;
-    
-    // ключ що відповідає за зміну кута напрямку дрона
-    bool keyChangeAngle = true;;
    
     DEBUG("Час зупинки або прискорення: " << std::fixed << std::setprecision(2) << myDrone.timeAcceleration << " с");
     DEBUG("Прискорення дрона: " << myDrone.acceleration << " м/с2 ---");
@@ -154,7 +147,7 @@ int main()
         DEBUG("--- timeIteration = " << timeIteration << " ---");
         DEBUG("--- curDroneX = " << std::fixed << std::setprecision(8) << curMyDrone.pos.x << " м ---");
         DEBUG("--- curDroneY = " << std::fixed << std::setprecision(8) << curMyDrone.pos.y << " м ---");
-        DEBUG("--- curAngularState = " << std::fixed << std::setprecision(2) << curMyDrone.angularState << " р. ---");
+        DEBUG("--- curMyDrone.angularState = " << std::fixed << std::setprecision(2) << curMyDrone.angularState << " р. ---");
         DEBUG("--- curDroneSpeed = " << curMyDrone.speed << " ---");
         DEBUG("--- curDroneState = " << getDroneStateName(curMyDrone.state) << " ---");
         DEBUG("--- currentTarget = " << curMyDrone.target << " ---");
@@ -181,7 +174,7 @@ int main()
                 // Функція acos повертає результат у радіанах
                 // це кут цілі відносно положення дрона
                 float angle_in_rad = atan2(deltaY, deltaX);
-                float angle_deg = angle_in_rad * (180.0f / M_PI);
+                //float angle_deg = angle_in_rad * (180.0f / M_PI);
                 
                 //printf("Початковий targetAngle для цілі %d : %.4f м/с\n", i , angle_in_rad);
                 
@@ -207,11 +200,11 @@ int main()
                     
                     int nextIteration = getNextIteration(timeIteration);
                     
-                    float distWithoutPoint = calculateLength(targets[i][nextIteration].x,
-                        targets[i][nextIteration].y, targets[i][timeIteration].x, targets[i][timeIteration].y);
+                    //float distWithoutPoint = calculateLength(targets[i][nextIteration].x,
+                    //    targets[i][nextIteration].y, targets[i][timeIteration].x, targets[i][timeIteration].y);
                     
                     // швидкість цілі i між двома точками    
-                    float Vtarget = distWithoutPoint / myDrone.arrayTimeStep;
+                    //float Vtarget = distWithoutPoint / myDrone.arrayTimeStep;
 
                     // швидкість Vxtarget це швидкість зміни координати x може бути відємною
                     float Vxtarget = (targets[i][nextIteration].x - targets[i][timeIteration].x) / myDrone.arrayTimeStep;
@@ -371,7 +364,7 @@ int main()
             // якщо змінилася ціль ми провіряємо чи кут напрямку в межах нової цілі
             // якщо в межаш тоді продовжуємо рух 
             // якщо ні тоді зупиняємося до зупинки і повертаємо дрон
-            if(needDroneRotation(targetAngles[newTarget], curMyDrone.angularState, myDrone.radInIteration, myDrone.turnThreshold)) {
+            if(needDroneRotation(targetAngles[newTarget], curMyDrone.angularState, myDrone.turnThreshold)) {
                 if (curMyDrone.state == TURNING) {
                     // якщо  false ми зупиняємо поворот
                     if(!updateRotation(targetAngles[newTarget], curMyDrone.angularState, myDrone.radInIteration, myDrone.turnThreshold)) {
