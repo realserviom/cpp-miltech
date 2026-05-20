@@ -18,9 +18,9 @@ public:
     virtual int getTargetCount() = 0;
     virtual Coord getTargetPositionInCounter(int &index, int &counter) = 0;
     virtual Coord getTargetPositionInIteration(int &index, int &timeIteration) = 0;
-    virtual void loadTargets() = 0;
     virtual Coord** getTargets() = 0;
     virtual ~ITargetProvider() {}
+    virtual void init() = 0;
 };
 
 // абстрактний клас
@@ -34,6 +34,14 @@ protected:
 public:
     AbstractTargetProvider(int numberCounterInTimeSpot) 
         : m_numberCounterInTimeSpot(numberCounterInTimeSpot) {}
+
+    virtual void loadTargets() = 0;
+
+    void init() override {
+        std::cout << "Preparing targets...\n";
+        loadTargets(); 
+        std::cout << "Targets ready.\n";
+    }
 
     virtual ~AbstractTargetProvider() override {}
 
@@ -95,26 +103,21 @@ public:
 
     std::string m_filePath;
     JsonTargetProvider(const std::string& jsonFilePath, int& numberCounterInTimeSpot) 
-        : AbstractTargetProvider(numberCounterInTimeSpot), m_filePath(jsonFilePath)
-    {
-        loadTargets();
-    }
+        : AbstractTargetProvider(numberCounterInTimeSpot), m_filePath(jsonFilePath) {}
 
     void loadTargets() override {
-          std::ifstream fin(m_filePath);
+        std::ifstream fin(m_filePath);
 
         if (!fin.is_open()) {
-            std::cout << "[JsonTargetProvider] Помилка файлу " << m_filePath << std::endl;
-            return;
+            throw std::runtime_error("Не вдалося відкрити файл конфігурації: " + m_filePath);
         }
         
         json j;
         try {
             fin >> j;
         } catch (const json::parse_error& e) {
-            std::cout << "[JsonTargetProvider] Помилка парсингу: " << e.what() << std::endl;
+            throw std::runtime_error("Помилка парсингу файлу " + m_filePath + ": " + std::string(e.what()));
             fin.close();
-            return;
         }
 
         m_targetCount = j["targetCount"]; 
