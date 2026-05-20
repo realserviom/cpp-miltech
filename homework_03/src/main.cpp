@@ -16,6 +16,7 @@ Code, Compile, Run and Debug online from anywhere in world.
 #include "functions.h"
 #include "debug.h"
 #include "JsonTargetProvider.h"
+#include "FileConfigLoader.h"
 
 //Визначення константи Пі, якщо її немає в cmath
 #ifndef M_PI
@@ -48,9 +49,17 @@ int main()
     float targetAngles[NUMBER_OF_TARGETS];   
 
     DroneConfig myDrone;
-    
-    if (!getDataFromInputTxtFile(myDrone)) {
-        return 1;
+
+    std::unique_ptr<IConfigLoader> configLoader;
+
+    try {
+        configLoader.reset(createLoader(LoaderType::FILE, "../data/config.json", "../data/ammo.json",  myDrone));
+        configLoader->init();
+        std::cout << "Дрон успішно налаштований та готовий до польоту!\n";
+    } 
+    catch (const std::runtime_error& e) {
+        std::cout << "[FileConfigLoader] КРИТИЧНА ПОМИЛКА: " << e.what() << std::endl;
+        return -1;
     }
 
     
@@ -67,21 +76,18 @@ int main()
     // кожну кількість numberCounterInTimeSpot в нас міняються координати цілей тобто проходить arrayTimeStep секунд
     int numberCounterInTimeSpot =  static_cast<int>(ratio);
 
-    std::unique_ptr<ITargetProvider> targetProvider{ createProvider(ProviderType::JSON, "../data/targets.json", numberCounterInTimeSpot) };
+    std::unique_ptr<ITargetProvider> targetProvider;
 
-    //Coord firstTargetPos = targetProvider->getTargetPositionInCounter(0, 0);
-
-    // std::cout << "Перша ціль: X = " << firstTargetPos.x 
-    //       << ", Y = " << firstTargetPos.y << std::endl;
-
-   
-    int targetCount;
-    int timeSteps;
-    Coord** targets = loadTargetCoordinates(targetCount, timeSteps);
-
-    if (targets == nullptr) {
-        return 1;
+    try {
+        targetProvider.reset(createProvider(ProviderType::JSON, "../data/targets.json", numberCounterInTimeSpot));
+        targetProvider->init();
+        std::cout << "Цілі успішно загруженні в систему!\n";
     }
+    catch (const std::runtime_error& e) {
+        std::cout << "[JsonTargetProvider] КРИТИЧНА ПОМИЛКА: " << e.what() << std::endl;
+        return -1;
+    }
+   
 
     CurrentDroneParameters curMyDrone;
 
@@ -101,15 +107,10 @@ int main()
     DEBUG("Величина оберту дрона за ітерацію: " << myDrone.radInIteration << " р/с ---");
     DEBUG("===========================");
     
-    const int ammoCount = 5;
-    
-    AmmoParams* ammoTable = new AmmoParams[ammoCount];
- 
-    fillAmmoData(ammoTable);
 
     SimStep* steps = new SimStep[MAX_STEPS];
     
-    const AmmoParams* ammo = getAmmoParameters(ammoTable, ammoCount, myDrone.ammoName);
+    const AmmoParams* ammo = configLoader->getAmmoParameters(myDrone.ammoName);
     
     if (ammo == nullptr) {
         printf("Помилка: боєприпас %s не знайдено в базі!\n", myDrone.ammoName);
@@ -158,8 +159,9 @@ int main()
         addingStep = true;
             
         // розраховуємо всі дані для визначення поточної найближчої цілі
-        const int timeIteration = getTimeIteration(counter, numberCounterInTimeSpot, timeSteps);
-        
+        //const int timeIteration = getTimeIteration(counter, numberCounterInTimeSpot);
+
+        const int timeIteration = targetProvider->getTimeIteration(counter);
       
         DEBUG("--- counter = " << counter << " ---");
         DEBUG("--- timeIteration = " << timeIteration << " ---");
@@ -338,8 +340,9 @@ int main()
         //Coord deltaPos = targets[newTarget][nextFutureIteration] - targets[newTarget][futureIteration];
 
         Coord dataPosFutureIteration = targetProvider->getTargetPositionInIteration(newTarget, futureIteration);
+        Coord dataPosNextFutureIteration = targetProvider->getTargetPositionInIteration(newTarget, nextFutureIteration);
 
-        Coord deltaPos = targetProvider->getTargetPositionInIteration(newTarget, nextFutureIteration) - dataPosFutureIteration;
+        Coord deltaPos = dataPosNextFutureIteration - dataPosFutureIteration;
 
         // швидкість Vtarget це швидкість зміни координатів
 
@@ -373,8 +376,8 @@ int main()
             DEBUG("--- targetAmmo: (" << targetAmmoPos.x << ", " << targetAmmoPos.y << ") ---");
             DEBUG("--- targetEndPoint: (" << targetEndPoint.x << ", " << targetEndPoint.y << ") ---");
             
-            DEBUG("--- [futurePos]: (" << targets[newTarget][futureIteration].x << ", " << targets[newTarget][futureIteration].y << ") ---");
-            DEBUG("--- [nextFuturePos]: (" << targets[newTarget][nextFutureIteration].x << ", " << targets[newTarget][nextFutureIteration].y << ") ---");
+            DEBUG("--- [futurePos]: (" << dataPosFutureIteration.x << ", " << dataPosFutureIteration.y << ") ---");
+            DEBUG("--- [nextFuturePos]: (" << dataPosNextFutureIteration.x << ", " << dataPosNextFutureIteration.y << ") ---");
             break;
         } 
         
@@ -480,17 +483,17 @@ int main()
     saveOutputFileByStep(counter - 1, steps);
 
     // видаляжмо масиви цілей
-    for (int i = 0; i < targetCount; i++) {
-	    delete[] targets[i];
-    }
+    // for (int i = 0; i < targetCount; i++) {
+	//     delete[] targets[i];
+    // }
 
-    delete[] targets;
+    // delete[] targets;
 
     // видаляємо масив точок
     delete[] steps;
 
     // видаляємо масив боєприпасів
-    delete[] ammoTable;
+    //delete[] ammoTable;
 
     return 0;
 }
