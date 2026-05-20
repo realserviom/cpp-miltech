@@ -20,7 +20,7 @@ public:
     virtual Coord getTargetPositionInIteration(int &index, int &timeIteration) = 0;
     virtual Coord** getTargets() = 0;
     virtual ~ITargetProvider() {}
-    virtual void init() = 0;
+    virtual void init(int &numberCounterInTimeSpot) = 0;
 };
 
 // абстрактний клас
@@ -28,16 +28,16 @@ class AbstractTargetProvider : public ITargetProvider {
 protected:
     int m_targetCount = 0;
     int m_timeSteps = 0;
-    const int m_numberCounterInTimeSpot;
+    int m_numberCounterInTimeSpot;
     Coord** m_targets = nullptr; 
 
 public:
-    AbstractTargetProvider(int numberCounterInTimeSpot) 
-        : m_numberCounterInTimeSpot(numberCounterInTimeSpot) {}
+    AbstractTargetProvider() {}
 
     virtual void loadTargets() = 0;
 
-    void init() override {
+    void init(int &numberCounterInTimeSpot) override {
+        m_numberCounterInTimeSpot = numberCounterInTimeSpot;
         std::cout << "Preparing targets...\n";
         loadTargets(); 
         std::cout << "Targets ready.\n";
@@ -51,10 +51,6 @@ public:
 
     Coord** getTargets() override {
         return this->m_targets;
-    }
-
-    int getNumberCounterInTimeSpot() const {
-        return m_numberCounterInTimeSpot;
     }
     
     int getTimeIteration(int &counter) override {
@@ -102,8 +98,8 @@ class JsonTargetProvider : public AbstractTargetProvider {
 public:
 
     std::string m_filePath;
-    JsonTargetProvider(const std::string& jsonFilePath, int& numberCounterInTimeSpot) 
-        : AbstractTargetProvider(numberCounterInTimeSpot), m_filePath(jsonFilePath) {}
+    JsonTargetProvider(const std::string& jsonFilePath) 
+        : m_filePath(jsonFilePath) {}
 
     void loadTargets() override {
         std::ifstream fin(m_filePath);
@@ -149,10 +145,10 @@ public:
 
 };
 
-inline ITargetProvider* createProvider(ProviderType type, const char* file_name, int& numberCounterInTimeSpot) {
+inline ITargetProvider* createProvider(ProviderType type, const char* file_name) {
     switch (type) {
         case ProviderType::JSON:
-            return new JsonTargetProvider(file_name, numberCounterInTimeSpot);
+            return new JsonTargetProvider(file_name);
         default:
             return nullptr;
     }

@@ -17,8 +17,8 @@ public:
     // virtual bool load(const std::string& source) = 0;
     // virtual Config getConfig() = 0;
     // virtual AmmoParams getAmmoParams(const std::string& ammoName) = 0;
-    virtual void debug() = 0;
-    virtual void init() = 0;
+    virtual void debug(DroneConfig &myDrone) = 0;
+    virtual void init(DroneConfig &myDrone) = 0;
     virtual const AmmoParams* getAmmoParameters(const char* name_to_find) = 0;
     virtual ~IConfigLoader() {}
 };
@@ -26,36 +26,35 @@ public:
 // абстрактний клас
 class AbstractConfigProvider : public IConfigLoader {
 protected:
-    DroneConfig &m_myDrone;
     std::vector<AmmoParams> ammoList;
 
-    virtual void tunningDrone() = 0;
+    virtual void tunningDrone(DroneConfig &myDrone) = 0;
     virtual void loadAmmo() = 0;
 
 public:
-    AbstractConfigProvider(DroneConfig &myDrone): m_myDrone(myDrone) {};
+    AbstractConfigProvider(){};
 
-    void init() override {
+    void init(DroneConfig &myDrone) override {
         std::cout << "Preparing drone...\n";
-        tunningDrone();
-        debug();
+        tunningDrone(myDrone);
+        debug(myDrone);
         loadAmmo();
         std::cout << "Drone ready.\n";
     }
 
-    void debug() override {
+    void debug(DroneConfig &myDrone) override {
         DEBUG("=== Вхідні дані з файлу (структура) ===");
-        DEBUG("Координати (x, y):    " << std::fixed << std::setprecision(2) << m_myDrone.startPos.x << " м, " << m_myDrone.startPos.y << " м");
-        DEBUG("Висота (altitude):    " << m_myDrone.altitude << " м");
-        DEBUG("Напрямок (dir):       " << m_myDrone.initialDir << " рад.");
-        DEBUG("Швидкість атаки:      " << m_myDrone.attackSpeed << " м/c");
-        DEBUG("Шлях розгону:         " << m_myDrone.accelPath << " м");
-        DEBUG("Боєприпас:            " << m_myDrone.ammoName);
-        DEBUG("Крок часу масиву:     " << m_myDrone.arrayTimeStep << " с");
-        DEBUG("Крок симуляції:       " << m_myDrone.simTimeStep << " с");
-        DEBUG("Радіус ураження:      " << m_myDrone.hitRadius << " м");
-        DEBUG("Кутова швидкість:     " << m_myDrone.angularSpeed << " рад/c");
-        DEBUG("Поріг повороту:       " << m_myDrone.turnThreshold << " рад");
+        DEBUG("Координати (x, y):    " << std::fixed << std::setprecision(2) << myDrone.startPos.x << " м, " << myDrone.startPos.y << " м");
+        DEBUG("Висота (altitude):    " << myDrone.altitude << " м");
+        DEBUG("Напрямок (dir):       " << myDrone.initialDir << " рад.");
+        DEBUG("Швидкість атаки:      " << myDrone.attackSpeed << " м/c");
+        DEBUG("Шлях розгону:         " << myDrone.accelPath << " м");
+        DEBUG("Боєприпас:            " << myDrone.ammoName);
+        DEBUG("Крок часу масиву:     " << myDrone.arrayTimeStep << " с");
+        DEBUG("Крок симуляції:       " << myDrone.simTimeStep << " с");
+        DEBUG("Радіус ураження:      " << myDrone.hitRadius << " м");
+        DEBUG("Кутова швидкість:     " << myDrone.angularSpeed << " рад/c");
+        DEBUG("Поріг повороту:       " << myDrone.turnThreshold << " рад");
         DEBUG("---------------------------------------");
     }
 
@@ -83,8 +82,8 @@ public:
     std::string m_filePath_droneConfig;
     std::string m_filePath_listAmmo;
 
-    FileConfigLoader(const std::string& filePathDroneConfig, const std::string& filePathListAmmo, DroneConfig &myDrone) 
-        : AbstractConfigProvider(myDrone), m_filePath_droneConfig(filePathDroneConfig), m_filePath_listAmmo(filePathListAmmo)  {}
+    FileConfigLoader(const std::string& filePathDroneConfig, const std::string& filePathListAmmo) 
+        : m_filePath_droneConfig(filePathDroneConfig), m_filePath_listAmmo(filePathListAmmo)  {}
 
 protected:
 
@@ -125,7 +124,7 @@ protected:
         fin.close();
     }
 
-    void tunningDrone() override {
+    void tunningDrone(DroneConfig &myDrone) override {
 
         std::ifstream fin(m_filePath_droneConfig);
 
@@ -140,19 +139,19 @@ protected:
             throw std::runtime_error("Помилка парсингу файлу " + m_filePath_droneConfig + ": " + std::string(e.what()));
         }
 
-        m_myDrone.startPos.x    = j["drone"]["position"]["x"];
-        m_myDrone.startPos.y    = j["drone"]["position"]["y"];
-        m_myDrone.altitude      = j["drone"]["altitude"];
-        m_myDrone.initialDir    = j["drone"]["initialDirection"];
-        m_myDrone.attackSpeed   = j["drone"]["attackSpeed"];
-        m_myDrone.accelPath     = j["drone"]["accelerationPath"];
-        m_myDrone.angularSpeed  = j["drone"]["angularSpeed"];
-        m_myDrone.turnThreshold = j["drone"]["turnThreshold"];
-        m_myDrone.arrayTimeStep = j["targetArrayTimeStep"];
-        m_myDrone.simTimeStep   = j["simulation"]["timeStep"];
-        m_myDrone.hitRadius     = j["simulation"]["hitRadius"];
+        myDrone.startPos.x    = j["drone"]["position"]["x"];
+        myDrone.startPos.y    = j["drone"]["position"]["y"];
+        myDrone.altitude      = j["drone"]["altitude"];
+        myDrone.initialDir    = j["drone"]["initialDirection"];
+        myDrone.attackSpeed   = j["drone"]["attackSpeed"];
+        myDrone.accelPath     = j["drone"]["accelerationPath"];
+        myDrone.angularSpeed  = j["drone"]["angularSpeed"];
+        myDrone.turnThreshold = j["drone"]["turnThreshold"];
+        myDrone.arrayTimeStep = j["targetArrayTimeStep"];
+        myDrone.simTimeStep   = j["simulation"]["timeStep"];
+        myDrone.hitRadius     = j["simulation"]["hitRadius"];
 
-        strncpy(m_myDrone.ammoName, j["ammo"].get<std::string>().c_str(), sizeof(m_myDrone.ammoName) - 1);      
+        strncpy(myDrone.ammoName, j["ammo"].get<std::string>().c_str(), sizeof(myDrone.ammoName) - 1);      
 
         fin.close();
     }
@@ -163,10 +162,10 @@ protected:
 };
 
 // Фабрика
-inline IConfigLoader* createLoader(LoaderType type, const char* file_drone_config_name, const char* file_list_ammo_name, DroneConfig &myDrone ) {
+inline IConfigLoader* createLoader(LoaderType type, const char* file_drone_config_name, const char* file_list_ammo_name) {
     switch (type) {
         case LoaderType::FILE:
-            return new FileConfigLoader(file_drone_config_name, file_list_ammo_name, myDrone);
+            return new FileConfigLoader(file_drone_config_name, file_list_ammo_name);
         default:
             return nullptr;
     }
