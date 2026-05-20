@@ -3,29 +3,11 @@
 
 #include "types.h"
 #include <cstdio>
-#include "constants.h"
 
-void fillAmmoData(AmmoParams* ammo);
-
-const AmmoParams* getAmmoParameters(AmmoParams* ammoTable, int tableSize, const char* name_to_find);
-
-bool getDataFromInputTxtFile(DroneConfig &config);
-
-bool getTimePol(float &t_pol, const float &d, const float &l, const float &m, const float &zd, const float &attackSpeed);
 
 float calculateLength(double targetX, double targetY, double xd, double yd);
 
-double calculateDistDuringFall(double t, double V0, double m, double d, double l, double g);
-
 void saveFireCoordinates(double fireX, double fireY, double xd_i, double yd_i);
-
-Coord** loadTargetCoordinates(int &targetCount);
-
-int getTimeIteration(int &counter, const int &numberCounterInTimeSpot, const int &numberOfTimes);
-
-int getNextIteration(int iteration);
-
-float calculateLengthWithCache(double &targetX, double &targetY, double &xd, double &yd);
 
 int getIndexByMinValue(float targetTimes[5]);
 

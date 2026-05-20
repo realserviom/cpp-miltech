@@ -27,7 +27,7 @@ public:
 class AbstractConfigProvider : public IConfigLoader {
 protected:
     DroneConfig &m_myDrone;
-    std::vector<AmmoParams> ammo;
+    std::vector<AmmoParams> ammoList;
 
     virtual void tunningDrone() = 0;
     virtual void loadAmmo() = 0;
@@ -61,9 +61,9 @@ public:
 
     const AmmoParams* getAmmoParameters(const char* name_to_find) override {
 
-       for (size_t i = 0; i < ammo.size(); ++i) {
-            if (strcmp(ammo[i].name, name_to_find) == 0) {
-                return &ammo[i];
+       for (size_t i = 0; i < ammoList.size(); ++i) {
+            if (strcmp(ammoList[i].name, name_to_find) == 0) {
+                return &ammoList[i];
             }
         }
 
@@ -103,7 +103,7 @@ protected:
             fin.close();
         }
 
-        ammo.clear();
+        ammoList.clear();
 
         if (j.is_array()) {
             for (const auto& ammoJson : j) {
@@ -118,7 +118,7 @@ protected:
                 singleAmmo.drag = ammoJson.value("drag", 0.0f);
                 singleAmmo.lift = ammoJson.value("lift", 0.0f);
 
-                ammo.push_back(singleAmmo);
+                ammoList.push_back(singleAmmo);
             }
         }
         

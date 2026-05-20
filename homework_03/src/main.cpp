@@ -17,6 +17,7 @@ Code, Compile, Run and Debug online from anywhere in world.
 #include "debug.h"
 #include "JsonTargetProvider.h"
 #include "FileConfigLoader.h"
+#include "AnalyticalSolver.h"
 
 //Визначення константи Пі, якщо її немає в cmath
 #ifndef M_PI
@@ -27,15 +28,6 @@ Code, Compile, Run and Debug online from anywhere in world.
 int main()
 {
 
-    // std::cout << "=== СИСТЕМА ДРОНА СТАРТУЄ (HEADER-ONLY ФАБРИКИ) ===" << std::endl;
-
-    // // 1. Створюємо об'єкти за допомогою фабрик, як вимагає завдання (використовуємо енуми)
-    // // Загортаємо в unique_ptr з фігурними дужками {}, щоб автоматично спрацював необхідний за умовою 'delete'
-    // std::unique_ptr<IConfigLoader> configLoader{ createLoader(LoaderType::FILE) };
-    // std::unique_ptr<ITargetProvider> targetProvider{ createProvider(ProviderType::JSON, "data/targets.json") };
-    // std::unique_ptr<IBallisticSolver> ballisticSolver{ createSolver(SolverType::ANALYTICAL) };
-
- 
     // лічильник
     int counter = 0;
       
@@ -61,7 +53,6 @@ int main()
         std::cout << "[FileConfigLoader] КРИТИЧНА ПОМИЛКА: " << e.what() << std::endl;
         return -1;
     }
-
     
     // запускаємо для розрахунку додаткових параметрів
     myDrone.updateCalculatedParams();
@@ -88,7 +79,6 @@ int main()
         return -1;
     }
    
-
     CurrentDroneParameters curMyDrone;
 
     // поточний стан дрона і його кута польоту, координати дрона, ціль
@@ -124,11 +114,18 @@ int main()
         
     float t_pol;
 
-    if (!getTimePol(t_pol, ammo->drag, ammo->lift, ammo->mass, myDrone.altitude, myDrone.attackSpeed)) {
-        return 1;
-    } 
-  
-    float distDuringFall = calculateDistDuringFall(t_pol, myDrone.attackSpeed, ammo->mass, ammo->drag, ammo->lift, physics::GRAVIT);
+    std::unique_ptr<IBallisticSolver> analyticalSolver;
+    float distDuringFall = 0;
+
+    try {
+        analyticalSolver.reset(createSolver(SolverType::ANALYTICAL));
+        distDuringFall = analyticalSolver->getDistDuringFall(t_pol, myDrone, ammo);
+    }
+    catch (const std::runtime_error& e) {
+        std::cout << "[AnalyticalSolver] КРИТИЧНА ПОМИЛКА: " << e.what() << std::endl;
+        return -1;
+    }
+
         
     DEBUG("Горизонтальна дистанція яку проходить дрон за час " << t_pol << " сек. рівна " << distDuringFall << " м.");
     DEBUG("-----------------------------------");
@@ -182,18 +179,10 @@ int main()
                 Coord targetPos = targetProvider->getTargetPositionInCounter(i, counter);
 
                 float length = calculateLength(targetPos.x, targetPos.y, curMyDrone.pos.x, curMyDrone.pos.y);
-
-                // float length = calculateLength(targets[i][timeIteration].x,
-                //     targets[i][timeIteration].y, curMyDrone.pos.x, curMyDrone.pos.y);
-
-                    //printf("Координати %lf, %lf", targets[i][timeIteration].x, targets[i][timeIteration].y);
     
                 // я не розглядаю задачу де можуть бути задані відємні координати положення цілі
                 // в цьому випадку треба буде переписати формули з модулями і також кути обертання треба буде перераховувати
                 // в залежності від знаку + чи - перед координатами положення цілі
-                
-                // float deltaX = targets[i][timeIteration].x - curMyDrone.pos.x;
-                // float deltaY = targets[i][timeIteration].y - curMyDrone.pos.y; 
 
                 float deltaX = targetPos.x - curMyDrone.pos.x;
                 float deltaY = targetPos.y - curMyDrone.pos.y; 
@@ -202,9 +191,7 @@ int main()
                 // Функція acos повертає результат у радіанах
                 // це кут цілі відносно положення дрона
                 float angle_in_rad = atan2(deltaY, deltaX);
-                //float angle_deg = angle_in_rad * (180.0f / M_PI);
-                
-                //printf("Початковий targetAngle для цілі %d : %.4f м/с\n", i , angle_in_rad);
+ 
                 
                 targetAngles[i] = angle_in_rad;
                                 
@@ -226,35 +213,15 @@ int main()
                     
                     keyChangeTarget = false;
                     
-                    //int nextIteration = getNextIteration(timeIteration, timeSteps);
-
                     int timeIteration = targetProvider->getTimeIteration(counter);
                     int nextIteration = targetProvider->getNextIteration(timeIteration);
                     
-                    //float distWithoutPoint = calculateLength(targets[i][nextIteration].x,
-                    //    targets[i][nextIteration].y, targets[i][timeIteration].x, targets[i][timeIteration].y);
-                    
-                    // швидкість цілі i між двома точками    
-                    //float Vtarget = distWithoutPoint / myDrone.arrayTimeStep;
-
-                    // швидкість Vxtarget це швидкість зміни координати x може бути відємною
-                    //float Vxtarget = (targets[i][nextIteration].x - targets[i][timeIteration].x) / myDrone.arrayTimeStep;
-
-                     
-                    // швидкість Vytarget це швидкість зміни координати y може бути відємною
-                    //float Vytarget = (targets[i][nextIteration].y - targets[i][timeIteration].y) / myDrone.arrayTimeStep;
-
                     Coord targetNextPos = targetProvider->getTargetPositionInIteration(i, nextIteration);
 
                     float Vxtarget = (targetNextPos.x - targetPos.x) / myDrone.arrayTimeStep;
-
                     float Vytarget = (targetNextPos.y - targetPos.y) / myDrone.arrayTimeStep;
-
                     
                     // знайшли зміщення маючи час руху до цілі
-                    // double targetXEndPoint = targets[i][timeIteration].x + (Vxtarget * t);
-                    // double targetYEndPoint = targets[i][timeIteration].y + (Vytarget * t);
-
                     double targetXEndPoint = targetPos.x + (Vxtarget * t);
                     double targetYEndPoint = targetPos.y + (Vytarget * t);
                     
@@ -279,9 +246,6 @@ int main()
                     
           
                     // знайшли зміщення маючи час руху до цілі t_new
-                    // targetXEndPoint = targets[i][timeIteration].x + (Vxtarget * t);
-                    // targetYEndPoint = targets[i][timeIteration].y + (Vytarget * t);
-
                     targetXEndPoint = targetPos.x + (Vxtarget * t);
                     targetYEndPoint = targetPos.y + (Vytarget * t);
                 
@@ -330,14 +294,9 @@ int main()
         
         // ітерація координати (кожних 5 секунд нова координата)
         int futureIteration = std::floor(Tt / myDrone.arrayTimeStep);
-        
-        //int nextFutureIteration = getNextIteration(futureIteration, timeSteps);
-
         int nextFutureIteration = targetProvider->getNextIteration(futureIteration);
         
         float remainderTimeInSpot = (counter % numberCounterInTimeSpot) * myDrone.simTimeStep;
-
-        //Coord deltaPos = targets[newTarget][nextFutureIteration] - targets[newTarget][futureIteration];
 
         Coord dataPosFutureIteration = targetProvider->getTargetPositionInIteration(newTarget, futureIteration);
         Coord dataPosNextFutureIteration = targetProvider->getTargetPositionInIteration(newTarget, nextFutureIteration);
@@ -345,9 +304,7 @@ int main()
         Coord deltaPos = dataPosNextFutureIteration - dataPosFutureIteration;
 
         // швидкість Vtarget це швидкість зміни координатів
-
         Coord Vtarget = deltaPos / myDrone.arrayTimeStep;
-
         Coord targetEndPoint = dataPosFutureIteration + Vtarget * remainderTimeInSpot;
 
         // прогнозована позиція цілі
@@ -482,18 +439,8 @@ int main()
     
     saveOutputFileByStep(counter - 1, steps);
 
-    // видаляжмо масиви цілей
-    // for (int i = 0; i < targetCount; i++) {
-	//     delete[] targets[i];
-    // }
-
-    // delete[] targets;
-
     // видаляємо масив точок
     delete[] steps;
-
-    // видаляємо масив боєприпасів
-    //delete[] ammoTable;
 
     return 0;
 }
