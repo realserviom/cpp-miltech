@@ -9,15 +9,21 @@ using json = nlohmann::json;
 
 enum class ProviderType { JSON };
 
+// інтерфейс
 class ITargetProvider {
 public:
+
+    virtual int getNextIteration(int &iteration) = 0;
+    virtual int getTimeIteration(int &counter) = 0;
     virtual int getTargetCount() = 0;
-    virtual Coord getTargetPositionInCounter(int index, int counter) = 0;
+    virtual Coord getTargetPositionInCounter(int &index, int &counter) = 0;
+    virtual Coord getTargetPositionInIteration(int &index, int &timeIteration) = 0;
     virtual void loadTargets() = 0;
     virtual Coord** getTargets() = 0;
     virtual ~ITargetProvider() {}
 };
 
+// абстрактний клас
 class AbstractTargetProvider : public ITargetProvider {
 protected:
     int m_targetCount = 0;
@@ -43,7 +49,7 @@ public:
         return m_numberCounterInTimeSpot;
     }
     
-    int getTimeIteration(int &counter) {
+    int getTimeIteration(int &counter) override {
         
         const int wholeRangeCounters = this->m_numberCounterInTimeSpot * this->m_timeSteps; 
         
@@ -55,7 +61,7 @@ public:
         return static_cast<int>(std::floor(new_counter / this->m_numberCounterInTimeSpot));
     }
 
-    int getNextIteration(int &iteration) {
+    int getNextIteration(int &iteration) override {
     
         if (iteration == (this->m_timeSteps - 1)) {
             return 0;
@@ -64,8 +70,16 @@ public:
         return iteration + 1;
     }
 
-    Coord getTargetPositionInCounter(int index, int counter) override {
+    Coord getTargetPositionInCounter(int &index, int &counter) override {
         int timeIteration = this->getTimeIteration(counter);
+        
+        if (this->m_targets && index >= 0 && index < m_targetCount) {
+            return this->m_targets[index][timeIteration];
+        }
+        return Coord{0.0, 0.0};
+    }
+
+    Coord getTargetPositionInIteration(int &index, int &timeIteration) override {
         
         if (this->m_targets && index >= 0 && index < m_targetCount) {
             return this->m_targets[index][timeIteration];
@@ -75,7 +89,7 @@ public:
 
 };
 
-// 3. Конкретна реалізація (JsonTargetProvider)
+//  Реалізація (JsonTargetProvider)
 class JsonTargetProvider : public AbstractTargetProvider {
 public:
 
@@ -132,7 +146,6 @@ public:
 
 };
 
-// Додаємо необов'язковий третій параметр для передачі лічильника ініціалізації
 inline ITargetProvider* createProvider(ProviderType type, const char* file_name, int& numberCounterInTimeSpot) {
     switch (type) {
         case ProviderType::JSON:
