@@ -4,6 +4,7 @@
 #include "FileConfigLoader.h"
 #include <iostream>
 #include "functions.h"
+#include "drone.h"
 
 class MissionProcessor {
 private:
@@ -21,7 +22,9 @@ private:
     // масив який містить кут напрямку для кожної цілі відносто осі X в радіанах 
     std::vector<float> targetAngles;   
 
-    const AmmoParams* init(DroneConfig& myDrone, CurrentDroneParameters& curMyDrone, int& numberCounterInTimeSpot) {
+    
+
+    Drone init(DroneConfig& myDrone, const AmmoParams*& ammo, int& numberCounterInTimeSpot, int&numberOfTargets) {
 
         // Ініціалізація
         try {
@@ -41,7 +44,7 @@ private:
 
         numberCounterInTimeSpot = static_cast<int>(ratio);
 
-        // 2. Отримуємо цілі
+        // Отримуємо цілі
         try {
             m_targetProvider->init(numberCounterInTimeSpot);
             std::cout << "Цілі успішно загруженні в систему!\n";
@@ -50,28 +53,23 @@ private:
             throw std::runtime_error("[JsonTargetProvider] КРИТИЧНА ПОМИЛКА: " + std::string(e.what()));
         }
 
-        const int numberOfTargets = m_targetProvider->getTargetCount();
+        numberOfTargets = m_targetProvider->getTargetCount();
 
         targetTimes.resize(numberOfTargets, 0.0f);
         targetDistances.resize(numberOfTargets, 0.0f);
         targetAngles.resize(numberOfTargets, 0.0f);
 
-        // 3. Поточний стан дрона
-        curMyDrone.pos.x = myDrone.startPos.x;
-        curMyDrone.pos.y = myDrone.startPos.y;
-        curMyDrone.speed = 0;
-        curMyDrone.angularState = myDrone.initialDir;
-        curMyDrone.state = STOPPED;
-        curMyDrone.target = 0;
-    
-        // 4. Дебаг інфо
+        // Поточний стан дрона
+        Drone curMyDrone(myDrone);
+
+        // Дебаг інфо
         DEBUG("Час зупинки або прискорення: " << std::fixed << std::setprecision(2) << myDrone.timeAcceleration << " с");
         DEBUG("Прискорення дрона: " << myDrone.acceleration << " м/с2 ---");
         DEBUG("Величина оберту дрона за ітерацію: " << myDrone.radInIteration << " р/с ---");
         DEBUG("===========================");
         
-        // 5. Завантаження боєприпасу
-        const AmmoParams* ammo = m_configLoader->getAmmoParameters(myDrone.ammoName);
+        // Завантаження боєприпасу
+        ammo = m_configLoader->getAmmoParameters(myDrone.ammoName);
         
         if (ammo == nullptr) {
             throw std::runtime_error("Помилка: боєприпас " + std::string(myDrone.ammoName) + " не знайдено в базі!");
@@ -82,7 +80,7 @@ private:
             << ", drag: " << ammo->drag 
             << ", lift: " << ammo->lift);
 
-        return ammo;
+        return curMyDrone;
     }
 
 public:
@@ -113,11 +111,13 @@ public:
         std::cout << "\n--- ПОЧАТОК МІСІЇ ---\n";
 
         DroneConfig myDrone;
-        CurrentDroneParameters curMyDrone;
+    
         int numberCounterInTimeSpot = 0;
+        int numberOfTargets = 0;
+        const AmmoParams* ammo = nullptr;
 
         // ініціалізація параметрів дрона і початкових параметрів руху
-        const AmmoParams* ammo = init(myDrone, curMyDrone, numberCounterInTimeSpot);
+        Drone curMyDrone = init(myDrone, ammo, numberCounterInTimeSpot, numberOfTargets);
 
         int counter = 0; // лічильник
         bool keyChangeTarget = true; // мітка зміни дрона
@@ -173,10 +173,9 @@ public:
             DEBUG("--- curDroneSpeed = " << curMyDrone.speed << " ---");
             DEBUG("--- curDroneState = " << getDroneStateName(curMyDrone.state) << " ---");
             DEBUG("--- currentTarget = " << curMyDrone.target << " ---");
-
             
             if (keyChangeTarget) {
-                for (int i = 0; i < NUMBER_OF_TARGETS; i++) {
+                for (int i = 0; i < numberOfTargets; i++) {
                 
                     // Допоміжні функції для Coord (вільні або як методи):
                     // float length(Coord c) — довжина вектора (hypot) - треба зробити
@@ -196,17 +195,13 @@ public:
                     // Функція acos повертає результат у радіанах
                     // це кут цілі відносно положення дрона
                     float angle_in_rad = atan2(deltaY, deltaX);
-    
-                    
+                        
                     targetAngles[i] = angle_in_rad;
                                     
-                    // час протягом якого дрон буде повертатися у випадку невірного напрямку 
-                    float timeTurned = (targetAngles[i] - curMyDrone.angularState) > myDrone.turnThreshold ? 
-                        (targetAngles[i] - curMyDrone.angularState) / myDrone.angularSpeed : 0;
-                        
                     // час за який дрон долетить до цілі з вичитанням шляху падіння боєприпасу а також шляхом на розгін
-                    float t = calculateArrivalTime(length, timeTurned, myDrone.timeAcceleration, myDrone.accelPath, distDuringFall, myDrone.attackSpeed);
                     
+                    float t = curMyDrone.calculateArrivalTime(targetAngles[i], length, distDuringFall);
+
                     // якщо ми митєво долітаємо до цілі в межах наступної часової ітерації по координаті a це arrayTimeStep секунд
                     // тоді враховуємо відхилення цілі за час дольоту до неї 
                     // іноді ціль може рухатися до дрону тоді підльот буде тривати ще менше часу
@@ -238,7 +233,7 @@ public:
                         // тут ми маємо визначити час протягом якого дрон досягне цілі 
                         // враховуючи стан дрона (статус), координати, швидкість дрона, час падіння боєприпасу 
                         // і кут повороту (на даний момент ми нехтуємо кутом повороту будемо повертати під час польоту)
-                        float t_new = calculateSmallArrivalTime(length - distDuringFall, myDrone.attackSpeed, curMyDrone.speed, myDrone.acceleration);
+                        float t_new = curMyDrone.calculateSmallArrivalTime(length - distDuringFall);
                         
                                             
                         if(std::abs(t_new - t) < myDrone.timeHitRadius) {
@@ -355,12 +350,12 @@ public:
     
             // State == STOPPED тільки коли стартує
             if(curMyDrone.state == STOPPED) {
-                curMyDrone.state = updateRotation(targetAngles[newTarget], curMyDrone.angularState, myDrone.radInIteration, myDrone.turnThreshold) ? TURNING : ACCELERATING;
+                curMyDrone.state = curMyDrone.updateRotation(targetAngles[newTarget], myDrone.turnThreshold) ? TURNING : ACCELERATING;
             } else if (curMyDrone.state == DECELERATING) {
 
                 // якщо в нас статус DECELERATING ми зупиняємо дрон до повної зупинки щоб потім його повернути
                 // це коли в нас змінилася ціль (тобто зміну цілі ми не провіряємо бо вона вже змінена :) як банально це не звучить )  
-                updateDronePosition(myDrone, curMyDrone);
+                curMyDrone.updatePosition();
                 
                 curMyDrone.speed -= (myDrone.acceleration * myDrone.simTimeStep);
                 if (curMyDrone.speed <= 0) {
@@ -375,15 +370,14 @@ public:
                 // якщо змінилася ціль ми провіряємо чи кут напрямку в межах нової цілі
                 // якщо в межаш тоді продовжуємо рух 
                 // якщо ні тоді зупиняємося до зупинки і повертаємо дрон
-                if(needDroneRotation(targetAngles[newTarget], curMyDrone.angularState, myDrone.turnThreshold)) {
+                if(curMyDrone.needRotation(targetAngles[newTarget], myDrone.turnThreshold)) {
                     if (curMyDrone.state == TURNING) {
                         // якщо  false ми зупиняємо поворот
-                        if(!updateRotation(targetAngles[newTarget], curMyDrone.angularState, myDrone.radInIteration, myDrone.turnThreshold)) {
+                        if(!curMyDrone.updateRotation(targetAngles[newTarget], myDrone.turnThreshold)) {
                             curMyDrone.state = ACCELERATING;
                         }
                     } else {
-                    
-                        updateDronePosition(myDrone, curMyDrone);
+                        curMyDrone.updatePosition();
                         curMyDrone.state = DECELERATING;
                         if (curMyDrone.speed <= 0) {
                             curMyDrone.state = TURNING;
@@ -392,8 +386,9 @@ public:
                     
                 } else {
                     curMyDrone.state = curMyDrone.speed <= myDrone.attackSpeed ? ACCELERATING : MOVING;
-                    updateRotation(targetAngles[newTarget], curMyDrone.angularState, myDrone.radInIteration);
-                    updateDronePosition(myDrone, curMyDrone);
+                    curMyDrone.updateRotation(targetAngles[newTarget]);
+                    curMyDrone.updatePosition();
+                    
                     // збільшуємо швидкість
                     curMyDrone.speed += (myDrone.acceleration * myDrone.simTimeStep);
                     
@@ -409,8 +404,8 @@ public:
                 if(curMyDrone.state == ACCELERATING) {
                     // перед тим ще паралельно руху до цілі будемо повертати дрон поки напряки цілі і дрону не співпадуть
                     // останній параметр тобто поріг встановлюємо 0
-                    updateRotation(targetAngles[newTarget], curMyDrone.angularState, myDrone.radInIteration);
-                    updateDronePosition(myDrone, curMyDrone);
+                    curMyDrone.updateRotation(targetAngles[newTarget]);
+                    curMyDrone.updatePosition();
                     curMyDrone.speed += (myDrone.acceleration * myDrone.simTimeStep);
                 
                     if (curMyDrone.speed >= myDrone.attackSpeed) {
@@ -420,13 +415,13 @@ public:
                 
                 } else if(curMyDrone.state == TURNING) {
                     // якщо resultRotation == false ми зупиняємо поворот
-                    if(!updateRotation(targetAngles[newTarget], curMyDrone.angularState, myDrone.radInIteration, myDrone.turnThreshold)) {
+                    if(!curMyDrone.updateRotation(targetAngles[newTarget], myDrone.turnThreshold)) {
                         curMyDrone.state = ACCELERATING;
                     }
                 } else if(curMyDrone.state == MOVING) {
                     // Рівномірний рух  з мінімальним обертанням якщо треба
-                    updateRotation(targetAngles[newTarget], curMyDrone.angularState, myDrone.radInIteration);
-                    updateDronePosition(myDrone, curMyDrone);
+                    curMyDrone.updateRotation(targetAngles[newTarget]);
+                    curMyDrone.updatePosition();
                 }       
             }
                     

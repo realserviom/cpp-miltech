@@ -93,7 +93,7 @@ struct Coord {
 struct CurrentDroneParameters {
     Coord pos;      // позиція (x, y)
     float speed;    // поточна швидкість
-    float angularState; // поточне положення дрона
+    float angularState; // поточне положення дрона відносно осі x
     DroneState state; // поточний стан
     int target;       // поточна ціль
     Coord dropPoint;    	// точка скиду (куди летить дрон)

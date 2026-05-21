@@ -2,15 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <cmath>
-#include <iomanip>
 #include <string.h>
 #include <fstream>
-#include "constants.h"
 #include "functions.h"
 #include "types.h"
 #include <stdbool.h>
 #include "json.hpp"
-#include "debug.h"
 
 using json = nlohmann::ordered_json;
 

@@ -35,60 +35,6 @@ inline float calculateSmallArrivalTime(float distance, float attackSpeed, float 
     return (-v0 + std::sqrt(D)) / a;
 }
 
-inline float calculateArrivalTime(float distance, float tTurn, float tAccel, float accelPath, float distFall, float speed) {
-    return tTurn + tAccel + ((distance - accelPath - distFall) / speed);
-}
-
-inline void updateDronePosition(const DroneConfig &myDrone, CurrentDroneParameters &curMyDrone) {
-    Coord direction = { (float)cos(curMyDrone.angularState), (float)sin(curMyDrone.angularState) };
-    
-    Coord velocity = direction * (float)curMyDrone.speed;
-    Coord acceleration = direction * (float)myDrone.acceleration;
-    
-    float dt = (float)myDrone.simTimeStep;
-    float stepSq = (dt * dt) / 2.0f;
-
-    if (curMyDrone.state == MOVING) {
-        curMyDrone.pos = curMyDrone.pos + (velocity * dt);
-    } 
-    else if (curMyDrone.state == ACCELERATING) {
-        curMyDrone.pos = curMyDrone.pos + (velocity * dt) + (acceleration * stepSq);
-    }
-    else if (curMyDrone.state == DECELERATING) {
-        curMyDrone.pos = curMyDrone.pos + (velocity * dt) - (acceleration * stepSq);
-    }
-}
-
-// обертаємо дрон згідно нового напрямку
-inline bool updateRotation(float targetAngle, float &curAngularState, float radInIteration, float turnThreshold = 0) {
-    
-    // якщо швидкість повороту в радіанах велика 
-    // тобто за одну ітерацію більша ніж різниця положень тоді проставляємо зразу вірний кут
-    
-    if(std::abs(targetAngle - curAngularState) < radInIteration) {
-        curAngularState = targetAngle;
-        return false;
-    }
-    
-    if((targetAngle - curAngularState) > turnThreshold) {
-        // крутимо проти годинникової стрілки
-        curAngularState += radInIteration;
-        return true;
-        
-    } else if((curAngularState - targetAngle) > turnThreshold) {
-        // крутимо за годинниковою стрілою
-        curAngularState -= radInIteration;
-        return true;
-    }
-    
-    return false;
-}
-
-// провіряємо чи треба дрон обертати
-inline bool needDroneRotation(float targetAngle, float curAngularState, float turnThreshold) {
-    return (targetAngle - curAngularState) > turnThreshold || (curAngularState - targetAngle) > turnThreshold;
-}
-
 inline const char* getDroneStateName(DroneState state) {
     switch (state) {
         case STOPPED:      return "STOPPED";
