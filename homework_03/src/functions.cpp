@@ -64,13 +64,11 @@ typedef struct {
 } CacheEntry;
 
 
-int getIndexByMinValue(float targetTimes[5]) {
+int getIndexByMinValue(std::vector<float>& targetTimes) {
     int minIndex = 0;
-    
-    int size = 5;
 
     // 2. Починаємо перевірку з другого елемента (індекс 1)
-    for (int i = 1; i < size; i++) {
+    for (size_t i = 1; i < targetTimes.size(); i++) {
         // Якщо знаходимо елемент, який менший за наш поточний мінімум
         if (targetTimes[i] < targetTimes[minIndex]) {
             minIndex = i; // Запам'ятовуємо новий індекс

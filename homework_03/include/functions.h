@@ -3,13 +3,14 @@
 
 #include "types.h"
 #include <cstdio>
+#include <vector>
 
 
 float calculateLength(double targetX, double targetY, double xd, double yd);
 
 void saveFireCoordinates(double fireX, double fireY, double xd_i, double yd_i);
 
-int getIndexByMinValue(float targetTimes[5]);
+int getIndexByMinValue(std::vector<float>& targetTimes);
 
 inline float calculateSmallArrivalTime(float distance, float attackSpeed, float curDroneSpeed,  float acceleration) {
     
