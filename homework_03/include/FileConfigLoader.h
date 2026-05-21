@@ -14,9 +14,6 @@ enum class LoaderType { FILE };
 // інтерфейс
 class IConfigLoader {
 public:
-    // virtual bool load(const std::string& source) = 0;
-    // virtual Config getConfig() = 0;
-    // virtual AmmoParams getAmmoParams(const std::string& ammoName) = 0;
     virtual void debug(DroneConfig &myDrone) = 0;
     virtual void init(DroneConfig &myDrone) = 0;
     virtual const AmmoParams* getAmmoParameters(const char* name_to_find) = 0;

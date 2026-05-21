@@ -3,25 +3,6 @@
 #define TYPES_H
 #include <stdlib.h>
 
-// Приклад того, що може бути у вашому types.h для підтримки інтерфейсів:
-// struct Vector3D {
-//     double x, y, z;
-// };
-
-// struct Target {
-//     Vector3D position;
-//     Vector3D velocity;
-// };
-
-// struct Config {
-//     // поля конфігу місії
-// };
-
-// struct AmmoParams {
-//     double weight;
-//     double dragCoefficient; // наприклад, для балістики VOG-17 чи M67
-// };
-
 // імя боєприпасу
 typedef char def_ammoName[32];
 
