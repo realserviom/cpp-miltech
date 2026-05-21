@@ -101,5 +101,80 @@ public:
 
         return (-speed + std::sqrt(D)) /  config.acceleration;
     }
+
+    void move(int newTarget, float targetAngle, bool& keyChangeTarget) {
+         // State == STOPPED тільки коли стартує
+        if (state == STOPPED) {
+            // updateRotation повертає true, якщо поворот ще триває
+            state = updateRotation(targetAngle, config.turnThreshold) ? TURNING : ACCELERATING;
+        } 
+        else if (state == DECELERATING) {
+            // Зупиняємо дрон до повної зупинки, щоб потім його повернути
+            updatePosition();
+            speed -= (config.acceleration * config.simTimeStep);
+            
+            if (speed <= 0) {
+                speed = 0;
+                state = TURNING;
+            }
+        } 
+        else if (newTarget != target) {
+            // Змінюємо ціль
+            keyChangeTarget = true;
+            target = newTarget; // Оновлюємо внутрішню ціль дрона, щоб не заходити сюди щоразу
+            
+            // Перевіряємо чи кут напрямку в межах нової цілі
+            if (needRotation(targetAngle, config.turnThreshold)) {
+                if (state == TURNING) {
+                    // Якщо false — ми закінчили поворот і починаємо рух
+                    if (!updateRotation(targetAngle, config.turnThreshold)) {
+                        state = ACCELERATING;
+                    }
+                } else {
+                    updatePosition();
+                    state = DECELERATING;
+                    if (speed <= 0) {
+                        speed = 0;
+                        state = TURNING;
+                    }
+                }   
+            } else {
+                state = (speed <= config.attackSpeed) ? ACCELERATING : MOVING;
+                updateRotation(targetAngle); // Обертання без порогу
+                updatePosition();
+                
+                // Збільшуємо швидкість
+                speed += (config.acceleration * config.simTimeStep);
+                if (speed >= config.attackSpeed) {
+                    speed = config.attackSpeed; 
+                    state = MOVING;
+                }
+            }
+        } 
+        else {
+            // Звичайний рух до поточної цілі
+            if (state == ACCELERATING) {
+                // Обертаємо паралельно руху
+                updateRotation(targetAngle);
+                updatePosition();
+                
+                speed += (config.acceleration * config.simTimeStep);
+                if (speed >= config.attackSpeed) {
+                    speed = config.attackSpeed; 
+                    state = MOVING;
+                }
+            } 
+            else if (state == TURNING) {
+                if (!updateRotation(targetAngle, config.turnThreshold)) {
+                    state = ACCELERATING;
+                }
+            } 
+            else if (state == MOVING) {
+                // Рівномірний рух з мінімальним обертанням
+                updateRotation(targetAngle);
+                updatePosition();
+            }       
+        }
+    }
     
 };
