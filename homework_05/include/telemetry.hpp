@@ -6,30 +6,30 @@ const int INVALID_VALUE = -1;
 
 // One telemetry sample from the input log.
 struct Frame {
-    long timestamp_ms;
-    int seq;
-    double voltage_v;
-    double current_a;
-    double temperature_c;
-    int gps_fix;
-    int satellites;
+  long timestamp_ms;
+  int seq;
+  double voltage_v;
+  double current_a;
+  double temperature_c;
+  int gps_fix;
+  int satellites;
 
-    bool operator!() const {
-        return timestamp_ms == INVALID_VALUE || seq == INVALID_VALUE || voltage_v == INVALID_VALUE || 
-               current_a == INVALID_VALUE || temperature_c == INVALID_VALUE || 
-               gps_fix == INVALID_VALUE || satellites == INVALID_VALUE;
-    }
+  bool operator!() const
+  {
+    return timestamp_ms == INVALID_VALUE || seq == INVALID_VALUE || voltage_v == INVALID_VALUE || current_a == INVALID_VALUE ||
+           temperature_c == INVALID_VALUE || gps_fix == INVALID_VALUE || satellites == INVALID_VALUE;
+  }
 };
 
 // Aggregated values printed by the executable.
 struct Summary {
-    int frames_total;
-    int frames_valid;
-    double voltage_min;
-    double voltage_max;
-    double temperature_avg;
-    int low_voltage_frames;
-    double frame_rate_hz;
+  int frames_total;
+  int frames_valid;
+  double voltage_min;
+  double voltage_max;
+  double temperature_avg;
+  int low_voltage_frames;
+  double frame_rate_hz;
 };
 
 // Reads frames from a whitespace-separated telemetry log.
