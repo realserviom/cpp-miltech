@@ -1,5 +1,5 @@
-#include "../../include/providers/JsonTargetProvider.h"
-#include "../../include/json.hpp"
+#include "providers/JsonTargetProvider.h"
+#include "json.hpp"
 #include <fstream>
 #include <stdexcept>
 
