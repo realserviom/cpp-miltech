@@ -30,6 +30,8 @@ void JsonTargetProvider::loadTargets()
   m_targetCount = j["targetCount"];
   m_timeSteps = j["timeSteps"];
 
+  // можна було використати std::vector<std::vector<Coord>>
+  // але мені щось не дуже подобається
   m_targets = new Coord*[m_targetCount];
 
   for (int i = 0; i < m_targetCount; i++) {

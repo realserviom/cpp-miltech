@@ -55,29 +55,23 @@ void saveFireCoordinates(double fireX, double fireY, double xd_i = 0, double yd_
   }
 }
 
-// Структура для комірки кешу
-typedef struct {
-  bool is_active;  // Чи є тут запис
-  char key[64];    // Оригінальний рядок (щоб перевіряти колізії)
-  float result;    // Сам закешований результат
-} CacheEntry;
-
-int getIndexByMinValue(std::vector<float>& targetTimes)
+int getIndexByMinValue(const std::vector<float>& targetTimes)
 {
-  int minIndex = 0;
+  if (targetTimes.empty())
+    return -1;
 
-  // 2. Починаємо перевірку з другого елемента (індекс 1)
-  for (size_t i = 1; i < targetTimes.size(); i++) {
-    // Якщо знаходимо елемент, який менший за наш поточний мінімум
-    if (targetTimes[i] < targetTimes[minIndex]) {
-      minIndex = i;  // Запам'ятовуємо новий індекс
+  auto minIt = targetTimes.begin();
+
+  for (auto it = targetTimes.begin() + 1; it != targetTimes.end(); ++it) {
+    if (*it < *minIt) {
+      minIt = it;
     }
   }
 
-  return minIndex;
+  return std::distance(targetTimes.begin(), minIt);
 }
 
-void saveOutputFileByStep(int length, SimStep* steps)
+void saveOutputFileByStep(int length, const std::vector<SimStep>& steps)
 {
   json out;
   out["totalSteps"] = length + 1;
@@ -85,18 +79,20 @@ void saveOutputFileByStep(int length, SimStep* steps)
   printf("============== length = %d ===========\n", length + 1);
   out["steps"] = json::array();
 
-  for (int i = 0; i <= length; i++) {
+  auto endIt = (static_cast<size_t>(length + 1) <= steps.size()) ? steps.begin() + (length + 1) : steps.end();
+
+  for (auto it = steps.begin(); it != endIt; ++it) {
     json stepEntry;
 
-    stepEntry["position"] = {{"x", steps[i].pos.x}, {"y", steps[i].pos.y}};
+    stepEntry["position"] = {{"x", it->pos.x}, {"y", it->pos.y}};
 
-    stepEntry["direction"] = steps[i].direction;
-    stepEntry["state"] = steps[i].state;
-    stepEntry["targetIndex"] = steps[i].targetIdx;
+    stepEntry["direction"] = it->direction;
+    stepEntry["state"] = it->state;
+    stepEntry["targetIndex"] = it->targetIdx;
 
-    stepEntry["dropPoint"] = {{"x", steps[i].dropPoint.x}, {"y", steps[i].dropPoint.y}};
-    stepEntry["aimPoint"] = {{"x", steps[i].aimPoint.x}, {"y", steps[i].aimPoint.y}};
-    stepEntry["predictedTarget"] = {{"x", steps[i].predictedTarget.x}, {"y", steps[i].predictedTarget.y}};
+    stepEntry["dropPoint"] = {{"x", it->dropPoint.x}, {"y", it->dropPoint.y}};
+    stepEntry["aimPoint"] = {{"x", it->aimPoint.x}, {"y", it->aimPoint.y}};
+    stepEntry["predictedTarget"] = {{"x", it->predictedTarget.x}, {"y", it->predictedTarget.y}};
 
     out["steps"].push_back(stepEntry);
   }

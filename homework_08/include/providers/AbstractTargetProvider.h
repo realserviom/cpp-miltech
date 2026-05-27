@@ -1,8 +1,6 @@
 #pragma once
-#pragma once
-#include "../Types.h"
-#include "../interfaces/ITargetProvider.h"
-
+#include "Types.h"
+#include "interfaces/ITargetProvider.h"
 
 class AbstractTargetProvider : public ITargetProvider {
 protected:

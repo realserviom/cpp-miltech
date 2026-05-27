@@ -34,17 +34,12 @@ void FileConfigLoader::loadAmmo()
   if (j.is_array()) {
     for (const auto& ammoJson : j) {
       AmmoParams singleAmmo;
+
       std::string nameStr = ammoJson.value("name", "Unknown");
-      // std::snprintf(singleAmmo.name, sizeof(singleAmmo.name), "%s", nameStr.c_str());
-
-      strncpy(singleAmmo.name, nameStr.c_str(), sizeof(singleAmmo.name) - 1);
-      singleAmmo.name[sizeof(singleAmmo.name) - 1] = '\0';
-
       singleAmmo.mass = ammoJson.value("mass", 0.0f);
       singleAmmo.drag = ammoJson.value("drag", 0.0f);
       singleAmmo.lift = ammoJson.value("lift", 0.0f);
-
-      ammoList.push_back(singleAmmo);
+      ammoList[nameStr] = singleAmmo;
     }
   }
 
@@ -78,8 +73,7 @@ void FileConfigLoader::tunningDrone(DroneConfig& myDrone)
   myDrone.arrayTimeStep = j["targetArrayTimeStep"];
   myDrone.simTimeStep = j["simulation"]["timeStep"];
   myDrone.hitRadius = j["simulation"]["hitRadius"];
-
-  strncpy(myDrone.ammoName, j["ammo"].get<std::string>().c_str(), sizeof(myDrone.ammoName) - 1);
+  myDrone.ammoName = j["ammo"].get<std::string>();
 
   fin.close();
 }

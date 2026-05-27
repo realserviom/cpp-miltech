@@ -10,7 +10,7 @@ float calculateLength(double targetX, double targetY, double xd, double yd);
 
 void saveFireCoordinates(double fireX, double fireY, double xd_i, double yd_i);
 
-int getIndexByMinValue(std::vector<float>& targetTimes);
+int getIndexByMinValue(const std::vector<float>& targetTimes);
 
 inline const char* getDroneStateName(DroneState state) {
     switch (state) {
@@ -23,7 +23,7 @@ inline const char* getDroneStateName(DroneState state) {
     }
 }
 
-void saveOutputFileByStep(int length, SimStep* steps);
+void saveOutputFileByStep(int length, const std::vector<SimStep>& steps);
 
 Coord normalize(const Coord& c);
 

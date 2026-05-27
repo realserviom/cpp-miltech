@@ -62,19 +62,19 @@ Drone MissionProcessor::init(DroneConfig& myDrone, const AmmoParams*& ammo, int&
   return curMyDrone;
 }
 
-void MissionProcessor::setTargetProvider(ITargetProvider* targetProvider)
+void MissionProcessor::setTargetProvider(std::unique_ptr<ITargetProvider> targetProvider)
 {
-  m_targetProvider = targetProvider;
+  m_targetProvider = std::move(targetProvider);
 }
 
-void MissionProcessor::setBallisticSolver(IBallisticSolver* solver)
+void MissionProcessor::setBallisticSolver(std::unique_ptr<IBallisticSolver> solver)
 {
-  m_solver = solver;
+  m_solver = std::move(solver);
 }
 
-void MissionProcessor::setConfigLoader(IConfigLoader* configLoader)
+void MissionProcessor::setConfigLoader(std::unique_ptr<IConfigLoader> configLoader)
 {
-  m_configLoader = configLoader;
+  m_configLoader = std::move(configLoader);
 }
 
 void MissionProcessor::executeMission()
@@ -95,9 +95,9 @@ void MissionProcessor::executeMission()
   // ініціалізація параметрів дрона і початкових параметрів руху
   Drone curMyDrone = init(myDrone, ammo, numberCounterInTimeSpot, numberOfTargets);
 
-  int counter = 0;                          // лічильник
-  bool keyChangeTarget = true;              // мітка зміни дрона
-  SimStep* steps = new SimStep[MAX_STEPS];  // Масив кроків для симуляції
+  int counter = 0;                        // лічильник
+  bool keyChangeTarget = true;            // мітка зміни дрона
+  std::vector<SimStep> steps(MAX_STEPS);  // Масив кроків для симуляції
 
   float t_pol;               // час польоту
   float distDuringFall = 0;  // дистанція подіння
@@ -324,9 +324,6 @@ void MissionProcessor::executeMission()
   }
 
   saveOutputFileByStep(counter - 1, steps);
-
-  // видаляємо масив точок
-  delete[] steps;
 
   std::cout << "--- МІСІЮ ЗАВЕРШЕНО ---\n";
 }

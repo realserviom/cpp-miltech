@@ -3,16 +3,15 @@
 #include "Types.h"
 #include "Debug.h"
 #include "../interfaces/IConfigLoader.h"
-#include <vector>
 #include <cstring>
-
+#include <unordered_map>
 
 class AbstractConfigProvider : public IConfigLoader {
 protected:
-    std::vector<AmmoParams> ammoList;
+  std::unordered_map<def_ammoName, AmmoParams> ammoList;
 
-    virtual void tunningDrone(DroneConfig &myDrone) = 0;
-    virtual void loadAmmo() = 0;
+  virtual void tunningDrone(DroneConfig &myDrone) = 0;
+  virtual void loadAmmo() = 0;
 
 public:
     AbstractConfigProvider(){};
@@ -41,15 +40,18 @@ public:
         DEBUG("---------------------------------------");
     }
 
-    const AmmoParams* getAmmoParameters(const char* name_to_find) override {
-
-       for (size_t i = 0; i < ammoList.size(); ++i) {
-            if (strcmp(ammoList[i].name, name_to_find) == 0) {
-                return &ammoList[i];
-            }
-        }
-
+    const AmmoParams *getAmmoParameters(std::string name_to_find) override
+    {
+      if (name_to_find.empty()) {
         return nullptr;
+      }
+
+      auto it = ammoList.find(name_to_find);
+      if (it != ammoList.end()) {
+        return &(it->second);
+      }
+
+      return nullptr;
     }
 
     virtual ~AbstractConfigProvider() override {}

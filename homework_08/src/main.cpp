@@ -28,7 +28,7 @@ int main()
   std::unique_ptr<ITargetProvider> targetProvider{createProvider(ProviderType::JSON, "../data/targets.json")};
   std::unique_ptr<IBallisticSolver> analyticalSolver{createSolver(SolverType::ANALYTICAL)};
 
-  MissionProcessor processor(targetProvider.get(), analyticalSolver.get(), configLoader.get());
+  MissionProcessor processor(std::move(targetProvider), std::move(analyticalSolver), std::move(configLoader));
 
   try {
     processor.executeMission();

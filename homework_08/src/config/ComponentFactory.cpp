@@ -3,7 +3,7 @@
 #include "config/FileConfigLoader.h"
 #include "solvers/AnalyticalSolver.h"
 
-ITargetProvider* createProvider(ProviderType type, const char* file_name)
+ITargetProvider* createProvider(ProviderType type, const std::string& file_name)
 {
   switch (type) {
     case ProviderType::JSON:
@@ -13,7 +13,7 @@ ITargetProvider* createProvider(ProviderType type, const char* file_name)
   }
 }
 
-IConfigLoader* createLoader(LoaderType type, const char* file_drone_config_name, const char* file_list_ammo_name)
+IConfigLoader* createLoader(LoaderType type, const std::string& file_drone_config_name, const std::string& file_list_ammo_name)
 {
   switch (type) {
     case LoaderType::FILE:

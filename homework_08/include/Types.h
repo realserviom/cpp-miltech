@@ -2,17 +2,17 @@
 #ifndef TYPES_H
 #define TYPES_H
 #include <stdlib.h>
+#include <string>
 
 // імя боєприпасу
-typedef char def_ammoName[32];
 
-typedef struct {
-    def_ammoName name;  // імя
-    float mass;         // маса (кг)
-    float drag;         // коефіцієнт опору
-    float lift;         // коефіцієнт підйому
-} AmmoParams;
- 
+using def_ammoName = std::string;
+
+struct AmmoParams {
+  float mass;  // маса (кг)
+  float drag;  // коефіцієнт опору
+  float lift;  // коефіцієнт підйому
+};
 
 // Визначення фаз руху дрона
 typedef enum {
@@ -23,6 +23,15 @@ typedef enum {
     MOVING = 4,      // Рівномірний рух
     NO_VALUE = -1    // Для провірки
 } DroneState;
+
+// enum class DroneState {
+//   STOPPED = 0,       // Дрон не рухається
+//   ACCELERATING = 1,  // Розгін
+//   DECELERATING = 2,  // Гальмування
+//   TURNING = 3,       // Поворот на ціль
+//   MOVING = 4,        // Рівномірний рух
+//   NO_VALUE = -1      // Для провірки
+// };
 
 struct Coord {
     double x;

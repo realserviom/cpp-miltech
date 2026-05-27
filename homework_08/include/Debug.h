@@ -1,9 +1,6 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
-#include <iostream>
-#include <iomanip>
-
 #define ENABLE_LOG	1
 #define ENABLE_DEBUG  1
  
@@ -19,5 +16,4 @@
   #define DEBUG(msg)
 #endif
 
-
-#endif // DEBUG_H
+#endif
