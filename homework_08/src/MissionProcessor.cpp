@@ -4,6 +4,7 @@
 #include "MissionProcessor.h"
 #include "Debug.h"
 #include "constants.h"
+#include <iomanip>
 
 Drone MissionProcessor::init(DroneConfig& myDrone, const AmmoParams*& ammo, int& numberCounterInTimeSpot, int& numberOfTargets)
 {
