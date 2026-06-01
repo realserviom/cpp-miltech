@@ -1,4 +1,4 @@
-project(targets2 LANGUAGES CXX)
+project(targets3 LANGUAGES CXX)
 
 #  Автоматично збираємо всі .cpp файли з папки src та її підпапок
 file(GLOB_RECURSE SRC_FILES "src/*.cpp")
@@ -10,16 +10,16 @@ list(REMOVE_ITEM SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
 file(GLOB_RECURSE HEADERS "include/*.h" "include/*.tpp")
 
 # Створюємо бібліотеку з усіх знайдених файлів (окрім main.cpp)
-add_library(targets_lib2 STATIC ${SRC_FILES} ${HEADERS})
+add_library(targets_lib3 STATIC ${SRC_FILES} ${HEADERS})
 
 # Вказуємо, де шукати заголовочні файли (.hpp)
-target_include_directories(targets_lib2 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(targets_lib3 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Створюємо виконуваний файл
-add_executable(targets2 src/main.cpp)
+add_executable(targets3 src/main.cpp)
 
 # Додаємо суворі перевірки
-target_compile_options(targets2 PRIVATE 
+target_compile_options(targets3 PRIVATE 
     -Wall 
     -Wextra 
     -pedantic
@@ -27,7 +27,7 @@ target_compile_options(targets2 PRIVATE
 
 # Поєднуємо їх (лінкуємо)
 # Тепер targets знає про функції з targets_lib
-target_link_libraries(targets2 PRIVATE targets_lib2)
+target_link_libraries(targets3 PRIVATE targets_lib3)
 
 # Встановлюємо назву бінарника
-set_target_properties(targets2 PROPERTIES OUTPUT_NAME "targets2")
+set_target_properties(targets3 PROPERTIES OUTPUT_NAME "targets3")
