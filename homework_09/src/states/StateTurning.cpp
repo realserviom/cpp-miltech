@@ -11,3 +11,8 @@ const std::string StateTurning::name() const
   // default:           return "UNKNOWN";
   return "TURNING";
 }
+
+int StateTurning::id() const
+{
+  return 3;
+}

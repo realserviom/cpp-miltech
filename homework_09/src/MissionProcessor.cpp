@@ -5,6 +5,8 @@
 #include "Debug.h"
 #include "constants.h"
 #include <iomanip>
+#include <cmath>
+#include "interfaces/IDroneState.h"
 
 Drone MissionProcessor::init(DroneConfig& myDrone, const AmmoParams*& ammo, int& numberCounterInTimeSpot, int& numberOfTargets)
 {
@@ -126,7 +128,7 @@ void MissionProcessor::executeMission()
       steps[counter - 1] = {
         {curMyDrone.pos.x, curMyDrone.pos.y},
         curMyDrone.angularState,
-        curMyDrone.state,
+        curMyDrone.state->id(),
         curMyDrone.target,
         {curMyDrone.dropPoint.x, curMyDrone.dropPoint.y},
         {curMyDrone.aimPoint.x, curMyDrone.aimPoint.y},
@@ -145,7 +147,7 @@ void MissionProcessor::executeMission()
     DEBUG("--- curDroneY = " << std::fixed << std::setprecision(8) << curMyDrone.pos.y << " м ---");
     DEBUG("--- curMyDrone.angularState = " << std::fixed << std::setprecision(2) << curMyDrone.angularState << " р. ---");
     DEBUG("--- curDroneSpeed = " << curMyDrone.speed << " ---");
-    DEBUG("--- curDroneState = " << getDroneStateName(curMyDrone.state) << " ---");
+    DEBUG("--- curDroneState = " << curMyDrone.state->name() << " ---");
     DEBUG("--- currentTarget = " << curMyDrone.target << " ---");
 
     if (keyChangeTarget) {
@@ -168,6 +170,11 @@ void MissionProcessor::executeMission()
 
         // час за який дрон долетить до цілі з вичитанням шляху падіння боєприпасу а також шляхом на розгін
         float t = curMyDrone.calculateArrivalTime(targetAngles[i], length, distDuringFall);
+
+        DEBUG("distDuringFall: " << distDuringFall << " м.");
+        DEBUG("t: " << t << " c.");
+        DEBUG("До " << i + 1 << " цілі " << std::fixed << std::setprecision(2) << length << " м.; Час польоту: " << std::setprecision(2)
+                    << t << " с");
 
         // якщо ми митєво долітаємо до цілі в межах наступної часової ітерації по координаті a це arrayTimeStep секунд
         // тоді враховуємо відхилення цілі за час дольоту до неї
@@ -219,7 +226,7 @@ void MissionProcessor::executeMission()
           // Ми врахували зміщення до цілі і тому перераховуємо кут нахилу дрона до цілі
           float targetAngle = atan2(targetYEndPoint - curMyDrone.pos.y, targetXEndPoint - curMyDrone.pos.x);
 
-          // printf("кут targetAngle для цілі %d = : %.4f м/с\n", i, targetAngle);
+          // printf("кут targetAngle для цілі %d = : %.4f р.\n", i, targetAngle);
           //  записуємо тільки один раз кут зміщення це коли вже пряма наводка до цілі
           targetAngles[i] = targetAngle;
         }

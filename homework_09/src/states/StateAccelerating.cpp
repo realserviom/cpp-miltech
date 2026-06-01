@@ -10,3 +10,8 @@ const std::string StateAccelerating::name() const
 {
   return "ACCELERATING";
 }
+
+int StateAccelerating::id() const
+{
+  return 1;
+}

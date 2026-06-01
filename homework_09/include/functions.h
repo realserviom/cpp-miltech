@@ -12,17 +12,6 @@ void saveFireCoordinates(double fireX, double fireY, double xd_i, double yd_i);
 
 int getIndexByMinValue(const std::vector<float>& targetTimes);
 
-inline const char* getDroneStateName(DroneState state) {
-    switch (state) {
-        case STOPPED:      return "STOPPED";
-        case ACCELERATING: return "ACCELERATING";
-        case DECELERATING: return "DECELERATING";
-        case TURNING:      return "TURNING";
-        case MOVING:       return "MOVING";
-        default:           return "UNKNOWN";
-    }
-}
-
 void saveOutputFileByStep(int length, const std::vector<SimStep>& steps);
 
 Coord normalize(const Coord& c);

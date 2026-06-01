@@ -10,3 +10,8 @@ const std::string StateMoving::name() const
 {
   return "MOVING";
 }
+
+int StateMoving::id() const
+{
+  return 4;
+}
