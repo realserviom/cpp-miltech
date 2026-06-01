@@ -1,33 +1,35 @@
-#include "config/ComponentFactory.h"
+#include <memory>
 #include "providers/JsonTargetProvider.h"
 #include "config/FileConfigLoader.h"
 #include "solvers/AnalyticalSolver.h"
 
-ITargetProvider* createProvider(ProviderType type, const std::string& file_name)
+std::unique_ptr<ITargetProvider> createProvider(ProviderType type, const std::string& file_name)
 {
   switch (type) {
     case ProviderType::JSON:
-      return new JsonTargetProvider(file_name);
+      return std::make_unique<JsonTargetProvider>(file_name);
     default:
       return nullptr;
   }
 }
 
-IConfigLoader* createLoader(LoaderType type, const std::string& file_drone_config_name, const std::string& file_list_ammo_name)
+std::unique_ptr<IConfigLoader> createLoader(LoaderType type,
+                                            const std::string& file_drone_config_name,
+                                            const std::string& file_list_ammo_name)
 {
   switch (type) {
     case LoaderType::FILE:
-      return new FileConfigLoader(file_drone_config_name, file_list_ammo_name);
+      return std::make_unique<FileConfigLoader>(file_drone_config_name, file_list_ammo_name);
     default:
       return nullptr;
   }
 }
 
-IBallisticSolver* createSolver(SolverType type)
+std::unique_ptr<IBallisticSolver> createSolver(SolverType type)
 {
   switch (type) {
     case SolverType::ANALYTICAL:
-      return new AnalyticalSolver();
+      return std::make_unique<AnalyticalSolver>();
     default:
       return nullptr;
   }

@@ -1,0 +1,12 @@
+#include "states/StateStopped.h"
+#include "states/StateAccelerating.h"
+
+std::unique_ptr<IDroneState> StateStopped::execute(Drone& curMyDrone)
+{
+  return std::make_unique<StateAccelerating>();
+}
+
+const std::string StateStopped::name() const
+{
+  return "STOPPED";
+}

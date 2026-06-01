@@ -2,9 +2,10 @@
 #include "../interfaces/ITargetProvider.h" 
 #include "../interfaces/IConfigLoader.h"
 #include "../interfaces/IBallisticSolver.h"
+#include <memory>
 
-ITargetProvider* createProvider(ProviderType type, const std::string& file_name);
-
-IConfigLoader* createLoader(LoaderType type, const std::string& file_drone_config_name, const std::string& file_list_ammo_name);
-
-IBallisticSolver* createSolver(SolverType type);
+std::unique_ptr<ITargetProvider> createProvider(ProviderType type, const std::string& file_name);
+std::unique_ptr<IConfigLoader> createLoader(LoaderType type,
+                                            const std::string& file_drone_config_name,
+                                            const std::string& file_list_ammo_name);
+std::unique_ptr<IBallisticSolver> createSolver(SolverType type);
