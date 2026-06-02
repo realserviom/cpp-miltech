@@ -2,13 +2,14 @@
 #include "Types.h"
 #include "providers/AbstractTargetProvider.h"
 #include <cmath>
+#include "Debug.h"
 
 void AbstractTargetProvider::init(int &numberCounterInTimeSpot)
 {
   m_numberCounterInTimeSpot = numberCounterInTimeSpot;
-  std::cout << "Preparing targets...\n";
+  LOG("Preparing targets...");
   loadTargets();
-  std::cout << "Targets ready.\n";
+  LOG("Targets ready");
 }
 
 int AbstractTargetProvider::getTargetCount()

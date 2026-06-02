@@ -18,11 +18,11 @@ public:
     AbstractConfigProvider(){};
 
     void init(DroneConfig &myDrone) override {
-        std::cout << "Preparing drone...\n";
-        tunningDrone(myDrone);
-        debug(myDrone);
-        loadAmmo();
-        std::cout << "Drone ready.\n";
+      LOG("Preparing drone...");
+      tunningDrone(myDrone);
+      debug(myDrone);
+      loadAmmo();
+      LOG("Drone ready");
     }
 
     void debug(DroneConfig &myDrone) override {

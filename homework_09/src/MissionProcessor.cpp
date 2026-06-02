@@ -14,7 +14,7 @@ Drone MissionProcessor::init(DroneConfig& myDrone, const AmmoParams*& ammo, int&
   try {
     m_configLoader->init(myDrone);
     myDrone.updateCalculatedParams();
-    std::cout << "Дрон успішно налаштований та готовий до польоту!\n";
+    LOG("Дрон успішно налаштований та готовий до польоту!");
   }
   catch (const std::runtime_error& e) {
     throw std::runtime_error("[FileConfigLoader] КРИТИЧНА ПОМИЛКА: " + std::string(e.what()));
@@ -31,7 +31,7 @@ Drone MissionProcessor::init(DroneConfig& myDrone, const AmmoParams*& ammo, int&
   // Отримуємо цілі
   try {
     m_targetProvider->init(numberCounterInTimeSpot);
-    std::cout << "Цілі успішно загруженні в систему!\n";
+    LOG("Цілі успішно загруженні в систему!");
   }
   catch (const std::runtime_error& e) {
     throw std::runtime_error("[JsonTargetProvider] КРИТИЧНА ПОМИЛКА: " + std::string(e.what()));
@@ -87,7 +87,7 @@ void MissionProcessor::executeMission()
     return;
   }
 
-  std::cout << "\n--- ПОЧАТОК МІСІЇ ---\n";
+  LOG("--- ПОЧАТОК МІСІЇ ---");
 
   DroneConfig myDrone;
 
@@ -105,6 +105,7 @@ void MissionProcessor::executeMission()
 
   float t_pol;               // час польоту
   float distDuringFall = 0;  // дистанція подіння
+  float prevFinalDistance = 0;
 
   try {
     distDuringFall = m_solver->getDistDuringFall(t_pol, myDrone, ammo);
@@ -137,8 +138,6 @@ void MissionProcessor::executeMission()
       };
     }
 
-    addingStep = true;
-
     // розраховуємо всі дані для визначення поточної найближчої цілі
     const int timeIteration = m_targetProvider->getTimeIteration(counter);
 
@@ -155,8 +154,8 @@ void MissionProcessor::executeMission()
       for (int i = 0; i < numberOfTargets; i++) {
         Coord targetPos = m_targetProvider->getTargetPositionInCounter(i, counter);
 
-        DEBUG("targetPos.x: " << targetPos.x);
-        DEBUG("targetPos.y: " << targetPos.y);
+        // DEBUG("targetPos.x: " << targetPos.x);
+        // DEBUG("targetPos.y: " << targetPos.y);
 
         float length = calculateLength(targetPos.x, targetPos.y, curMyDrone.pos.x, curMyDrone.pos.y);
 
@@ -262,6 +261,7 @@ void MissionProcessor::executeMission()
     int futureIteration = std::floor(Tt / myDrone.arrayTimeStep);
     int nextFutureIteration = m_targetProvider->getNextIteration(futureIteration);
 
+    // час що залишився
     float remainderTimeInSpot = (counter % numberCounterInTimeSpot) * myDrone.simTimeStep;
 
     Coord dataPosFutureIteration = m_targetProvider->getTargetPositionInIteration(newTarget, futureIteration);
@@ -291,9 +291,9 @@ void MissionProcessor::executeMission()
 
     double finalDistance = length(delta);
 
-    if (finalDistance <= myDrone.hitRadius - myDrone.hitRadius / 4) {
-      DEBUG("--- БОЄПРИПАС СКИНУТИЙ! Ураження : " << std::fixed << std::setprecision(2) << finalDistance << " м від цілі номер "
-                                                  << newTarget << " ---");
+    if (finalDistance <= myDrone.hitRadius - myDrone.hitRadius / 3) {
+      LOG("--- БОЄПРИПАС СКИНУТИЙ! Ураження : " << std::fixed << std::setprecision(2) << finalDistance << " м від цілі номер " << newTarget
+                                                << " ---");
       DEBUG("--- remainderTimeInSpot: " << std::setprecision(4) << remainderTimeInSpot << " ---");
       DEBUG("--- curDrone: (" << curMyDrone.pos.x << ", " << curMyDrone.pos.y << ") ---");
       DEBUG("--- targetAmmo: (" << targetAmmoPos.x << ", " << targetAmmoPos.y << ") ---");
@@ -304,22 +304,22 @@ void MissionProcessor::executeMission()
       break;
     }
 
-    // якщо в нас відстань між дроном і цілю менше ніж distDuringFall + 5 метрів тоді включаємо пошук цілі знову
-    // тому що дрон не вийшов на позицію
-    if (!keyChangeTarget) {
-      double distanceWithDroneAndTarget = length(curMyDrone.pos - targetEndPoint);
-
-      if (distanceWithDroneAndTarget > distDuringFall + 5 && distanceWithDroneAndTarget > myDrone.arrayTimeStep * 2) {
-        keyChangeTarget = true;
-      }
+    // якщо в нас відстань між дроном і цілю почала збільшуватися і різниця більше ніж на 2 метри
+    // тоді включаємо пошук цілі знову тому що дрон не вийшов на позицію
+    if (!keyChangeTarget && prevFinalDistance < (finalDistance - 2)) {
+      keyChangeTarget = true;
     }
 
     bool workingIteration = curMyDrone.move(newTarget, targetAngles[newTarget], keyChangeTarget);
 
     if (!workingIteration) {
       iteration++;
-      continue;  // Повертаємось на початок циклу. simStep і час НЕ збільшуються!
+      continue;  // Повертаємось на початок циклу. counter не збільшуються але ціль вже інша
     }
+
+    prevFinalDistance = finalDistance;
+
+    addingStep = true;
 
     // ################ the end ################
 
@@ -327,12 +327,13 @@ void MissionProcessor::executeMission()
     iteration++;
 
     if (iteration > MAX_STEPS) {
-      LOG("============== спрацював автомат ми перевищили ліміт ітерацій  ==============");
+      LOG("============== спрацював ліміт ітерацій  ==============");
       break;
     }
   }
 
-  saveOutputFileByStep(counter - 1, steps);
-
-  std::cout << "--- МІСІЮ ЗАВЕРШЕНО ---\n";
+  if (iteration <= MAX_STEPS) {
+    saveOutputFileByStep(counter - 1, steps);
+    LOG("--- МІСІЮ ЗАВЕРШЕНО ---");
+  }
 }
