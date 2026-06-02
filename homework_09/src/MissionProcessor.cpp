@@ -153,16 +153,16 @@ void MissionProcessor::executeMission()
     if (keyChangeTarget) {
       for (int i = 0; i < numberOfTargets; i++) {
         Coord targetPos = m_targetProvider->getTargetPositionInCounter(i, counter);
-        float length = calculateLength(targetPos.x, targetPos.y, curMyDrone.pos.x, curMyDrone.pos.y);
 
-        // я не розглядаю задачу де можуть бути задані відємні координати положення цілі
-        // в цьому випадку треба буде переписати формули з модулями і також кути обертання треба буде перераховувати
-        // в залежності від знаку + чи - перед координатами положення цілі
+        DEBUG("targetPos.x: " << targetPos.x);
+        DEBUG("targetPos.y: " << targetPos.y);
+
+        float length = calculateLength(targetPos.x, targetPos.y, curMyDrone.pos.x, curMyDrone.pos.y);
 
         float deltaX = targetPos.x - curMyDrone.pos.x;
         float deltaY = targetPos.y - curMyDrone.pos.y;
 
-        // Функція acos повертає результат у радіанах
+        // Функція atan2 повертає результат у радіанах
         // це кут цілі відносно положення дрона
         float angle_in_rad = atan2(deltaY, deltaX);
 
@@ -170,11 +170,6 @@ void MissionProcessor::executeMission()
 
         // час за який дрон долетить до цілі з вичитанням шляху падіння боєприпасу а також шляхом на розгін
         float t = curMyDrone.calculateArrivalTime(targetAngles[i], length, distDuringFall);
-
-        DEBUG("distDuringFall: " << distDuringFall << " м.");
-        DEBUG("t: " << t << " c.");
-        DEBUG("До " << i + 1 << " цілі " << std::fixed << std::setprecision(2) << length << " м.; Час польоту: " << std::setprecision(2)
-                    << t << " с");
 
         // якщо ми митєво долітаємо до цілі в межах наступної часової ітерації по координаті a це arrayTimeStep секунд
         // тоді враховуємо відхилення цілі за час дольоту до неї
@@ -205,8 +200,9 @@ void MissionProcessor::executeMission()
 
           // тут ми маємо визначити час протягом якого дрон досягне цілі
           // враховуючи стан дрона (статус), координати, швидкість дрона, час падіння боєприпасу
-          // і кут повороту (на даний момент ми нехтуємо кутом повороту будемо повертати під час польоту)
-          float t_new = curMyDrone.calculateSmallArrivalTime(length - distDuringFall);
+          // на даний момент ми нехтуємо кутом повороту будемо повертати під час польоту
+          // а з іншої сторони в цей момент дрон вже має бути направлений на ціль
+          float t_new = curMyDrone.calculateSmallArrivalTime(length - distDuringFall > 0 ? length - distDuringFall : length);
 
           if (std::abs(t_new - t) < myDrone.timeHitRadius) {
             t = t_new;
@@ -222,11 +218,10 @@ void MissionProcessor::executeMission()
           targetXEndPoint = targetPos.x + (Vxtarget * t);
           targetYEndPoint = targetPos.y + (Vytarget * t);
 
-          // Кут, під яким дрон МАЄ летіти, щоб влучити в точку зустрічі
+          // Кут, під яким дрон повинен летіти, щоб влучити в точку зустрічі
           // Ми врахували зміщення до цілі і тому перераховуємо кут нахилу дрона до цілі
           float targetAngle = atan2(targetYEndPoint - curMyDrone.pos.y, targetXEndPoint - curMyDrone.pos.x);
 
-          // printf("кут targetAngle для цілі %d = : %.4f р.\n", i, targetAngle);
           //  записуємо тільки один раз кут зміщення це коли вже пряма наводка до цілі
           targetAngles[i] = targetAngle;
         }
@@ -295,7 +290,7 @@ void MissionProcessor::executeMission()
 
     double finalDistance = length(delta);
 
-    if (finalDistance <= myDrone.hitRadius - myDrone.hitRadius / 3) {
+    if (finalDistance <= myDrone.hitRadius - myDrone.hitRadius / 4) {
       DEBUG("--- БОЄПРИПАС СКИНУТИЙ! Ураження : " << std::fixed << std::setprecision(2) << finalDistance << " м від цілі номер "
                                                   << newTarget << " ---");
       DEBUG("--- remainderTimeInSpot: " << std::setprecision(4) << remainderTimeInSpot << " ---");

@@ -23,19 +23,37 @@ Drone::Drone(const DroneConfig& config)
 
 bool Drone::updateRotation(float targetAngle, float turnThreshold)
 {
-  if (std::abs(targetAngle - angularState) < config.radInIteration) {
+  float angleDiff = targetAngle - angularState;
+
+  angleDiff = std::atan2(std::sin(angleDiff), std::cos(angleDiff));
+
+  if (std::abs(angleDiff) < config.radInIteration) {
     angularState = targetAngle;
     return false;
   }
 
-  if ((targetAngle - angularState) > turnThreshold) {
-    angularState += config.radInIteration;
+  // Якщо різниця більша за поріг — крутимо туди, куди БЛИЖЧЕ
+  if (std::abs(angleDiff) > turnThreshold) {
+    if (angleDiff > 0) {
+      // angleDiff додатний -> крутимо проти годинникової
+      angularState += config.radInIteration;
+    }
+    else {
+      // angleDiff від'ємний -> крутимо за годинниковою
+      angularState -= config.radInIteration;
+    }
+
+    if (angularState > M_PI * 2) {
+      angularState -= M_PI * 2;
+    }
+
+    if (angularState < 0) {
+      angularState += M_PI * 2;
+    }
+
     return true;
   }
-  else if ((angularState - targetAngle) > turnThreshold) {
-    angularState -= config.radInIteration;
-    return true;
-  }
+
   return false;
 }
 
@@ -68,9 +86,22 @@ bool Drone::needRotation(float targetAngle, float turnThreshold) const
 
 float Drone::calculateArrivalTime(float targetAngle, float distance, float distFall) const
 {
-  float timeTurned = (targetAngle - angularState) > config.turnThreshold ? (targetAngle - angularState) / config.angularSpeed : 0;
+  float angleDiff = targetAngle - angularState;
+  angleDiff = std::atan2(std::sin(angleDiff), std::cos(angleDiff));
 
-  return timeTurned + config.timeAcceleration + ((distance - config.accelPath - distFall) / speed);
+  float actualAngleToTurn = std::abs(angleDiff);
+
+  float timeTurned = (actualAngleToTurn > config.turnThreshold) ? ((actualAngleToTurn - config.turnThreshold) / config.angularSpeed) : 0.0f;
+
+  float d = distance - config.accelPath - distFall;
+
+  if (d > 0) {
+    return timeTurned + config.timeAcceleration + (d / config.attackSpeed);
+  }
+  else {
+    float smallDistance = (distance - distFall > 0) ? (distance - distFall) : distance;
+    return timeTurned + calculateSmallArrivalTime(smallDistance);
+  }
 }
 
 float Drone::calculateSmallArrivalTime(float distance) const
@@ -85,7 +116,7 @@ float Drone::calculateSmallArrivalTime(float distance) const
   return (-speed + std::sqrt(D)) / config.acceleration;
 }
 
-// 7. Реалізація методу move
+// Реалізація методу move
 void Drone::move(int newTarget, float targetAngle, bool& keyChangeTarget)
 {
   // State == STOPPED тільки коли стартує
@@ -155,7 +186,7 @@ void Drone::move(int newTarget, float targetAngle, bool& keyChangeTarget)
     // Звичайний рух до поточної цілі
     if (currentStateName == "ACCELERATING") {
       // Обертаємо паралельно руху
-      updateRotation(targetAngle);
+      updateRotation(targetAngle);  // Обертання без порогу
       updatePosition();
 
       speed += (config.acceleration * config.simTimeStep);
