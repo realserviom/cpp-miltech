@@ -32,7 +32,7 @@ bool Drone::updateRotation(float targetAngle, float turnThreshold)
     return false;
   }
 
-  // Якщо різниця більша за поріг — крутимо туди, куди БЛИЖЧЕ
+  // Якщо різниця більша за поріг — крутимо туди, куди ближче
   if (std::abs(angleDiff) > turnThreshold) {
     if (angleDiff > 0) {
       // angleDiff додатний -> крутимо проти годинникової
@@ -117,95 +117,158 @@ float Drone::calculateSmallArrivalTime(float distance) const
 }
 
 // Реалізація методу move
-void Drone::move(int newTarget, float targetAngle, bool& keyChangeTarget)
+bool Drone::move(int newTarget, float targetAngle, bool& keyChangeTarget)
 {
   // State == STOPPED тільки коли стартує
-  std::string currentNewStateName;
+  // std::string currentNewStateName;
+  // std::string currentStateName = state->name();
+  // if (currentStateName == "STOPPED") {
+  //   // updateRotation повертає true, якщо поворот ще триває
+  //   if (updateRotation(targetAngle, config.turnThreshold)) {
+  //     state = std::make_unique<StateTurning>();
+  //   }
+  //   else {
+  //     state = std::make_unique<StateAccelerating>();
+  //   }
+  // }
+  // else if (currentStateName == "DECELERATING") {
+  //   // Зупиняємо дрон до повної зупинки, щоб потім його повернути
+  //   updatePosition();
+  //   speed -= (config.acceleration * config.simTimeStep);
+
+  //   if (speed <= 0) {
+  //     speed = 0;
+  //     state = std::make_unique<StateTurning>();
+  //   }
+  // }
+  // else if (newTarget != target) {
+  //   // Змінюємо ціль
+  //   keyChangeTarget = true;
+  //   target = newTarget;  // Оновлюємо внутрішню ціль дрона, щоб не заходити сюди щоразу
+
+  //   // Перевіряємо чи кут напрямку в межах нової цілі
+  //   if (needRotation(targetAngle, config.turnThreshold)) {
+  //     if (currentStateName == "TURNING") {
+  //       // Якщо false — ми закінчили поворот і починаємо рух
+  //       if (!updateRotation(targetAngle, config.turnThreshold)) {
+  //         currentNewStateName = "ACCELERATING";
+  //         state = std::make_unique<StateAccelerating>();
+  //       }
+  //     }
+  //     else {
+  //       updatePosition();
+  //       if (speed <= 0) {
+  //         speed = 0;
+  //         state = std::make_unique<StateTurning>();
+  //         currentNewStateName = "TURNING";
+  //       }
+  //       else {
+  //         state = std::make_unique<StateDecelerating>();
+  //         currentNewStateName = "DECELERATING";
+  //       }
+  //     }
+  //   }
+  //   else {
+  //     updateRotation(targetAngle);  // Обертання без порогу
+  //     updatePosition();
+
+  //     // Збільшуємо швидкість
+  //     speed += (config.acceleration * config.simTimeStep);
+
+  //     if (speed >= config.attackSpeed) {
+  //       speed = config.attackSpeed;
+  //       state = std::make_unique<StateMoving>();
+  //       currentNewStateName = "MOVING";
+  //     }
+  //     else {
+  //       state = std::make_unique<StateAccelerating>();
+  //     }
+  //   }
+  // }
+  // else {
+  //   // Звичайний рух до поточної цілі
+  //   if (currentStateName == "ACCELERATING") {
+  //     // Обертаємо паралельно руху
+  //     updateRotation(targetAngle);  // Обертання без порогу
+  //     updatePosition();
+
+  //     speed += (config.acceleration * config.simTimeStep);
+  //     if (speed >= config.attackSpeed) {
+  //       speed = config.attackSpeed;
+  //       // currentNewStateName = "MOVING";
+  //       state = std::make_unique<StateMoving>();
+  //     }
+  //   }
+  //   else if (currentStateName == "TURNING") {
+  //     if (!updateRotation(targetAngle, config.turnThreshold)) {
+  //       // currentNewStateName = "ACCELERATING";
+  //       state = std::make_unique<StateAccelerating>();
+  //     }
+  //   }
+  //   else if (currentStateName == "MOVING") {
+  //     // Рівномірний рух з мінімальним обертанням
+  //     updateRotation(targetAngle);
+  //     updatePosition();
+  //   }
+  // }
+
   std::string currentStateName = state->name();
+
+  // =================================================================
+  // ЕТАП 1: Реакція на зміну цілі (Переривання)
+  // =================================================================
+  // Якщо ми летимо і ціль змінилася - реагуємо. (STOPPED і DECELERATING ігнорують)
+  if (currentStateName != "STOPPED" && currentStateName != "DECELERATING" && newTarget != target) {
+    target = newTarget;
+    keyChangeTarget = true;
+
+    // Якщо для нової цілі треба сильно розвернутися, а ми летимо на всіх парах - треба гальмувати
+    if (needRotation(targetAngle, config.turnThreshold)) {
+      if (currentStateName == "MOVING" || currentStateName == "ACCELERATING") {
+        state = std::make_unique<StateDecelerating>();
+      }
+    }
+  }
+
+  // =================================================================
+  // ЕТАП 2: Виконання фізики відповідно до стану (Плоска структура)
+  // =================================================================
   if (currentStateName == "STOPPED") {
-    // updateRotation повертає true, якщо поворот ще триває
     if (updateRotation(targetAngle, config.turnThreshold)) {
       state = std::make_unique<StateTurning>();
     }
     else {
       state = std::make_unique<StateAccelerating>();
+      return false;
     }
   }
   else if (currentStateName == "DECELERATING") {
-    // Зупиняємо дрон до повної зупинки, щоб потім його повернути
     updatePosition();
     speed -= (config.acceleration * config.simTimeStep);
-
     if (speed <= 0) {
       speed = 0;
       state = std::make_unique<StateTurning>();
     }
   }
-  else if (newTarget != target) {
-    // Змінюємо ціль
-    keyChangeTarget = true;
-    target = newTarget;  // Оновлюємо внутрішню ціль дрона, щоб не заходити сюди щоразу
-
-    // Перевіряємо чи кут напрямку в межах нової цілі
-    if (needRotation(targetAngle, config.turnThreshold)) {
-      if (currentStateName == "TURNING") {
-        // Якщо false — ми закінчили поворот і починаємо рух
-        if (!updateRotation(targetAngle, config.turnThreshold)) {
-          currentNewStateName = "ACCELERATING";
-          state = std::make_unique<StateAccelerating>();
-        }
-      }
-      else {
-        updatePosition();
-        if (speed <= 0) {
-          speed = 0;
-          state = std::make_unique<StateTurning>();
-          currentNewStateName = "TURNING";
-        }
-        else {
-          state = std::make_unique<StateDecelerating>();
-          currentNewStateName = "DECELERATING";
-        }
-      }
-    }
-    else {
-      currentStateName = (speed <= config.attackSpeed) ? "ACCELERATING" : "MOVING";
-      updateRotation(targetAngle);  // Обертання без порогу
-      updatePosition();
-
-      // Збільшуємо швидкість
-      speed += (config.acceleration * config.simTimeStep);
-      if (speed >= config.attackSpeed) {
-        speed = config.attackSpeed;
-        state = std::make_unique<StateMoving>();
-        currentNewStateName = "MOVING";
-      }
+  else if (currentStateName == "TURNING") {
+    if (!updateRotation(targetAngle, config.turnThreshold)) {
+      state = std::make_unique<StateAccelerating>();  // Повернулися? Газуємо!
+      return false;
     }
   }
-  else {
-    // Звичайний рух до поточної цілі
-    if (currentStateName == "ACCELERATING") {
-      // Обертаємо паралельно руху
-      updateRotation(targetAngle);  // Обертання без порогу
-      updatePosition();
-
-      speed += (config.acceleration * config.simTimeStep);
-      if (speed >= config.attackSpeed) {
-        speed = config.attackSpeed;
-        // currentNewStateName = "MOVING";
-        state = std::make_unique<StateMoving>();
-      }
-    }
-    else if (currentStateName == "TURNING") {
-      if (!updateRotation(targetAngle, config.turnThreshold)) {
-        // currentNewStateName = "ACCELERATING";
-        state = std::make_unique<StateAccelerating>();
-      }
-    }
-    else if (currentStateName == "MOVING") {
-      // Рівномірний рух з мінімальним обертанням
-      updateRotation(targetAngle);
-      updatePosition();
+  else if (currentStateName == "ACCELERATING") {
+    updateRotation(targetAngle);  // Легке підрулювання
+    updatePosition();
+    speed += (config.acceleration * config.simTimeStep);
+    if (speed >= config.attackSpeed) {
+      speed = config.attackSpeed;
+      state = std::make_unique<StateMoving>();
     }
   }
+  else if (currentStateName == "MOVING") {
+    updateRotation(targetAngle);  // Легке підрулювання
+    updatePosition();
+  }
+
+  return true;
 }

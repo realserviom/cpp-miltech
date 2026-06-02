@@ -29,5 +29,5 @@ public:
 
     float calculateSmallArrivalTime(float distance) const;
 
-    void move(int newTarget, float targetAngle, bool& keyChangeTarget);
+    bool move(int newTarget, float targetAngle, bool& keyChangeTarget);
 };

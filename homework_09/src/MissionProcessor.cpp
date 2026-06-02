@@ -98,7 +98,8 @@ void MissionProcessor::executeMission()
   // ініціалізація параметрів дрона і початкових параметрів руху
   Drone curMyDrone = init(myDrone, ammo, numberCounterInTimeSpot, numberOfTargets);
 
-  int counter = 0;                        // лічильник
+  int iteration = 0;                      // лічильник ітерацій
+  int counter = 0;                        // лічильник часу
   bool keyChangeTarget = true;            // мітка зміни дрона
   std::vector<SimStep> steps(MAX_STEPS);  // Масив кроків для симуляції
 
@@ -313,15 +314,20 @@ void MissionProcessor::executeMission()
       }
     }
 
-    curMyDrone.move(newTarget, targetAngles[newTarget], keyChangeTarget);
-    curMyDrone.target = newTarget;
+    bool workingIteration = curMyDrone.move(newTarget, targetAngles[newTarget], keyChangeTarget);
+
+    if (!workingIteration) {
+      iteration++;
+      continue;  // Повертаємось на початок циклу. simStep і час НЕ збільшуються!
+    }
 
     // ################ the end ################
 
     counter++;
+    iteration++;
 
-    if (counter > MAX_STEPS) {
-      LOG("============== спрацював автомат ми перевищили ліміт циклів ==============");
+    if (iteration > MAX_STEPS) {
+      LOG("============== спрацював автомат ми перевищили ліміт ітерацій  ==============");
       break;
     }
   }
