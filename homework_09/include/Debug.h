@@ -1,8 +1,10 @@
+#include <iostream>
+
 #ifndef DEBUG_H
 #define DEBUG_H
 
 #define ENABLE_LOG	1
-#define ENABLE_DEBUG 0
+#define ENABLE_DEBUG 1
 
 #if ENABLE_LOG
   #define LOG(msg) std::cout << "[LOG] " << msg << std::endl

@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <cmath>
 #include "interfaces/IDroneState.h"
+#include "states/StateDecelerating.h"
 
 Drone MissionProcessor::init(DroneConfig& myDrone, const AmmoParams*& ammo, int& numberCounterInTimeSpot, int& numberOfTargets)
 {
@@ -98,9 +99,8 @@ void MissionProcessor::executeMission()
   // ініціалізація параметрів дрона і початкових параметрів руху
   Drone curMyDrone = init(myDrone, ammo, numberCounterInTimeSpot, numberOfTargets);
 
-  int iteration = 0;                      // лічильник ітерацій
   int counter = 0;                        // лічильник часу
-  bool keyChangeTarget = true;            // мітка зміни дрона
+  bool canChangeTarget = true;            // мітка чи є дозвіл міняти ціль
   std::vector<SimStep> steps(MAX_STEPS);  // Масив кроків для симуляції
 
   float t_pol;               // час польоту
@@ -150,7 +150,7 @@ void MissionProcessor::executeMission()
     DEBUG("--- curDroneState = " << curMyDrone.state->name() << " ---");
     DEBUG("--- currentTarget = " << curMyDrone.target << " ---");
 
-    if (keyChangeTarget) {
+    if (canChangeTarget) {
       for (int i = 0; i < numberOfTargets; i++) {
         Coord targetPos = m_targetProvider->getTargetPositionInCounter(i, counter);
 
@@ -179,7 +179,7 @@ void MissionProcessor::executeMission()
         // Хоча при умові що пороговий кут в межаш похибки тоді можна міняти але з іншої сторони ми можемо перепригувати
         // із цілі на ціль що дасть велику похибку (цікаво як роблять виробники ПЗ для ППО ?)
         if (t < myDrone.arrayTimeStep) {
-          keyChangeTarget = false;
+          canChangeTarget = false;
 
           int timeIteration = m_targetProvider->getTimeIteration(counter);
           int nextIteration = m_targetProvider->getNextIteration(timeIteration);
@@ -237,13 +237,9 @@ void MissionProcessor::executeMission()
 
     int newTarget = getIndexByMinValue(targetTimes);
 
-    if (newTarget != curMyDrone.target) {
-      DEBUG("Нова ціль: " << newTarget);
-    }
-
     // Умова при якій програма находить точку скиду
     // Координа падіння боєприпасу дрона через t_pol секунд
-    // Але t_pol дрона в нас досягається при досягані швидкості атаки якщо швидкість менша треба перераховувати
+    // Але t_pol дрона в нас досягається при досягані швидкості атаки якщо швидкість менша тоді треба перераховувати
     // В цій задачі ми не будемо перераховувати цей час. Будемо перелітати і йти на друге коло польоту на ціль
     // якщо відстані не співпадуть
 
@@ -291,48 +287,39 @@ void MissionProcessor::executeMission()
 
     double finalDistance = length(delta);
 
-    if (finalDistance <= myDrone.hitRadius - myDrone.hitRadius / 3) {
+    if (finalDistance <= myDrone.hitRadius / 2) {
       LOG("--- БОЄПРИПАС СКИНУТИЙ! Ураження : " << std::fixed << std::setprecision(2) << finalDistance << " м від цілі номер " << newTarget
                                                 << " ---");
       DEBUG("--- remainderTimeInSpot: " << std::setprecision(4) << remainderTimeInSpot << " ---");
       DEBUG("--- curDrone: (" << curMyDrone.pos.x << ", " << curMyDrone.pos.y << ") ---");
       DEBUG("--- targetAmmo: (" << targetAmmoPos.x << ", " << targetAmmoPos.y << ") ---");
       DEBUG("--- targetEndPoint: (" << targetEndPoint.x << ", " << targetEndPoint.y << ") ---");
-
       DEBUG("--- [futurePos]: (" << dataPosFutureIteration.x << ", " << dataPosFutureIteration.y << ") ---");
       DEBUG("--- [nextFuturePos]: (" << dataPosNextFutureIteration.x << ", " << dataPosNextFutureIteration.y << ") ---");
       break;
     }
 
-    // якщо в нас відстань між дроном і цілю почала збільшуватися і різниця більше ніж на 2 метри
+    // якщо в нас відстань між дроном і цілю почала збільшуватися
     // тоді включаємо пошук цілі знову тому що дрон не вийшов на позицію
-    if (!keyChangeTarget && prevFinalDistance < (finalDistance - 2)) {
-      keyChangeTarget = true;
+    if (length(curMyDrone.pos - targetEndPoint) > distDuringFall) {
+      canChangeTarget = true;
     }
 
-    bool workingIteration = curMyDrone.move(newTarget, targetAngles[newTarget], keyChangeTarget);
-
-    if (!workingIteration) {
-      iteration++;
-      continue;  // Повертаємось на початок циклу. counter не збільшуються але ціль вже інша
-    }
+    curMyDrone.move(newTarget, canChangeTarget, targetAngles[newTarget]);
 
     prevFinalDistance = finalDistance;
 
     addingStep = true;
 
-    // ################ the end ################
-
     counter++;
-    iteration++;
 
-    if (iteration > MAX_STEPS) {
+    if (counter > MAX_STEPS) {
       LOG("============== спрацював ліміт ітерацій  ==============");
       break;
     }
   }
 
-  if (iteration <= MAX_STEPS) {
+  if (counter <= MAX_STEPS) {
     saveOutputFileByStep(counter - 1, steps);
     LOG("--- МІСІЮ ЗАВЕРШЕНО ---");
   }

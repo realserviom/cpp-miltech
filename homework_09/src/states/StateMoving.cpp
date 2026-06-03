@@ -1,9 +1,12 @@
 #include "states/StateMoving.h"
-#include "states/StateAccelerating.h"
 
-std::unique_ptr<IDroneState> StateMoving::execute(Drone& curMyDrone)
+std::unique_ptr<IDroneState> StateMoving::execute(Drone& curMyDrone, const float& targetAngle)
 {
-  return std::make_unique<StateAccelerating>();
+  // Рівномірний рух з мінімальним обертанням
+  curMyDrone.updateRotation(targetAngle);
+  curMyDrone.updatePosition();
+
+  return std::make_unique<StateMoving>();
 }
 
 const std::string StateMoving::name() const

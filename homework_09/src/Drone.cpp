@@ -2,10 +2,7 @@
 #include <cmath>
 #include "interfaces/IDroneState.h"
 #include "states/StateStopped.h"
-#include "states/StateAccelerating.h"
 #include "states/StateDecelerating.h"
-#include "states/StateTurning.h"
-#include "states/StateMoving.h"
 #include <iostream>
 #include "Debug.h"
 
@@ -17,7 +14,7 @@ Drone::Drone(const DroneConfig& config)
   speed = 0.0f;
   angularState = config.initialDir;
   state = std::make_unique<StateStopped>();
-  target = 0;
+  target = -1;
   dropPoint = {0, 0};
   aimPoint = {0, 0};
   predictedTarget = {0, 0};
@@ -118,73 +115,35 @@ float Drone::calculateSmallArrivalTime(float distance) const
   return (-speed + std::sqrt(D)) / config.acceleration;
 }
 
-// Реалізація методу move
-bool Drone::move(int newTarget, float targetAngle, bool& keyChangeTarget)
+void Drone::changeTarget(const int& newTarget, const bool& canChangeTarget, const float& targetAngle)
 {
-  // State == STOPPED тільки коли стартує
   std::string currentStateName = state->name();
 
-  // =================================================================
-  // ЕТАП 1: Реакція на зміну цілі
-  // =================================================================
-  // Якщо ми летимо і ціль змінилася - реагуємо. (STOPPED і DECELERATING ігнорують)
-  if (currentStateName != "STOPPED" && currentStateName != "DECELERATING" && newTarget != target) {
+  if (currentStateName != "STOPPED" && currentStateName != "DECELERATING" && canChangeTarget && newTarget != target) {
     target = newTarget;
-    keyChangeTarget = true;
+    DEBUG("Нова ціль: " << newTarget);
 
     // Якщо для нової цілі треба сильно розвернутися, а ми летимо на всіх парах або прискорюємося - треба гальмувати
     if (needRotation(targetAngle, config.turnThreshold)) {
       if (currentStateName == "MOVING" || currentStateName == "ACCELERATING") {
+        // auto nextState = std::make_unique<StateDecelerating>();
         state = std::make_unique<StateDecelerating>();
         DEBUG("--- Сповільнюємося!!!! Треба повертатися! ---");
-        return false;
       }
-      // В цьому місці код продовжує виконуватися і переходить до блоку currentStateName == "TURNING"
-      // тому ми не виходимо із метода з false
     }
   }
+}
 
-  // =================================================================
-  // ЕТАП 2: Виконання фізики відповідно до стану
-  // =================================================================
-  if (currentStateName == "STOPPED") {
-    if (updateRotation(targetAngle, config.turnThreshold)) {
-      state = std::make_unique<StateTurning>();
-    }
-    else {
-      state = std::make_unique<StateAccelerating>();
-      DEBUG("--- Повертатися не треба! Почали! ---");
-      return false;
-    }
-  }
-  else if (currentStateName == "DECELERATING") {
-    updatePosition();
-    speed -= (config.acceleration * config.simTimeStep);
-    if (speed <= 0) {
-      speed = 0;
-      state = std::make_unique<StateTurning>();
-    }
-  }
-  else if (currentStateName == "TURNING") {
-    if (!updateRotation(targetAngle, config.turnThreshold)) {
-      state = std::make_unique<StateAccelerating>();  // Повернулися? Газуємо!
-      DEBUG("--- Повернулися! Газуємо! ---");
-      return false;
-    }
-  }
-  else if (currentStateName == "ACCELERATING") {
-    updateRotation(targetAngle);  // Легке підрулювання
-    updatePosition();
-    speed += (config.acceleration * config.simTimeStep);
-    if (speed >= config.attackSpeed) {
-      speed = config.attackSpeed;
-      state = std::make_unique<StateMoving>();
-    }
-  }
-  else if (currentStateName == "MOVING") {
-    updateRotation(targetAngle);  // Легке підрулювання
-    updatePosition();
-  }
+// Реалізація методу move
+void Drone::move(int& newTarget, const bool canChangeTarget, const float& targetAngle)
+{
+  // тут змінюємо ціль за певних умов
+  changeTarget(newTarget, canChangeTarget, targetAngle);
 
-  return true;
+  std::string currentStateName = state->name();
+
+  auto nextState = state->execute(*this, targetAngle);
+  if (nextState) {
+    state = std::move(nextState);
+  }
 }

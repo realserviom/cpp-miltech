@@ -1,14 +1,19 @@
-#include "states/StateStopped.h"
+#include "states/StateAccelerating.h"
 #include "states/StateTurning.h"
+#include "Debug.h"
 
-std::unique_ptr<IDroneState> StateTurning::execute(Drone& curMyDrone)
+std::unique_ptr<IDroneState> StateTurning::execute(Drone& curMyDrone, const float& targetAngle)
 {
-  return std::make_unique<StateStopped>();
+  if (!curMyDrone.updateRotation(targetAngle, curMyDrone.config.turnThreshold)) {
+    DEBUG("--- Повернулися! Газуємо! ---");
+    return std::make_unique<StateAccelerating>();  // Повернулися? Газуємо!
+  }
+
+  return std::make_unique<StateTurning>();
 }
 
 const std::string StateTurning::name() const
 {
-  // default:           return "UNKNOWN";
   return "TURNING";
 }
 
