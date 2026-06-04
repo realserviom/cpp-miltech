@@ -3,6 +3,9 @@
 #define TYPES_H
 #include <stdlib.h>
 #include <string>
+#include <vector>
+#include <algorithm>
+#include <cassert>
 
 // імя боєприпасу
 
@@ -112,9 +115,6 @@ enum class LoaderType {
     FILE 
 };
 
-enum class SolverType {
-    ANALYTICAL
-};
-
+enum class SolverType { ANALYTICAL, TABLE };
 
 #endif

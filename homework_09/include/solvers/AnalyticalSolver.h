@@ -7,6 +7,6 @@ public:
     AnalyticalSolver() = default;
 
     double getDistDuringFall(float &t_pol, DroneConfig &myDrone, const AmmoParams *ammo) override;
-    float getTimePol(const float &d, const float &l, const float &m, const float &zd, const float &attackSpeed);
+    float getTimePol(const float &d, const float &l, const float &m, const float &zd, const float &attackSpeed) override;
     ~AnalyticalSolver() override = default;
 };
