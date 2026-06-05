@@ -1,0 +1,155 @@
+#pragma once
+#include <iostream>
+#include <fstream>
+#include <string>
+#include "types.h"
+#include "json.hpp"
+
+using json = nlohmann::json;
+
+enum class ProviderType { JSON };
+
+// інтерфейс
+class ITargetProvider {
+public:
+
+    virtual int getNextIteration(int &iteration) = 0;
+    virtual int getTimeIteration(int &counter) = 0;
+    virtual int getTargetCount() = 0;
+    virtual Coord getTargetPositionInCounter(int &index, int &counter) = 0;
+    virtual Coord getTargetPositionInIteration(int &index, int &timeIteration) = 0;
+    virtual Coord** getTargets() = 0;
+    virtual ~ITargetProvider() {}
+    virtual void init(int &numberCounterInTimeSpot) = 0;
+};
+
+// абстрактний клас
+class AbstractTargetProvider : public ITargetProvider {
+protected:
+    int m_targetCount = 0;
+    int m_timeSteps = 0;
+    int m_numberCounterInTimeSpot;
+    Coord** m_targets = nullptr; 
+
+public:
+    AbstractTargetProvider() {}
+
+    virtual void loadTargets() = 0;
+
+    void init(int &numberCounterInTimeSpot) override {
+        m_numberCounterInTimeSpot = numberCounterInTimeSpot;
+        std::cout << "Preparing targets...\n";
+        loadTargets(); 
+        std::cout << "Targets ready.\n";
+    }
+
+    virtual ~AbstractTargetProvider() override {}
+
+    int getTargetCount() override {
+        return m_targetCount;
+    }
+
+    Coord** getTargets() override {
+        return this->m_targets;
+    }
+    
+    int getTimeIteration(int &counter) override {
+        
+        const int wholeRangeCounters = this->m_numberCounterInTimeSpot * this->m_timeSteps; 
+        
+        // якщо в нас поточна ітерація більша чи рівна wholeRangeCounters тоді берем остачу від цілочисленого
+        // ділення на wholeRangeCounters
+        const int new_counter = counter >= wholeRangeCounters ?
+            static_cast<int>(counter % wholeRangeCounters) : counter;
+
+        return static_cast<int>(std::floor(new_counter / this->m_numberCounterInTimeSpot));
+    }
+
+    int getNextIteration(int &iteration) override {
+    
+        if (iteration == (this->m_timeSteps - 1)) {
+            return 0;
+        }
+        
+        return iteration + 1;
+    }
+
+    Coord getTargetPositionInCounter(int &index, int &counter) override {
+        int timeIteration = this->getTimeIteration(counter);
+        
+        if (this->m_targets && index >= 0 && index < m_targetCount) {
+            return this->m_targets[index][timeIteration];
+        }
+        return Coord{0.0, 0.0};
+    }
+
+    Coord getTargetPositionInIteration(int &index, int &timeIteration) override {
+        
+        if (this->m_targets && index >= 0 && index < m_targetCount) {
+            return this->m_targets[index][timeIteration];
+        }
+        return Coord{0.0, 0.0};
+    }
+
+};
+
+//  Реалізація (JsonTargetProvider)
+class JsonTargetProvider : public AbstractTargetProvider {
+public:
+
+    std::string m_filePath;
+    JsonTargetProvider(const std::string& jsonFilePath) 
+        : m_filePath(jsonFilePath) {}
+
+    void loadTargets() override {
+        std::ifstream fin(m_filePath);
+
+        if (!fin.is_open()) {
+            throw std::runtime_error("Не вдалося відкрити файл конфігурації: " + m_filePath);
+        }
+        
+        json j;
+        try {
+            fin >> j;
+        } catch (const json::parse_error& e) {
+            throw std::runtime_error("Помилка парсингу файлу " + m_filePath + ": " + std::string(e.what()));
+            fin.close();
+        }
+
+        m_targetCount = j["targetCount"]; 
+        m_timeSteps = j["timeSteps"];
+
+        m_targets = new Coord*[m_targetCount];
+
+        for (int i = 0; i < m_targetCount; i++) {
+            m_targets[i] = new Coord[m_timeSteps];
+            auto& positionsJson = j["targets"][i]["positions"];
+            
+            for (int t = 0; t < m_timeSteps; t++) {
+                m_targets[i][t].x = positionsJson[t]["x"];
+                m_targets[i][t].y = positionsJson[t]["y"];
+            }
+        }
+        
+        fin.close();
+    }
+
+    virtual ~JsonTargetProvider() override {
+        if (m_targets != nullptr) {
+            for (int i = 0; i < m_targetCount; i++) {
+                delete[] m_targets[i];
+            }
+            delete[] m_targets;
+        }
+    }
+
+};
+
+inline ITargetProvider* createProvider(ProviderType type, const char* file_name) {
+    switch (type) {
+        case ProviderType::JSON:
+            return new JsonTargetProvider(file_name);
+        default:
+            return nullptr;
+    }
+}
