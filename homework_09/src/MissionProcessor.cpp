@@ -7,7 +7,6 @@
 #include <iomanip>
 #include <cmath>
 #include "interfaces/IDroneState.h"
-#include "states/StateDecelerating.h"
 
 Drone MissionProcessor::init(DroneConfig& myDrone, const AmmoParams*& ammo, int& numberCounterInTimeSpot, int& numberOfTargets)
 {
@@ -81,6 +80,19 @@ void MissionProcessor::setConfigLoader(std::unique_ptr<IConfigLoader> configLoad
   m_configLoader = std::move(configLoader);
 }
 
+void MissionProcessor::addStep(const int counter, Drone& mDrone)
+{
+  steps[counter] = {
+    {mDrone.pos.x, mDrone.pos.y},
+    mDrone.angularState,
+    mDrone.state->id(),
+    mDrone.target,
+    {mDrone.dropPoint.x, mDrone.dropPoint.y},
+    {mDrone.aimPoint.x, mDrone.aimPoint.y},
+    {mDrone.predictedTarget.x, mDrone.predictedTarget.y},
+  };
+}
+
 void MissionProcessor::executeMission()
 {
   if (!m_targetProvider || !m_solver || !m_configLoader) {
@@ -90,25 +102,25 @@ void MissionProcessor::executeMission()
 
   LOG("--- ПОЧАТОК МІСІЇ ---");
 
-  DroneConfig myDrone;
+  DroneConfig myDroneConfig;
 
   int numberCounterInTimeSpot = 0;
   int numberOfTargets = 0;
   const AmmoParams* ammo = nullptr;
 
   // ініціалізація параметрів дрона і початкових параметрів руху
-  Drone curMyDrone = init(myDrone, ammo, numberCounterInTimeSpot, numberOfTargets);
+  Drone curMyDrone = init(myDroneConfig, ammo, numberCounterInTimeSpot, numberOfTargets);
 
-  int counter = 0;                        // лічильник часу
-  bool canChangeTarget = true;            // мітка чи є дозвіл міняти ціль
-  std::vector<SimStep> steps(MAX_STEPS);  // Масив кроків для симуляції
+  int counter = 0;              // лічильник часу
+  bool canChangeTarget = true;  // мітка чи є дозвіл міняти ціль
+  // std::vector<SimStep> steps(MAX_STEPS);  // Масив кроків для симуляції
 
   float t_pol;               // час польоту
   float distDuringFall = 0;  // дистанція падіння
   float prevFinalDistance = 10000000;  // відхилення координат падіння боєприпаса від цілі в попередньому кроці
 
   try {
-    distDuringFall = m_solver->getDistDuringFall(t_pol, myDrone, ammo);
+    distDuringFall = m_solver->getDistDuringFall(t_pol, myDroneConfig, ammo);
   }
   catch (const std::runtime_error& e) {
     throw std::runtime_error("[AnalyticalSolver] КРИТИЧНА ПОМИЛКА: " + std::string(e.what()));
@@ -121,23 +133,7 @@ void MissionProcessor::executeMission()
     throw std::runtime_error("Горизонтальна дистанція повинна бути додатня");
   }
 
-  bool addingStep = false;
-
   while (true) {
-    // запис даних в масиви з яких будемо формувати вихідний файл
-    // при першій ітерації не записуємо точку в масив
-    if (addingStep) {
-      steps[counter - 1] = {
-        {curMyDrone.pos.x, curMyDrone.pos.y},
-        curMyDrone.angularState,
-        curMyDrone.state->id(),
-        curMyDrone.target,
-        {curMyDrone.dropPoint.x, curMyDrone.dropPoint.y},
-        {curMyDrone.aimPoint.x, curMyDrone.aimPoint.y},
-        {curMyDrone.predictedTarget.x, curMyDrone.predictedTarget.y},
-      };
-    }
-
     // розраховуємо всі дані для визначення поточної найближчої цілі
     const int timeIteration = m_targetProvider->getTimeIterationByCounter(counter);
 
@@ -178,7 +174,7 @@ void MissionProcessor::executeMission()
         // в цьому випадку ми вже ціль не можемо поміняти тому що недоцільно зупиняти і набирати знову швидкість
         // Хоча при умові що пороговий кут в межаш похибки тоді можна міняти але з іншої сторони ми можемо перепригувати
         // із цілі на ціль що дасть велику похибку (цікаво як роблять виробники ПЗ для ППО ?)
-        if (t < myDrone.arrayTimeStep && i == curMyDrone.target) {
+        if (t < myDroneConfig.arrayTimeStep && i == curMyDrone.target) {
           canChangeTarget = false;
 
           LOG("canChangeTarget: false");
@@ -188,8 +184,8 @@ void MissionProcessor::executeMission()
 
           Coord targetNextPos = m_targetProvider->getTargetPositionInIteration(i, nextIteration);
 
-          float Vxtarget = (targetNextPos.x - targetPos.x) / myDrone.arrayTimeStep;
-          float Vytarget = (targetNextPos.y - targetPos.y) / myDrone.arrayTimeStep;
+          float Vxtarget = (targetNextPos.x - targetPos.x) / myDroneConfig.arrayTimeStep;
+          float Vytarget = (targetNextPos.y - targetPos.y) / myDroneConfig.arrayTimeStep;
 
           // знайшли зміщення маючи час руху до цілі
           double targetXEndPoint = targetPos.x + (Vxtarget * t);
@@ -206,7 +202,7 @@ void MissionProcessor::executeMission()
           // а з іншої сторони в цей момент дрон вже має бути направлений на ціль
           float t_new = curMyDrone.calculateSmallArrivalTime(length - distDuringFall > 0 ? length - distDuringFall : length);
 
-          if (std::abs(t_new - t) < myDrone.timeHitRadius) {
+          if (std::abs(t_new - t) < myDroneConfig.timeHitRadius) {
             t = t_new;
           }
           else if (t_new < t) {
@@ -239,8 +235,7 @@ void MissionProcessor::executeMission()
     }
 
     // визначаємо ціль за мінімальним часом підльоту
-
-    int newTarget = getIndexByMinValue(targetTimes);
+    int newTarget = canChangeTarget ? getIndexByMinValue(targetTimes) : curMyDrone.target;
 
     // Умова при якій програма находить точку скиду
     // Координа падіння боєприпасу дрона через t_pol секунд
@@ -253,7 +248,7 @@ void MissionProcessor::executeMission()
     Coord droneDir = {(float)cos(curMyDrone.angularState), (float)sin(curMyDrone.angularState)};
 
     // мітка часу коли боєприпас долетить до землі якщо буде випущений в даний момент
-    float Tt = counter * myDrone.simTimeStep + t_pol;
+    float Tt = counter * myDroneConfig.simTimeStep + t_pol;
 
     // ітерація координати (кожних myDrone.arrayTimeStep секунд нова координата)
     int futureIterationForTarget = m_targetProvider->getTimeIterationByTime(Tt, curMyDrone.config.arrayTimeStep);
@@ -261,7 +256,7 @@ void MissionProcessor::executeMission()
     int nextFutureIterationForTarget = m_targetProvider->getNextIteration(futureIterationForTarget);
 
     // час що залишився
-    float remainderTimeInSpot = std::fmod(Tt, myDrone.arrayTimeStep);
+    float remainderTimeInSpot = std::fmod(Tt, myDroneConfig.arrayTimeStep);
 
     Coord targetPosIteration = m_targetProvider->getTargetPositionInIteration(newTarget, futureIterationForTarget);
     Coord targetPosNextIteration = m_targetProvider->getTargetPositionInIteration(newTarget, nextFutureIterationForTarget);
@@ -269,7 +264,7 @@ void MissionProcessor::executeMission()
     Coord deltaTargetPos = targetPosNextIteration - targetPosIteration;
 
     // швидкість Vtarget це швидкість зміни координатів
-    Coord Vtarget = deltaTargetPos / myDrone.arrayTimeStep;
+    Coord Vtarget = deltaTargetPos / myDroneConfig.arrayTimeStep;
 
     // прогнозована позиція цілі
     curMyDrone.predictedTarget = targetPosIteration + Vtarget * remainderTimeInSpot;
@@ -294,13 +289,16 @@ void MissionProcessor::executeMission()
     if (finalDistance <= curMyDrone.config.hitRadius / 10 ||
         (prevFinalDistance < finalDistance && !canChangeTarget && prevFinalDistance <= curMyDrone.config.hitRadius / 10)) {
       // встановлюємо нову ціль
+      // TODO це може не працювати
       curMyDrone.target = newTarget;
+
+      addStep(counter, curMyDrone);
 
       LOG("--- БОЄПРИПАС СКИНУТИЙ! Ураження : " << std::fixed << std::setprecision(2) << finalDistance << " м від цілі номер " << newTarget
                                                 << " ---");
       DEBUG("--- prevFinalDistance: " << std::setprecision(4) << prevFinalDistance << " м.  ---");
       DEBUG("--- Tt: " << std::setprecision(4) << Tt << " ---");
-      DEBUG("--- myDrone.arrayTimeStep: " << std::setprecision(4) << myDrone.arrayTimeStep << " ---");
+      DEBUG("--- myDrone.arrayTimeStep: " << std::setprecision(4) << myDroneConfig.arrayTimeStep << " ---");
       DEBUG("--- remainderTimeInSpot: " << std::setprecision(4) << remainderTimeInSpot << " ---");
       DEBUG("--- dropPoint: (" << curMyDrone.pos.x << ", " << curMyDrone.pos.y << ") ---");
       DEBUG("--- aimPoint: (" << curMyDrone.aimPoint.x << ", " << curMyDrone.aimPoint.y << ") ---");
@@ -308,6 +306,8 @@ void MissionProcessor::executeMission()
 
       break;
     }
+
+    addStep(counter, curMyDrone);
 
     prevFinalDistance = finalDistance;
 
@@ -321,8 +321,6 @@ void MissionProcessor::executeMission()
 
     // зміна цілі і прорахунок руху дрона
     curMyDrone.move(newTarget, canChangeTarget, targetAngles[newTarget]);
-
-    addingStep = true;
 
     counter++;
 

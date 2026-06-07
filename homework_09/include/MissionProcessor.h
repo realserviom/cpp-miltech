@@ -1,10 +1,12 @@
 #pragma once
-#include "Drone.h"
 #include "./interfaces/IBallisticSolver.h"
 #include "./interfaces/IConfigLoader.h"
 #include "./interfaces/ITargetProvider.h"
 #include <vector>
 #include <memory>
+#include "Debug.h"
+#include "constants.h"
+#include "Drone.h"
 
 class MissionProcessor {
 private:
@@ -25,6 +27,8 @@ private:
   Drone init(DroneConfig& myDrone, const AmmoParams*& ammo, int& numberCounterInTimeSpot, int& numberOfTargets);
 
 public:
+  std::vector<SimStep> steps{MAX_STEPS};  // Масив кроків для симуляції
+
   MissionProcessor(std::unique_ptr<ITargetProvider> targetProvider,
                    std::unique_ptr<IBallisticSolver> solver,
                    std::unique_ptr<IConfigLoader> configLoader)
@@ -38,4 +42,5 @@ public:
   void setBallisticSolver(std::unique_ptr<IBallisticSolver> solver);
   void setConfigLoader(std::unique_ptr<IConfigLoader> configLoader);
   void executeMission();
+  void addStep(const int counter, Drone& mDrone);
 };
