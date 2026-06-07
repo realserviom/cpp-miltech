@@ -4,10 +4,13 @@
 
 class AbstractTargetProvider : public ITargetProvider {
 protected:
-    int m_targetCount = 0;
-    int m_timeSteps = 0;
-    int m_numberCounterInTimeSpot;
-    Coord** m_targets = nullptr; 
+  // кількість цілей
+  int m_targetCount = 0;
+  // кількість часових кроків для кожної цілі
+  int m_timeSteps = 0;
+  // кількість ітерацій в одному часовому кроці
+  int m_numberCounterInTimeSpot;
+  Coord **m_targets = nullptr;
 
 public:
     ~AbstractTargetProvider() override = default;
@@ -20,7 +23,9 @@ public:
 
     Coord** getTargets() override;
 
-    int getTimeIteration(int &counter) override;
+    int getTimeIterationByCounter(int &counter) override;
+
+    int getTimeIterationByTime(float time, const float &arrayTimeStep) override;
 
     int getNextIteration(int &iteration) override;
 
