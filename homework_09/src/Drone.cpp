@@ -5,6 +5,7 @@
 #include "states/StateDecelerating.h"
 #include <iostream>
 #include "Debug.h"
+#include "functions.h"
 
 Drone::Drone(const DroneConfig& config)
   : config(config)
@@ -14,7 +15,7 @@ Drone::Drone(const DroneConfig& config)
   speed = 0.0f;
   angularState = config.initialDir;
   state = std::make_unique<StateStopped>();
-  target = -1;
+  target = 0;
   dropPoint = {0, 0};
   aimPoint = {0, 0};
   predictedTarget = {0, 0};
@@ -115,13 +116,18 @@ float Drone::calculateSmallArrivalTime(float distance) const
   return (-speed + std::sqrt(D)) / config.acceleration;
 }
 
-void Drone::changeTarget(const int& newTarget, const bool& canChangeTarget, const float& targetAngle)
+float Drone::changeTarget(const std::vector<float> targetTimes, const bool& canChangeTarget, const std::vector<float> targetAngles)
 {
   std::string currentStateName = state->name();
 
+  const float newTarget = getIndexByMinValue(targetTimes);
+
+  float targetAngle = targetAngles[target];
+
   if (currentStateName != "STOPPED" && currentStateName != "DECELERATING" && canChangeTarget && newTarget != target) {
-    target = newTarget;
     DEBUG("Нова ціль: " << newTarget);
+    target = newTarget;
+    targetAngle = targetAngles[newTarget];
 
     // Якщо для нової цілі треба сильно розвернутися, а ми летимо на всіх парах або прискорюємося - треба гальмувати
     if (needRotation(targetAngle, config.turnThreshold)) {
@@ -132,13 +138,15 @@ void Drone::changeTarget(const int& newTarget, const bool& canChangeTarget, cons
       }
     }
   }
+
+  return targetAngle;
 }
 
 // Реалізація методу move
-void Drone::move(int& newTarget, const bool canChangeTarget, const float& targetAngle)
+void Drone::move(const std::vector<float> targetTimes, const bool canChangeTarget, const std::vector<float> targetAngles)
 {
   // тут змінюємо ціль за певних умов
-  changeTarget(newTarget, canChangeTarget, targetAngle);
+  const float targetAngle = changeTarget(targetTimes, canChangeTarget, targetAngles);
 
   std::string currentStateName = state->name();
 

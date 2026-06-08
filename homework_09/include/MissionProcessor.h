@@ -38,6 +38,12 @@ public:
   {
   }
 
+  void fillArrays(bool& canChangeTarget,
+                  const int& numberOfTargets,
+                  const int& counter,
+                  const Drone& curMyDrone,
+                  const DroneConfig& myDroneConfig,
+                  const float& distDuringFall);
   void setTargetProvider(std::unique_ptr<ITargetProvider> targetProvider);
   void setBallisticSolver(std::unique_ptr<IBallisticSolver> solver);
   void setConfigLoader(std::unique_ptr<IConfigLoader> configLoader);

@@ -74,12 +74,13 @@ int getIndexByMinValue(const std::vector<float>& targetTimes)
 void saveOutputFileByStep(int length, const std::vector<SimStep>& steps)
 {
   json out;
-  out["totalSteps"] = length + 1;
+  out["totalSteps"] = length;
 
-  printf("============== length = %d ===========\n", length + 1);
+  printf("============== length = %d ===========\n", length);
+
   out["steps"] = json::array();
 
-  auto endIt = (static_cast<size_t>(length + 1) <= steps.size()) ? steps.begin() + (length + 1) : steps.end();
+  auto endIt = (static_cast<size_t>(length) <= steps.size()) ? steps.begin() + length : steps.end();
 
   for (auto it = steps.begin(); it != endIt; ++it) {
     json stepEntry;

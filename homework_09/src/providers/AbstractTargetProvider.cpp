@@ -22,7 +22,7 @@ Coord **AbstractTargetProvider::getTargets()
   return this->m_targets;
 }
 
-int AbstractTargetProvider::getTimeIterationByCounter(int &counter)
+int AbstractTargetProvider::getTimeIterationByCounter(const int &counter)
 {
   const int wholeRangeCounters = this->m_numberCounterInTimeSpot * this->m_timeSteps;
 
@@ -52,12 +52,12 @@ int AbstractTargetProvider::getNextIteration(int &iteration)
   return iteration + 1;
 }
 
-Coord AbstractTargetProvider::getTargetPositionInCounter(int &index, int &counter)
+Coord AbstractTargetProvider::getTargetPositionInCounter(int &targetId, const int &counter)
 {
   int timeIteration = this->getTimeIterationByCounter(counter);
 
-  if (this->m_targets && index >= 0 && index < m_targetCount) {
-    return this->m_targets[index][timeIteration];
+  if (this->m_targets && targetId >= 0 && targetId < m_targetCount) {
+    return this->m_targets[targetId][timeIteration];
   }
   return Coord{0.0, 0.0};
 }

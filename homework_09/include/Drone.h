@@ -1,6 +1,7 @@
 #pragma once
 #include "Types.h"
 #include <memory>
+#include <vector>
 
 class IDroneState;
 
@@ -29,7 +30,7 @@ public:
 
     float calculateSmallArrivalTime(float distance) const;
 
-    void move(int& newTarget, const bool canChangeTarget, const float& targetAngle);
+    void move(const std::vector<float> targetTimes, const bool canChangeTarget, const std::vector<float> targetAngles);
 
-    void changeTarget(const int& newTarget, const bool& canChangeTarget, const float& targetAngle);
+    float changeTarget(const std::vector<float> targetTimes, const bool& canChangeTarget, const std::vector<float> targetAngles);
 };

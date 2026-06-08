@@ -23,13 +23,13 @@ public:
 
     Coord** getTargets() override;
 
-    int getTimeIterationByCounter(int &counter) override;
+    int getTimeIterationByCounter(const int &counter) override;
 
     int getTimeIterationByTime(float time, const float &arrayTimeStep) override;
 
     int getNextIteration(int &iteration) override;
 
-    Coord getTargetPositionInCounter(int &index, int &counter) override;
+    Coord getTargetPositionInCounter(int &targetId, const int &counter) override;
 
     Coord getTargetPositionInIteration(int &index, int &timeIteration) override;
 
