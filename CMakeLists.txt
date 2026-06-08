@@ -33,11 +33,11 @@ if(NOT CMAKE_CROSSCOMPILING)
 endif()
 
 # Домашні роботи. По мірі появи додаємо кожну окремим add_subdirectory.
-# add_subdirectory(homework_03)
-# add_subdirectory(homework_04)
-# add_subdirectory(homework_05)
-# add_subdirectory(homework_08)
-# add_subdirectory(homework_06)
+add_subdirectory(homework_03)
+add_subdirectory(homework_04)
+add_subdirectory(homework_05)
+add_subdirectory(homework_08)
+add_subdirectory(homework_06)
 add_subdirectory(homework_09)
 
 # Demo-код для заняття 2.4: локальне і віддалене відлагодження через GDB.
