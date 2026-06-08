@@ -18,3 +18,5 @@ Dockerfile text eol=lf
 *.zip binary
 *.tar binary
 *.gz binary
+
+homework_09/data/*.json linguist-generated=true
