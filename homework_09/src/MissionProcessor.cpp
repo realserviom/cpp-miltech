@@ -331,6 +331,6 @@ void MissionProcessor::executeMission()
 
   if (counter <= MAX_STEPS) {
     saveOutputFileByStep(counter + 1, steps);
-    LOG("--- МІСІЮ ЗАВЕРШЕНО ---");
+    LOG("--- МІСІЮ ЗАВЕРШЕНО!!! ---");
   }
 }
