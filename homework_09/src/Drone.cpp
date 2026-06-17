@@ -3,6 +3,10 @@
 #include "interfaces/IDroneState.h"
 #include "states/StateStopped.h"
 #include "states/StateDecelerating.h"
+#include "states/StateAccelerating.h"
+#include "states/StateTurning.h"
+#include "states/StateMoving.h"
+#include <cstddef>
 #include <iostream>
 #include "Debug.h"
 #include "functions.h"
@@ -15,20 +19,115 @@ Drone::Drone(const DroneConfig& config)
   speed = 0.0f;
   angularState = config.initialDir;
   state = std::make_unique<StateStopped>();
-  target = 0;
-  dropPoint = {0, 0};
-  aimPoint = {0, 0};
-  predictedTarget = {0, 0};
+  currentTargetAngle = config.initialDir;
 }
 
-bool Drone::updateRotation(float targetAngle, float turnThreshold)
+// === БАГАТОПОТОЧНИЙ ІНТЕРФЕЙС ===
+void Drone::start()
 {
-  float angleDiff = targetAngle - angularState;
+  running = true;
+  physicsThread = std::thread(&Drone::physicsLoop, this);
+}
+
+void Drone::stop()
+{
+  running = false;
+  if (physicsThread.joinable()) {
+    physicsThread.join();
+  }
+}
+
+bool Drone::isThreadReady() const
+{
+  return isReady;
+}
+
+void Drone::sendCommand(DroneCommand& cmd)
+{
+  commandQueue.push(std::move(cmd));
+}
+
+DroneTelemetry Drone::getTelemetry() const
+{
+  std::lock_guard<std::mutex> lock(stateMutex);
+  DroneTelemetry tel;
+  tel.pos = this->pos;
+
+  // Повертаємо нормалізований вектор швидкості
+  tel.normSpeed.x = std::cos(angularState) * speed;
+  tel.normSpeed.y = std::sin(angularState) * speed;
+  tel.speed = speed;
+  tel.angularState = angularState;
+  tel.stateId = state->id();
+  tel.stateName = state->name();
+  return tel;
+}
+
+// === ВНУТРІШНІЙ ЦИКЛ ПОТОКУ ФІЗИКИ ===
+void Drone::physicsLoop()
+{
+  isReady = true;
+
+  // Беремо абсолютний час старту симуляції
+  auto startTime = std::chrono::high_resolution_clock::now();
+
+  int stepCount = 0;
+  float dt = config.timeStep;
+
+  while (running) {
+    // 1. Перевіряємо чергу команд від MissionProcessor
+    DroneCommand cmd;
+    if (commandQueue.try_pop(cmd)) {
+      std::lock_guard<std::mutex> lock(stateMutex);
+      this->currentTargetAngle = cmd.targetAngle;
+
+      // Якщо місія вимагає інший стан, ніж поточний — перевизначаємо об'єкт
+      if (cmd.state != nullptr && (!state || state->id() != cmd.state->id())) {
+        state = std::move(cmd.state);
+        // if (cmd.stateId == DroneStateId::STOPPED)
+        //   state = std::make_unique<StateStopped>();
+        // else if (cmd.stateId == DroneStateId::ACCELERATING)
+        //   state = std::make_unique<StateAccelerating>();
+        // else if (cmd.stateId == DroneStateId::MOVING)
+        //   state = std::make_unique<StateMoving>();
+        // else if (cmd.stateId == DroneStateId::DECELERATING)
+        //   state = std::make_unique<StateDecelerating>();
+        // else if (cmd.stateId == DroneStateId::TURNING)
+        //   state = std::make_unique<StateTurning>();
+      }
+    }
+
+    // Рахуємо фізичний крок під м'ютексом
+    {
+      std::lock_guard<std::mutex> lock(stateMutex);
+      this->move();
+    }
+
+    // Крок виконано успішно
+    stepCount++;
+
+    // Рахуємо, в який момент часу цей крок закінчитися
+    float totalTargetTime = (stepCount * dt) / config.timeScale;
+
+    auto nextTargetPoint = startTime + std::chrono::duration<float>(totalTargetTime);
+
+    // Кажемо операційній системі прокинутися в певній точці"
+    std::this_thread::sleep_until(nextTargetPoint);
+  }
+
+  isReady = false;
+}
+
+bool Drone::updateRotation(float turnThreshold)
+{
+  DEBUG("--- updateRotation! ---");
+
+  float angleDiff = currentTargetAngle - angularState;
 
   angleDiff = std::atan2(std::sin(angleDiff), std::cos(angleDiff));
 
   if (std::abs(angleDiff) < config.radInIteration) {
-    angularState = targetAngle;
+    angularState = currentTargetAngle;
     return false;
   }
 
@@ -59,11 +158,12 @@ bool Drone::updateRotation(float targetAngle, float turnThreshold)
 
 void Drone::updatePosition()
 {
+  DEBUG("--- updatePosition! ---");
   Coord direction = {(float)cos(angularState), (float)sin(angularState)};
   Coord velocity = direction * speed;
   Coord acceleration = direction * config.acceleration;
 
-  float dt = config.simTimeStep;
+  float dt = config.timeStep;
   float stepSq = (dt * dt) / 2.0f;
 
   std::string currentStateName = state->name();
@@ -116,42 +216,32 @@ float Drone::calculateSmallArrivalTime(float distance) const
   return (-speed + std::sqrt(D)) / config.acceleration;
 }
 
-float Drone::changeTarget(const std::vector<float> targetTimes, const bool& canChangeTarget, const std::vector<float> targetAngles)
+void Drone::move()
 {
-  std::string currentStateName = state->name();
+  auto nextState = state->execute(*this);
 
-  const float newTarget = getIndexByMinValue(targetTimes);
-
-  float targetAngle = targetAngles[target];
-
-  if (currentStateName != "STOPPED" && currentStateName != "DECELERATING" && canChangeTarget && newTarget != target) {
-    DEBUG("Нова ціль: " << newTarget);
-    target = newTarget;
-    targetAngle = targetAngles[newTarget];
-
-    // Якщо для нової цілі треба сильно розвернутися, а ми летимо на всіх парах або прискорюємося - треба гальмувати
-    if (needRotation(targetAngle, config.turnThreshold)) {
-      if (currentStateName == "MOVING" || currentStateName == "ACCELERATING") {
-        // auto nextState = std::make_unique<StateDecelerating>();
-        state = std::make_unique<StateDecelerating>();
-        DEBUG("--- Сповільнюємося!!!! Треба повертатися! ---");
-      }
-    }
-  }
-
-  return targetAngle;
-}
-
-// Реалізація методу move
-void Drone::move(const std::vector<float> targetTimes, const bool canChangeTarget, const std::vector<float> targetAngles)
-{
-  // тут змінюємо ціль за певних умов
-  const float targetAngle = changeTarget(targetTimes, canChangeTarget, targetAngles);
-
-  std::string currentStateName = state->name();
-
-  auto nextState = state->execute(*this, targetAngle);
   if (nextState) {
     state = std::move(nextState);
   }
+}
+
+void Drone::accelerate()
+{
+  speed += (config.acceleration * config.timeStep);
+  if (speed > config.attackSpeed) {
+    speed = config.attackSpeed;
+  }
+}
+
+void Drone::decelerate()
+{
+  speed -= (config.acceleration * config.timeStep);
+  if (speed <= 0) {
+    speed = 0;
+  }
+}
+
+float Drone::getSpeed()
+{
+  return speed;
 }

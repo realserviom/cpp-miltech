@@ -1,36 +1,64 @@
 #pragma once
 #include "Types.h"
+#include "ThreadSafeQueue.h"  // Твоя шаблонна черга команд
 #include <memory>
 #include <vector>
+#include <thread>
+#include <mutex>
+#include <atomic>
 
 class IDroneState;
 
 class Drone {
 public:
-    Coord pos;               // поточна позиція (x, y)
-    float speed;             // поточна швидкість
-    float angularState;      // поточне положення дрона відносно осі x
-    std::unique_ptr<IDroneState> state;  // поточний стан
-    int target;              // поточна ціль
-    Coord dropPoint;         // точка скиду
-    Coord aimPoint;          // куди впаде бомба
-    Coord predictedTarget;   // прогнозована позиція цілі
+  Coord pos;           // поточна позиція (x, y)
+  float speed;         // поточна швидкість
+  float angularState;  // поточне положення дрона відносно осі x
 
-    DroneConfig config;
+  DroneConfig config;
 
-    explicit Drone(const DroneConfig& config);
+  explicit Drone(const DroneConfig& config);
 
-    bool updateRotation(float targetAngle, float turnThreshold = 0.0f);
+  std::unique_ptr<IDroneState> state;  // поточний стан
+  bool updateRotation(float turnThreshold = 0.0f);
 
-    void updatePosition();
+  void updatePosition();
 
-    bool needRotation(float targetAngle, float turnThreshold = 0.0f) const;
+  float getSpeed();
 
-    float calculateArrivalTime(float targetAngle, float distance, float distFall) const;
+  void accelerate();
+  void decelerate();
 
-    float calculateSmallArrivalTime(float distance) const;
+  bool needRotation(float targetAngle, float turnThreshold = 0.0f) const;
 
-    void move(const std::vector<float> targetTimes, const bool canChangeTarget, const std::vector<float> targetAngles);
+  float calculateArrivalTime(float targetAngle, float distance, float distFall) const;
 
-    float changeTarget(const std::vector<float> targetTimes, const bool& canChangeTarget, const std::vector<float> targetAngles);
+  float calculateSmallArrivalTime(float distance) const;
+
+  // void move(const std::vector<float> targetTimes, const bool canChangeTarget, const std::vector<float> targetAngles);
+
+  void move();
+
+  // =========================================================================
+  // КЕРУВАННЯ ПОТОКОМ ФІЗИКИ
+  // =========================================================================
+  void start();
+  void stop();
+  bool isThreadReady() const;
+
+  // Потокобезпечний інтерфейс для MissionProcessor
+  void sendCommand(DroneCommand& cmd);
+  DroneTelemetry getTelemetry() const;
+
+private:
+  void physicsLoop();  // Головний цикл фонового потоку
+
+  // Засоби синхронізації
+  std::atomic<bool> running{false};
+  std::atomic<bool> isReady{false};
+  std::thread physicsThread;
+
+  mutable std::mutex stateMutex;               // Захищає фізичні параметри дрона
+  ThreadSafeQueue<DroneCommand> commandQueue;  // Черга команд
+  float currentTargetAngle{0.0f};              // Поточний кут, який виконує фізика
 };

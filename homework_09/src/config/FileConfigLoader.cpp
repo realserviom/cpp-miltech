@@ -71,7 +71,8 @@ void FileConfigLoader::tunningDrone(DroneConfig& myDrone)
   myDrone.angularSpeed = j["drone"]["angularSpeed"];
   myDrone.turnThreshold = j["drone"]["turnThreshold"];
   myDrone.arrayTimeStep = j["targetArrayTimeStep"];
-  myDrone.simTimeStep = j["simulation"]["timeStep"];
+  myDrone.timeStep = j["simulation"]["timeStep"];
+  myDrone.timeScale = j["simulation"]["timeScale"];
   myDrone.hitRadius = j["simulation"]["hitRadius"];
   myDrone.ammoName = j["ammo"].get<std::string>();
 

@@ -3,9 +3,10 @@
 #define TYPES_H
 #include <stdlib.h>
 #include <string>
-#include <vector>
-#include <algorithm>
 #include <cassert>
+#include <memory>
+#include "interfaces/DroneStateId.h"
+#include "interfaces/IDroneState.h"
 
 // імя боєприпасу
 
@@ -70,11 +71,11 @@ struct DroneConfig {
     float accelPath;        // шлях розгону (м)
     def_ammoName ammoName;     // обрані боєприпаси
     float arrayTimeStep;    // крок часу масиву цілей
-    float simTimeStep;      // крок симуляції
+    float timeStep;         // крок симуляції
+    float timeScale;        // крок маштабування кроку
     float hitRadius;        // радіус влучення
     float angularSpeed;     // кутова швидкість (рад/с)
     float turnThreshold;    // поріг повороту (рад)
-
 
     // величина оберту дрона в радіанах за одну ітерацію
     float radInIteration;
@@ -90,17 +91,17 @@ struct DroneConfig {
 
     // Викликаємо після того, як заповнили структуру з JSON
     void updateCalculatedParams() {
-        radInIteration = angularSpeed * simTimeStep;
-        timeAcceleration = (2.0f * accelPath) / attackSpeed;
-        acceleration = attackSpeed / timeAcceleration;
-        timeHitRadius = hitRadius / attackSpeed;
+      radInIteration = angularSpeed * timeStep;
+      timeAcceleration = (2.0f * accelPath) / attackSpeed;
+      acceleration = attackSpeed / timeAcceleration;
+      timeHitRadius = hitRadius / attackSpeed;
     }
 };
 
 struct SimStep {
     Coord pos;          // позиція дрона
     float direction;    // напрямок (рад)
-    int   state;        // стан дрона (0-4)
+    DroneStateId state;  // стан дрона (0-4)
     int   targetIdx;    // індекс поточної цілі
     Coord dropPoint;    	// точка скиду (куди летить дрон)
 	Coord aimPoint;     	// куди впаде бомба (якщо скинути зараз)
@@ -116,5 +117,24 @@ enum class LoaderType {
 };
 
 enum class SolverType { ANALYTICAL, TABLE };
+
+struct Target {
+  Coord pos;       // поточна позиція цілі
+  Coord velocity;  // поточна швидкість цілі
+};
+
+struct DroneCommand {
+  std::unique_ptr<IDroneState> state;
+  float targetAngle;  // Цільовий кут польоту
+};
+
+struct DroneTelemetry {
+  Coord pos;
+  Coord normSpeed;  // Нормалізована швидкість (вектор)
+  float speed;
+  float angularState;
+  DroneStateId stateId;  // ID поточного стану дрона
+  std::string stateName;
+};
 
 #endif
