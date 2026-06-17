@@ -117,7 +117,7 @@ void MissionProcessor::fillArrays(bool& canChangeTarget,
     if (t < myDroneConfig.arrayTimeStep && targetId == target) {
       canChangeTarget = false;
 
-      LOG("canChangeTarget: false");
+      // LOG("canChangeTarget: false");
 
       int timeIteration = m_targetProvider->getTimeIterationByCounter(counter);
       int nextIteration = m_targetProvider->getNextIteration(timeIteration);
@@ -166,8 +166,8 @@ void MissionProcessor::fillArrays(bool& canChangeTarget,
     }
 
     if (targetId == target) {
-      DEBUG("До " << targetId << " цілі " << std::fixed << std::setprecision(2) << length << "; Кут у радіанах: " << std::setprecision(4)
-                  << targetAngles[targetId] << " rad; Час польоту: " << std::setprecision(2) << t << " с");
+      // DEBUG("До " << targetId << " цілі " << std::fixed << std::setprecision(2) << length << "; Кут у радіанах: " << std::setprecision(4)
+      //             << targetAngles[targetId] << " rad; Час польоту: " << std::setprecision(2) << t << " с");
     }
 
     targetTimes[targetId] = t;
@@ -257,19 +257,23 @@ void MissionProcessor::executeMission()
     throw std::runtime_error("Горизонтальна дистанція повинна бути додатня");
   }
 
+  // Беремо абсолютний час старту симуляції
+  auto startTime = std::chrono::high_resolution_clock::now();
+
   while (true) {
     // розраховуємо всі дані для визначення поточної найближчої цілі
     const int timeIteration = m_targetProvider->getTimeIterationByCounter(counter);
+
     DroneTelemetry telemetry = curMyDrone.getTelemetry();
 
     DEBUG("--- counter = " << counter << " ---");
-    DEBUG("--- timeIteration = " << timeIteration << " ---");
-    DEBUG("--- curDroneX = " << std::fixed << std::setprecision(8) << telemetry.pos.x << " м ---");
-    DEBUG("--- curDroneY = " << std::fixed << std::setprecision(8) << telemetry.pos.y << " м ---");
-    DEBUG("--- curMyDrone.angularState = " << std::fixed << std::setprecision(2) << telemetry.angularState << " р. ---");
-    DEBUG("--- curDroneSpeed = " << telemetry.speed << " ---");
-    DEBUG("--- curDroneStateName = " << telemetry.stateName << " ---");
-    DEBUG("--- currentTarget = " << target << " ---");
+    // DEBUG("--- timeIteration = " << timeIteration << " ---");
+    // DEBUG("--- curDroneX = " << std::fixed << std::setprecision(8) << telemetry.pos.x << " м ---");
+    // DEBUG("--- curDroneY = " << std::fixed << std::setprecision(8) << telemetry.pos.y << " м ---");
+    // DEBUG("--- curMyDrone.angularState = " << std::fixed << std::setprecision(2) << telemetry.angularState << " р. ---");
+    // DEBUG("--- curDroneSpeed = " << telemetry.speed << " ---");
+    // DEBUG("--- curDroneStateName = " << telemetry.stateName << " ---");
+    // DEBUG("--- currentTarget = " << target << " --cd -");
 
     // ################## РОЗРАХУНОК ТОЧКИ СКИДУ #############################################
     // -----------  заповнення масивів для пошуку найближчих цілей ---------------------------
@@ -355,17 +359,19 @@ void MissionProcessor::executeMission()
     // зміна цілі і прорахунок руху дрона
     float targetAngle;
 
-    std::unique_ptr<IDroneState> state = changeTarget(targetAngle, canChangeTarget, curMyDrone);
+    std::unique_ptr<IDroneState> newState = changeTarget(targetAngle, canChangeTarget, curMyDrone);
+
+    // Створюємо команду
     DroneCommand cmd;
+    cmd.targetAngle = targetAngle;  // Кут передаємо завжди, щоб дрон знав, куди тримати курс
 
-    cmd.state = std::move(state);
-    cmd.targetAngle = targetAngle;  // Передаємо кут, отриманий з changeTarget
+    cmd.state = newState != nullptr ? std::move(newState) : nullptr;
 
-    curMyDrone.sendCommand(cmd);  // Закинули в чергу
+    // Безповоротно віддаємо команду в чергу дрона
+    curMyDrone.sendCommand(std::move(cmd));
 
-    // Спимо крок планувальника (simTimeStep) з урахуванням масштабу часу
-    float sleepTime = myDroneConfig.timeStep / myDroneConfig.timeScale;
-    std::this_thread::sleep_for(std::chrono::duration<float>(sleepTime));
+    auto nextTimePoint = getNextTimePoint(startTime, myDroneConfig, counter);
+    std::this_thread::sleep_until(nextTimePoint);
   }
 
   curMyDrone.stop();  // Зупиняє physicsThread через join()

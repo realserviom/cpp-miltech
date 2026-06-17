@@ -8,6 +8,7 @@
 #include "states/StateMoving.h"
 #include <cstddef>
 #include <iostream>
+#include <thread>
 #include "Debug.h"
 #include "functions.h"
 
@@ -25,6 +26,7 @@ Drone::Drone(const DroneConfig& config)
 // === БАГАТОПОТОЧНИЙ ІНТЕРФЕЙС ===
 void Drone::start()
 {
+  DEBUG("--- start drone thread! ---");
   running = true;
   physicsThread = std::thread(&Drone::physicsLoop, this);
 }
@@ -42,9 +44,9 @@ bool Drone::isThreadReady() const
   return isReady;
 }
 
-void Drone::sendCommand(DroneCommand& cmd)
+void Drone::sendCommand(DroneCommand cmd)
 {
-  commandQueue.push(std::move(cmd));
+  commandQueue.push(std::move(cmd));  // Переміщуємо команду прямо всередину черги
 }
 
 DroneTelemetry Drone::getTelemetry() const
@@ -68,32 +70,21 @@ void Drone::physicsLoop()
 {
   isReady = true;
 
-  // Беремо абсолютний час старту симуляції
-  auto startTime = std::chrono::high_resolution_clock::now();
-
   int stepCount = 0;
   float dt = config.timeStep;
 
+  // Беремо абсолютний час старту симуляції
+  auto startTime = std::chrono::high_resolution_clock::now();
+
   while (running) {
-    // 1. Перевіряємо чергу команд від MissionProcessor
+    // Перевіряємо чергу команд від MissionProcessor
     DroneCommand cmd;
     if (commandQueue.try_pop(cmd)) {
       std::lock_guard<std::mutex> lock(stateMutex);
       this->currentTargetAngle = cmd.targetAngle;
 
-      // Якщо місія вимагає інший стан, ніж поточний — перевизначаємо об'єкт
-      if (cmd.state != nullptr && (!state || state->id() != cmd.state->id())) {
-        state = std::move(cmd.state);
-        // if (cmd.stateId == DroneStateId::STOPPED)
-        //   state = std::make_unique<StateStopped>();
-        // else if (cmd.stateId == DroneStateId::ACCELERATING)
-        //   state = std::make_unique<StateAccelerating>();
-        // else if (cmd.stateId == DroneStateId::MOVING)
-        //   state = std::make_unique<StateMoving>();
-        // else if (cmd.stateId == DroneStateId::DECELERATING)
-        //   state = std::make_unique<StateDecelerating>();
-        // else if (cmd.stateId == DroneStateId::TURNING)
-        //   state = std::make_unique<StateTurning>();
+      if (cmd.state != nullptr) {
+        this->state = std::move(cmd.state);
       }
     }
 
@@ -106,13 +97,9 @@ void Drone::physicsLoop()
     // Крок виконано успішно
     stepCount++;
 
-    // Рахуємо, в який момент часу цей крок закінчитися
-    float totalTargetTime = (stepCount * dt) / config.timeScale;
-
-    auto nextTargetPoint = startTime + std::chrono::duration<float>(totalTargetTime);
-
+    auto nextTimePoint = getNextTimePoint(startTime, config, stepCount);
     // Кажемо операційній системі прокинутися в певній точці"
-    std::this_thread::sleep_until(nextTargetPoint);
+    std::this_thread::sleep_until(nextTimePoint);
   }
 
   isReady = false;
@@ -120,8 +107,6 @@ void Drone::physicsLoop()
 
 bool Drone::updateRotation(float turnThreshold)
 {
-  DEBUG("--- updateRotation! ---");
-
   float angleDiff = currentTargetAngle - angularState;
 
   angleDiff = std::atan2(std::sin(angleDiff), std::cos(angleDiff));
@@ -158,7 +143,6 @@ bool Drone::updateRotation(float turnThreshold)
 
 void Drone::updatePosition()
 {
-  DEBUG("--- updatePosition! ---");
   Coord direction = {(float)cos(angularState), (float)sin(angularState)};
   Coord velocity = direction * speed;
   Coord acceleration = direction * config.acceleration;

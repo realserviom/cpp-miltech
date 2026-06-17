@@ -12,7 +12,7 @@ std::unique_ptr<IDroneState> StateAccelerating::execute(Drone& curMyDrone)
     return std::make_unique<StateMoving>();
   }
 
-  return nullptr;
+  return std::make_unique<StateAccelerating>();
 }
 
 const std::string StateAccelerating::name() const

@@ -35,8 +35,6 @@ public:
 
   float calculateSmallArrivalTime(float distance) const;
 
-  // void move(const std::vector<float> targetTimes, const bool canChangeTarget, const std::vector<float> targetAngles);
-
   void move();
 
   // =========================================================================
@@ -47,7 +45,7 @@ public:
   bool isThreadReady() const;
 
   // Потокобезпечний інтерфейс для MissionProcessor
-  void sendCommand(DroneCommand& cmd);
+  void sendCommand(DroneCommand cmd);
   DroneTelemetry getTelemetry() const;
 
 private:
