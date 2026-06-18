@@ -76,6 +76,8 @@ struct DroneConfig {
     float hitRadius;        // радіус влучення
     float angularSpeed;     // кутова швидкість (рад/с)
     float turnThreshold;    // поріг повороту (рад)
+    float targetTimeStep;   // крок фізики цілей
+    float physicsTimeStep;  // крок фізики дрона
 
     // величина оберту дрона в радіанах за одну ітерацію
     float radInIteration;

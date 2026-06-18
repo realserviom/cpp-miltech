@@ -20,7 +20,7 @@ Coord normalize(const Coord& c);
 float length(const Coord& c);
 
 std::chrono::high_resolution_clock::time_point getNextTimePoint(std::chrono::high_resolution_clock::time_point startTime,
-                                                                DroneConfig& config,
+                                                                double dt,
                                                                 int stepCount);
 
 template <typename T>

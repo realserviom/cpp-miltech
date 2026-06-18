@@ -4,14 +4,10 @@
 
 std::unique_ptr<IDroneState> StateDecelerating::execute(Drone& curMyDrone)
 {
-  DEBUG("--- StateDecelerating!!! ---");
-
   curMyDrone.updatePosition();
   curMyDrone.decelerate();
 
-  DEBUG("--- curMyDrone.getSpeed(): " << curMyDrone.getSpeed());
-
-  if (curMyDrone.getSpeed() <= 0) {
+  if (curMyDrone.getSpeed() <= 0.0f) {
     return std::make_unique<StateTurning>();
   }
 

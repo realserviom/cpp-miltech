@@ -104,11 +104,11 @@ void saveOutputFileByStep(int length, const std::vector<SimStep>& steps)
 }
 
 std::chrono::high_resolution_clock::time_point getNextTimePoint(std::chrono::high_resolution_clock::time_point startTime,
-                                                                DroneConfig& config,
-                                                                int stepCount)
+                                                                double dt,
+                                                                int counter)
 {
-  // Рахуємо, в який момент часу цей крок закінчитися
-  double totalTargetTime = (static_cast<double>(stepCount) * config.timeStep) / config.timeScale;
+  // Рахуємо, в який момент часу цей крок закінчитися з врахуванням timeScale
+  double totalTargetTime = static_cast<double>(counter) * dt;
 
   // Перетворюємо totalTargetTime у duration на базі double
   auto durationOffset = std::chrono::duration<double>(totalTargetTime);

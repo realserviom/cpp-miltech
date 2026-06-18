@@ -97,7 +97,7 @@ void Drone::physicsLoop()
     // Крок виконано успішно
     stepCount++;
 
-    auto nextTimePoint = getNextTimePoint(startTime, config, stepCount);
+    auto nextTimePoint = getNextTimePoint(startTime, (config.physicsTimeStep / config.timeScale), stepCount);
     // Кажемо операційній системі прокинутися в певній точці"
     std::this_thread::sleep_until(nextTimePoint);
   }

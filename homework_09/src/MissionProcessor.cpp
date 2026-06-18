@@ -119,7 +119,9 @@ void MissionProcessor::fillArrays(bool& canChangeTarget,
 
       // LOG("canChangeTarget: false");
 
+      // передаємо counter повертаємо ітерацію часу з координатами
       int timeIteration = m_targetProvider->getTimeIterationByCounter(counter);
+      // передаємо timeIteration повертаємо наступну ітерацію часу з координатами
       int nextIteration = m_targetProvider->getNextIteration(timeIteration);
 
       Coord targetNextPos = m_targetProvider->getTargetPositionInIteration(targetId, nextIteration);
@@ -266,14 +268,14 @@ void MissionProcessor::executeMission()
 
     DroneTelemetry telemetry = curMyDrone.getTelemetry();
 
-    DEBUG("--- counter = " << counter << " ---");
-    // DEBUG("--- timeIteration = " << timeIteration << " ---");
-    // DEBUG("--- curDroneX = " << std::fixed << std::setprecision(8) << telemetry.pos.x << " м ---");
-    // DEBUG("--- curDroneY = " << std::fixed << std::setprecision(8) << telemetry.pos.y << " м ---");
-    // DEBUG("--- curMyDrone.angularState = " << std::fixed << std::setprecision(2) << telemetry.angularState << " р. ---");
-    // DEBUG("--- curDroneSpeed = " << telemetry.speed << " ---");
-    // DEBUG("--- curDroneStateName = " << telemetry.stateName << " ---");
-    // DEBUG("--- currentTarget = " << target << " --cd -");
+    //  DEBUG("--- counter = " << counter << " ---");
+    //  DEBUG("--- timeIteration = " << timeIteration << " ---");
+    //  DEBUG("--- curDroneX = " << std::fixed << std::setprecision(8) << telemetry.pos.x << " м ---");
+    //  DEBUG("--- curDroneY = " << std::fixed << std::setprecision(8) << telemetry.pos.y << " м ---");
+    //  DEBUG("--- curMyDrone.angularState = " << std::fixed << std::setprecision(2) << telemetry.angularState << " р. ---");
+    //  DEBUG("--- curDroneSpeed = " << telemetry.speed << " ---");
+    //  DEBUG("--- curDroneStateName = " << telemetry.stateName << " ---");
+    //  DEBUG("--- currentTarget = " << target << " --cd -");
 
     // ################## РОЗРАХУНОК ТОЧКИ СКИДУ #############################################
     // -----------  заповнення масивів для пошуку найближчих цілей ---------------------------
@@ -370,7 +372,7 @@ void MissionProcessor::executeMission()
     // Безповоротно віддаємо команду в чергу дрона
     curMyDrone.sendCommand(std::move(cmd));
 
-    auto nextTimePoint = getNextTimePoint(startTime, myDroneConfig, counter);
+    auto nextTimePoint = getNextTimePoint(startTime, (curMyDrone.config.timeStep / curMyDrone.config.timeScale), counter);
     std::this_thread::sleep_until(nextTimePoint);
   }
 
