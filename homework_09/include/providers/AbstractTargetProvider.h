@@ -12,25 +12,18 @@ protected:
   int m_numberCounterInTimeSpot;
   Coord **m_targets = nullptr;
 
+  float arrayTimeStep = 0.0f;
+
 public:
     ~AbstractTargetProvider() override = default;
 
     virtual void loadTargets() = 0;
 
-    void init(int &numberCounterInTimeSpot) override;
-
     int getTargetCount() override;
 
-    Coord** getTargets() override;
+    virtual void init(int &numberCounterInTimeSpot) override;
 
-    int getTimeIterationByCounter(const int &counter) override;
+    Coord **getTargets() override;
 
-    int getTimeIterationByTime(float time, const float &arrayTimeStep) override;
-
-    int getNextIteration(int &iteration) override;
-
-    Coord getTargetPositionInCounter(int &targetId, const int &counter) override;
-
-    Coord getTargetPositionInIteration(int &index, int &timeIteration) override;
-
+    float getArrayTimeStep() const override;
 };

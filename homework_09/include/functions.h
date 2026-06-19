@@ -5,9 +5,6 @@
 #include <cstdio>
 #include <vector>
 
-
-float calculateLength(double targetX, double targetY, double xd, double yd);
-
 void saveFireCoordinates(double fireX, double fireY, double xd_i, double yd_i);
 
 int getIndexByMinValue(const std::vector<float>& targetTimes);
@@ -16,7 +13,7 @@ void saveOutputFileByStep(int length, const std::vector<SimStep>& steps);
 
 Coord normalize(const Coord& c);
 
-float length(const Coord& c);
+float calculateLength(const Coord& c);
 
 template <typename T>
 int countFilledElements(const T arr[], int size, T marker);
