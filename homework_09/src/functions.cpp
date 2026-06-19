@@ -18,11 +18,6 @@ using json = nlohmann::ordered_json;
 // в нас 60 точок часу і 5 цілей це 300 комбінацій
 #define CACHE_SIZE 1024
 
-float calculateLength(double targetX, double targetY, double xd, double yd)
-{
-  return std::sqrt(std::pow((targetX - xd), 2) + std::pow((targetY - yd), 2));
-}
-
 Coord normalize(const Coord& c)
 {
   float L = std::hypot(c.x, c.y);
@@ -31,7 +26,7 @@ Coord normalize(const Coord& c)
   return c / L;
 }
 
-float length(const Coord& c)
+float calculateLength(const Coord& c)
 {
   return std::hypot(c.x, c.y);
 }

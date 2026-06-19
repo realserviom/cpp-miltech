@@ -15,9 +15,9 @@
   "simulation": {
     "timeStep": 0.1,
     "hitRadius": 2,
-    "targetTimeStep": 0.05,
     "physicsTimeStep": 0.01,
-    "timeScale": 10.0
+    "timeScale": 10.0,
+    "targetTimeStep": 0.05
   },
   "targetArrayTimeStep": 1
 }
