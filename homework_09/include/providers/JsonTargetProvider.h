@@ -7,19 +7,15 @@ private:
 public:
   JsonTargetProvider(const std::string& jsonFilePath);
 
-  void setArrayTimeStep(float time) override;
-
   Coord getTargetPosition(const int target, const float time) override;
 
   void loadTargets() override;
 
   ~JsonTargetProvider();
 
-  std::string m_filePath;
-
   int getIterationByCounter(const int& counter);
 
-  Coord getTargetNextPos(int& targetId, const int& counter);
+  //  Coord getTargetNextPos(int& targetId, const int& counter);
 
   int getIterationByTime(float time, const float& arrayTimeStep);
 

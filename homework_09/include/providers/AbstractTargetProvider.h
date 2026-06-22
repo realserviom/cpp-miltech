@@ -15,15 +15,24 @@ protected:
   float arrayTimeStep = 0.0f;
 
 public:
-    ~AbstractTargetProvider() override = default;
+  std::string m_filePath;
 
-    virtual void loadTargets() = 0;
+  explicit AbstractTargetProvider(const std::string &jsonFilePath)
+    : m_filePath(jsonFilePath)
+  {
+  }
 
-    int getTargetCount() override;
+  ~AbstractTargetProvider() override = default;
 
-    virtual void init(int &numberCounterInTimeSpot) override;
+  virtual void loadTargets() = 0;
 
-    Coord **getTargets() override;
+  int getTargetCount() override;
 
-    float getArrayTimeStep() const override;
+  virtual void init(int &numberCounterInTimeSpot) override;
+
+  Coord **getTargets() override;
+
+  float getArrayTimeStep() const override;
+
+  void setArrayTimeStep(float time) override;
 };
