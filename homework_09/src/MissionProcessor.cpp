@@ -257,7 +257,7 @@ void MissionProcessor::executeMission()
     DEBUG("--- curMyDrone.angularState = " << std::fixed << std::setprecision(2) << telemetry.angularState << " р. ---");
     DEBUG("--- curDroneSpeed = " << telemetry.speed << " ---");
     DEBUG("--- curDroneStateName = " << telemetry.stateName << " ---");
-    DEBUG("--- currentTarget = " << target << " --cd -");
+    DEBUG("--- currentTarget = " << target << " ---");
 
     // ################## РОЗРАХУНОК ТОЧКИ СКИДУ #############################################
     // -----------  заповнення масивів для пошуку найближчих цілей ---------------------------

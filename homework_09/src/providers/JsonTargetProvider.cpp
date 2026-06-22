@@ -6,7 +6,7 @@
 using json = nlohmann::json;
 
 JsonTargetProvider::JsonTargetProvider(const std::string& jsonFilePath)
-  : m_filePath(jsonFilePath)
+  : AbstractTargetProvider(jsonFilePath)
 {
 }
 
@@ -88,11 +88,6 @@ Coord JsonTargetProvider::getTargetPositionInCounter(int& targetId, const int& c
   return Coord{0.0, 0.0};
 }
 
-void JsonTargetProvider::setArrayTimeStep(float time)
-{
-  arrayTimeStep = time;
-}
-
 int JsonTargetProvider::getIterationByTime(float time, const float& arrayTimeStep)
 {
   const int wholeRangeTime = arrayTimeStep * this->m_timeSteps;
@@ -111,13 +106,13 @@ Coord JsonTargetProvider::getTargetPositionInIteration(const int& index, int& ti
   return Coord{0.0, 0.0};
 }
 
-Coord JsonTargetProvider::getTargetNextPos(int& targetId, const int& counter)
-{
-  int timeIteration = getIterationByCounter(counter);
-  int nextIteration = getNextIteration(timeIteration);
+// Coord JsonTargetProvider::getTargetNextPos(int& targetId, const int& counter)
+// {
+//   int timeIteration = getIterationByCounter(counter);
+//   int nextIteration = getNextIteration(timeIteration);
 
-  return getTargetPositionInIteration(targetId, nextIteration);
-}
+//   return getTargetPositionInIteration(targetId, nextIteration);
+// }
 
 int JsonTargetProvider::getIterationByCounter(const int& counter)
 {

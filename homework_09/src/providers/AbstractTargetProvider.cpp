@@ -26,3 +26,8 @@ float AbstractTargetProvider::getArrayTimeStep() const
 {
   return arrayTimeStep;
 }
+
+void AbstractTargetProvider::setArrayTimeStep(float time)
+{
+  arrayTimeStep = time;
+}
