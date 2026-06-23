@@ -2,6 +2,9 @@
 #include "json.hpp"
 #include <fstream>
 #include <stdexcept>
+#include "Debug.h"
+#include <cmath>
+#include "functions.h"
 
 using json = nlohmann::json;
 
@@ -47,66 +50,92 @@ void ThreadSafeTargetProvider::loadTargets()
   fin.close();
 }
 
-// Coord ThreadSafeTargetProvider::getTargetPosition(const int target, const float time)
-// {
-//   // ітерація координати (кожних myDrone.arrayTimeStep секунд нова координата)
-//   int futureIterationForTarget = getIterationByTime(time, getArrayTimeStep());
+Coord ThreadSafeTargetProvider::getTargetPosition(const int target)
+{
+  const float time = stepCount * getTargetTimeStep();
 
-//   int nextFutureIterationForTarget = getNextIteration(futureIterationForTarget);
+  // ітерація координати (кожних myDrone.arrayTimeStep секунд нова координата)
+  int futureIterationForTarget = getIterationByTime(time, getArrayTimeStep());
 
-//   // час що залишився
-//   float remainderTimeInSpot = std::fmod(time, arrayTimeStep);
+  int nextFutureIterationForTarget = getNextIteration(futureIterationForTarget);
 
-//   Coord targetPosIteration = getTargetPositionInIteration(target, futureIterationForTarget);
-//   Coord targetPosNextIteration = getTargetPositionInIteration(target, nextFutureIterationForTarget);
+  // час що залишився
+  float remainderTimeInSpot = std::fmod(time, arrayTimeStep);
 
-//   Coord deltaTargetPos = targetPosNextIteration - targetPosIteration;
+  Coord targetPosIteration = getTargetPositionInIteration(target, futureIterationForTarget);
+  Coord targetPosNextIteration = getTargetPositionInIteration(target, nextFutureIterationForTarget);
 
-//   // швидкість Vtarget це швидкість зміни координатів
-//   Coord Vtarget = deltaTargetPos / getArrayTimeStep();
+  Coord deltaTargetPos = targetPosNextIteration - targetPosIteration;
 
-//   // прогнозована позиція цілі
-//   return targetPosIteration + Vtarget * remainderTimeInSpot;
-// }
+  // швидкість Vtarget це швидкість зміни координатів
+  Coord Vtarget = deltaTargetPos / getArrayTimeStep();
 
-// int ThreadSafeTargetProvider::getNextIteration(int& iteration)
-// {
-//   if (iteration == (this->m_timeSteps - 1)) {
-//     return 0;
-//   }
+  // прогнозована позиція цілі
+  return targetPosIteration + Vtarget * remainderTimeInSpot;
+}
 
-//   return iteration + 1;
-// }
+Coord ThreadSafeTargetProvider::setTargetPosition(const int target)
+{
+  const float time = stepCount * getTargetTimeStep();
 
-// Coord ThreadSafeTargetProvider::getTargetPositionInCounter(int& targetId, const int& counter)
-// {
-//   int timeIteration = this->getIterationByCounter(counter);
+  // ітерація координати (кожних myDrone.arrayTimeStep секунд нова координата)
+  int futureIterationForTarget = getIterationByTime(time, getArrayTimeStep());
 
-//   if (this->m_targets && targetId >= 0 && targetId < m_targetCount) {
-//     return this->m_targets[targetId][timeIteration];
-//   }
-//   return Coord{0.0, 0.0};
-// }
+  int nextFutureIterationForTarget = getNextIteration(futureIterationForTarget);
 
-// int ThreadSafeTargetProvider::getIterationByTime(float time, const float& arrayTimeStep)
-// {
-//   const int wholeRangeTime = arrayTimeStep * this->m_timeSteps;
+  // час що залишився
+  float remainderTimeInSpot = std::fmod(time, arrayTimeStep);
 
-//   if (time > wholeRangeTime) {
-//     time = std::fmod(time, wholeRangeTime);
-//   }
-//   return std::floor(time / arrayTimeStep);
-// }
+  Coord targetPosIteration = getTargetPositionInIteration(target, futureIterationForTarget);
+  Coord targetPosNextIteration = getTargetPositionInIteration(target, nextFutureIterationForTarget);
 
-// Coord ThreadSafeTargetProvider::getTargetPositionInIteration(const int& index, int& timeIteration)
-// {
-//   if (this->m_targets && index >= 0 && index < m_targetCount) {
-//     return this->m_targets[index][timeIteration];
-//   }
-//   return Coord{0.0, 0.0};
-// }
+  Coord deltaTargetPos = targetPosNextIteration - targetPosIteration;
 
-// Coord JsonTargetProvider::getTargetNextPos(int& targetId, const int& counter)
+  // швидкість Vtarget це швидкість зміни координатів
+  Coord Vtarget = deltaTargetPos / getArrayTimeStep();
+
+  // прогнозована позиція цілі
+  return targetPosIteration + Vtarget * remainderTimeInSpot;
+}
+
+int ThreadSafeTargetProvider::getNextIteration(int& iteration)
+{
+  if (iteration == (this->m_timeSteps - 1)) {
+    return 0;
+  }
+
+  return iteration + 1;
+}
+
+Coord ThreadSafeTargetProvider::getTargetPositionInCounter(int& targetId, const int& counter)
+{
+  int timeIteration = this->getIterationByCounter(counter);
+
+  if (this->m_targets && targetId >= 0 && targetId < m_targetCount) {
+    return this->m_targets[targetId][timeIteration];
+  }
+  return Coord{0.0, 0.0};
+}
+
+int ThreadSafeTargetProvider::getIterationByTime(float time, const float& arrayTimeStep)
+{
+  const int wholeRangeTime = arrayTimeStep * this->m_timeSteps;
+
+  if (time > wholeRangeTime) {
+    time = std::fmod(time, wholeRangeTime);
+  }
+  return std::floor(time / arrayTimeStep);
+}
+
+Coord ThreadSafeTargetProvider::getTargetPositionInIteration(const int& index, int& timeIteration)
+{
+  if (this->m_targets && index >= 0 && index < m_targetCount) {
+    return this->m_targets[index][timeIteration];
+  }
+  return Coord{0.0, 0.0};
+}
+
+// Coord ThreadSafeTargetProvider::getTargetNextPos(int& targetId, const int& counter)
 // {
 //   int timeIteration = getIterationByCounter(counter);
 //   int nextIteration = getNextIteration(timeIteration);
@@ -114,16 +143,16 @@ void ThreadSafeTargetProvider::loadTargets()
 //   return getTargetPositionInIteration(targetId, nextIteration);
 // }
 
-// int ThreadSafeTargetProvider::getIterationByCounter(const int& counter)
-// {
-//   const int wholeRangeCounters = this->m_numberCounterInTimeSpot * this->m_timeSteps;
+int ThreadSafeTargetProvider::getIterationByCounter(const int& counter)
+{
+  const int wholeRangeCounters = this->m_numberCounterInTimeSpot * this->m_timeSteps;
 
-//   // якщо в нас поточна ітерація більша чи рівна wholeRangeCounters тоді берем остачу від цілочисленого
-//   // ділення на wholeRangeCounters
-//   const int new_counter = counter >= wholeRangeCounters ? static_cast<int>(counter % wholeRangeCounters) : counter;
+  // якщо в нас поточна ітерація більша чи рівна wholeRangeCounters тоді берем остачу від цілочисленого
+  // ділення на wholeRangeCounters
+  const int new_counter = counter >= wholeRangeCounters ? static_cast<int>(counter % wholeRangeCounters) : counter;
 
-//   return static_cast<int>(std::floor(new_counter / this->m_numberCounterInTimeSpot));
-// }
+  return static_cast<int>(std::floor(new_counter / this->m_numberCounterInTimeSpot));
+}
 
 ThreadSafeTargetProvider::~ThreadSafeTargetProvider()
 {
@@ -133,4 +162,46 @@ ThreadSafeTargetProvider::~ThreadSafeTargetProvider()
     }
     delete[] m_targets;
   }
+}
+
+// === БАГАТОПОТОЧНИЙ ІНТЕРФЕЙС ===
+void ThreadSafeTargetProvider::start()
+{
+  DEBUG("--- start drone thread! ---");
+  running = true;
+  physicsThread = std::thread(&ThreadSafeTargetProvider::physicsLoop);
+}
+
+void ThreadSafeTargetProvider::stop()
+{
+  running = false;
+  if (physicsThread.joinable()) {
+    physicsThread.join();
+  }
+}
+
+bool ThreadSafeTargetProvider::isThreadReady() const
+{
+  return isReady;
+}
+
+void ThreadSafeTargetProvider::physicsLoop()
+{
+  isReady = true;
+
+  stepCount = 0;
+
+  // Беремо абсолютний час старту симуляції
+  auto startTime = std::chrono::high_resolution_clock::now();
+
+  while (running) {
+    // Крок виконано успішно
+    stepCount++;
+
+    auto nextTimePoint = getNextTimePoint(startTime, getTargetTimeStep() / getTimeScale(), stepCount);
+    // Кажемо операційній системі прокинутися в певній точці"
+    std::this_thread::sleep_until(nextTimePoint);
+  }
+
+  isReady = false;
 }

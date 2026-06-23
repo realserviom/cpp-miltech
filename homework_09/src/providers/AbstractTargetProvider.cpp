@@ -31,3 +31,23 @@ void AbstractTargetProvider::setArrayTimeStep(float time)
 {
   arrayTimeStep = time;
 }
+
+float AbstractTargetProvider::getTargetTimeStep() const
+{
+  return targetTimeStep;
+}
+
+void AbstractTargetProvider::setTargetTimeStep(float time)
+{
+  targetTimeStep = time;
+}
+
+float AbstractTargetProvider::getTimeScale() const
+{
+  return timeScale;
+}
+
+void AbstractTargetProvider::setTimeScale(float time)
+{
+  timeScale = time;
+}

@@ -13,6 +13,8 @@ protected:
   Coord **m_targets = nullptr;
 
   float arrayTimeStep = 0.0f;
+  float targetTimeStep = 0.0f;
+  float timeScale = 1.0f;
 
 public:
   std::string m_filePath;
@@ -32,7 +34,15 @@ public:
 
   Coord **getTargets() override;
 
+  void setArrayTimeStep(float time) override;
+
   float getArrayTimeStep() const override;
 
-  void setArrayTimeStep(float time) override;
+  void setTargetTimeStep(float time) override;
+
+  float getTargetTimeStep() const override;
+
+  void setTimeScale(float time) override;
+
+  float getTimeScale() const override;
 };

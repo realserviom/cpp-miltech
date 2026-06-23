@@ -221,6 +221,7 @@ void MissionProcessor::executeMission()
   }
 
   m_targetProvider->setArrayTimeStep(myDroneConfig.arrayTimeStep);
+  m_targetProvider->setTargetTimeStep(myDroneConfig.targetTimeStep);
 
   int counter = 0;              // лічильник часу
   bool canChangeTarget = true;  // мітка чи є дозвіл міняти ціль

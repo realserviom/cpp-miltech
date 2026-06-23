@@ -12,7 +12,14 @@ public:
   virtual void setArrayTimeStep(float time) = 0;
   virtual float getArrayTimeStep() const = 0;
 
+  virtual void setTargetTimeStep(float time) = 0;
+  virtual float getTargetTimeStep() const = 0;
+
+  virtual void setTimeScale(float time) = 0;
+  virtual float getTimeScale() const = 0;
+
   virtual Coord getTargetPosition(const int target, const float time) = 0;
+  virtual Coord getTargetPosition(const int target) = 0;
 
   virtual void init(int &numberCounterInTimeSpot) = 0;
 
