@@ -8,9 +8,13 @@ protected:
   int m_targetCount = 0;
   // кількість часових кроків для кожної цілі
   int m_timeSteps = 0;
+
   // кількість ітерацій в одному часовому кроці
   int m_numberCounterInTimeSpot;
+
   Coord **m_targets = nullptr;
+
+  Coord *currentPositions = nullptr;
 
   float arrayTimeStep = 0.0f;
   float targetTimeStep = 0.0f;

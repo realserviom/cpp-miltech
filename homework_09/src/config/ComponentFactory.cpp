@@ -1,5 +1,6 @@
 #include <memory>
 #include "providers/JsonTargetProvider.h"
+#include "providers/ThreadSafeTargetProvider.h"
 #include "config/FileConfigLoader.h"
 #include "solvers/AnalyticalSolver.h"
 #include "solvers/TableSolver.h"
@@ -7,8 +8,12 @@
 std::unique_ptr<ITargetProvider> createProvider(ProviderType type, const std::string& file_name)
 {
   switch (type) {
-    case ProviderType::JSON:
-      return std::make_unique<JsonTargetProvider>(file_name);
+      // case ProviderType::JSON:
+      //   return std::make_unique<JsonTargetProvider>(file_name);
+
+    case ProviderType::TIME:
+      return std::make_unique<ThreadSafeTargetProvider>(file_name);
+
     default:
       return nullptr;
   }

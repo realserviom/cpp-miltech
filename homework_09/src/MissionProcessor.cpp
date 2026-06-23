@@ -215,8 +215,9 @@ void MissionProcessor::executeMission()
   DEBUG("Параметри: mass: " << std::fixed << std::setprecision(3) << ammo->mass << ", drag: " << ammo->drag << ", lift: " << ammo->lift);
 
   curMyDrone.start();
+  m_targetProvider->start();
 
-  while (!curMyDrone.isThreadReady()) {
+  while (!curMyDrone.isThreadReady() || !m_targetProvider->isThreadReady()) {
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }
 
@@ -272,7 +273,8 @@ void MissionProcessor::executeMission()
     // мітка часу в таблиці targets для визначення майбутньої позиції цілі
     // ми взяли весь час що пройшов + час коли боєприпас долетить до землі якщо буде випущений в даний момент
     float Tt = counter * myDroneConfig.timeStep + t_pol;
-    predictedTarget = m_targetProvider->getTargetPosition(target, Tt);
+    Target targetPosition = m_targetProvider->getTargetPosition(target);
+    predictedTarget = targetPosition.pos;
 
     // точка скиду (куди летить дрон)
     // TODO  тут ще можна підкоригувати напрямок дрону маючи dirToDrone

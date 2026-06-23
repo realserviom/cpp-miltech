@@ -110,9 +110,7 @@ struct SimStep {
 	Coord predictedTarget;  // прогнозована позиція цілі
 };
 
-enum class ProviderType { 
-    JSON 
-};
+enum class ProviderType { JSON, TIME };
 
 enum class LoaderType { 
     FILE 

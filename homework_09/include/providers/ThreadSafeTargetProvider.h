@@ -11,9 +11,14 @@
 class ThreadSafeTargetProvider : public AbstractTargetProvider {
 public:
   int stepCount = 0;
+  Coord* currentPositions = nullptr;
+  Coord* prevPositions = nullptr;
+
   ThreadSafeTargetProvider(const std::string& jsonFilePath);
 
-  Coord getTargetPosition(const int target) override;
+  Target getTargetPosition(const int target) override;
+
+  void setTargetPosition();
 
   void loadTargets() override;
 
@@ -32,17 +37,17 @@ public:
   // =========================================================================
   // КЕРУВАННЯ ПОТОКОМ ФІЗИКИ
   // =========================================================================
-  void start();
-  void stop();
-  bool isThreadReady() const;
+  void start() override;
+  void stop() override;
+  bool isThreadReady() const override;
 
 private:
-  void physicsLoop();  // Головний цикл фонового потоку
+  void physicsLoop() override;  // Головний цикл фонового потоку
 
   // Засоби синхронізації
   std::atomic<bool> running{false};
   std::atomic<bool> isReady{false};
-  std::thread physicsThread;
+  std::thread targetsThread;
 
-  mutable std::mutex stateMutex;  // Захищає фізичні параметри дрона
+  mutable std::mutex targetMutex;  // Захищає положення цілі
 };
