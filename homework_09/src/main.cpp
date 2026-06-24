@@ -24,7 +24,7 @@ int main()
   try {
     auto configLoader = createLoader(LoaderType::FILE, "../data/config.json", "../data/ammo.json");
 
-    auto targetProvider = createProvider(ProviderType::JSON, "../data/targets.json");
+    auto targetProvider = createProvider(ProviderType::TIME, "../data/targets.json");
 
     auto analyticalSolver = createSolver(SolverType::TABLE);
 

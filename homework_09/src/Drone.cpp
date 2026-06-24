@@ -69,37 +69,48 @@ DroneTelemetry Drone::getTelemetry() const
 void Drone::physicsLoop()
 {
   isReady = true;
-
   int stepCount = 0;
-  float dt = config.timeStep;
 
   // Беремо абсолютний час старту симуляції
   auto startTime = std::chrono::high_resolution_clock::now();
 
-  while (running) {
-    // Перевіряємо чергу команд від MissionProcessor
-    DroneCommand cmd;
-    if (commandQueue.try_pop(cmd)) {
-      std::lock_guard<std::mutex> lock(stateMutex);
-      this->currentTargetAngle = cmd.targetAngle;
+  // Загортаємо ВЕСЬ робочий цикл у try-catch
+  try {
+    while (running) {
+      // Перевіряємо чергу команд від MissionProcessor
+      DroneCommand cmd;
+      if (commandQueue.try_pop(cmd)) {
+        std::lock_guard<std::mutex> lock(stateMutex);
+        this->currentTargetAngle = cmd.targetAngle;
 
-      if (cmd.state != nullptr) {
-        this->state = std::move(cmd.state);
+        if (cmd.state != nullptr) {
+          this->state = std::move(cmd.state);
+        }
       }
+
+      // Рахуємо фізичний крок під м'ютексом
+      {
+        std::lock_guard<std::mutex> lock(stateMutex);
+        this->move();
+      }
+
+      // Крок виконано успішно
+      stepCount++;
+
+      auto nextTimePoint = getNextTimePoint(startTime, (config.physicsTimeStep / config.timeScale), stepCount);
+      // Кажемо операційній системі прокинутися в певній точці
+      std::this_thread::sleep_until(nextTimePoint);
     }
-
-    // Рахуємо фізичний крок під м'ютексом
-    {
-      std::lock_guard<std::mutex> lock(stateMutex);
-      this->move();
-    }
-
-    // Крок виконано успішно
-    stepCount++;
-
-    auto nextTimePoint = getNextTimePoint(startTime, (config.physicsTimeStep / config.timeScale), stepCount);
-    // Кажемо операційній системі прокинутися в певній точці"
-    std::this_thread::sleep_until(nextTimePoint);
+  }
+  // ТЕПЕР ДЕБАГЕР І ЛОГИ ГАРАНТОВАНО ЗЛОВЛЯТЬ ПОМИЛКУ ТУТ
+  catch (const std::exception& e) {
+    // Замініть на ваш логер, якщо потрібно, але std::cerr виведе це в термінал
+    std::cerr << "[КРИТИЧНА ПОМИЛКА ПОТОКУ ДРОНА]: " << e.what() << '\n';
+    running = false;  // Зупиняємо цикл, щоб він не крутився з помилкою
+  }
+  catch (...) {
+    std::cerr << "[КРИТИЧНА ПОМИЛКА ПОТОКУ ДРОНА]: Невідомий виняток!\n";
+    running = false;
   }
 
   isReady = false;
@@ -111,7 +122,7 @@ bool Drone::updateRotation(float turnThreshold)
 
   angleDiff = std::atan2(std::sin(angleDiff), std::cos(angleDiff));
 
-  if (std::abs(angleDiff) < config.radInIteration) {
+  if (std::abs(angleDiff) < config.angularSpeed * config.physicsTimeStep) {
     angularState = currentTargetAngle;
     return false;
   }
@@ -120,11 +131,11 @@ bool Drone::updateRotation(float turnThreshold)
   if (std::abs(angleDiff) > turnThreshold) {
     if (angleDiff > 0) {
       // angleDiff додатний -> крутимо проти годинникової
-      angularState += config.radInIteration;
+      angularState += config.angularSpeed * config.physicsTimeStep;
     }
     else {
       // angleDiff від'ємний -> крутимо за годинниковою
-      angularState -= config.radInIteration;
+      angularState -= config.angularSpeed * config.physicsTimeStep;
     }
 
     if (angularState > M_PI * 2) {
@@ -147,7 +158,7 @@ void Drone::updatePosition()
   Coord velocity = direction * speed;
   Coord acceleration = direction * config.acceleration;
 
-  float dt = config.timeStep;
+  float dt = config.physicsTimeStep;
   float stepSq = (dt * dt) / 2.0f;
 
   std::string currentStateName = state->name();

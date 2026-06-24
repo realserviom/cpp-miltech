@@ -86,9 +86,9 @@ void saveOutputFileByStep(int length, const std::vector<SimStep>& steps)
     stepEntry["state"] = it->state;
     stepEntry["targetIndex"] = it->targetIdx;
 
-    stepEntry["dropPoint"] = {{"x", it->dropPoint.x}, {"y", it->dropPoint.y}};
-    stepEntry["aimPoint"] = {{"x", it->aimPoint.x}, {"y", it->aimPoint.y}};
-    stepEntry["predictedTarget"] = {{"x", it->predictedTarget.x}, {"y", it->predictedTarget.y}};
+    // stepEntry["dropPoint"] = {{"x", it->dropPoint.x}, {"y", it->dropPoint.y}};
+    // stepEntry["aimPoint"] = {{"x", it->aimPoint.x}, {"y", it->aimPoint.y}};
+    // stepEntry["predictedTarget"] = {{"x", it->predictedTarget.x}, {"y", it->predictedTarget.y}};
 
     out["steps"].push_back(stepEntry);
   }

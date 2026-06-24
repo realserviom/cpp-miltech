@@ -79,9 +79,6 @@ struct DroneConfig {
     float targetTimeStep;   // крок фізики цілей
     float physicsTimeStep;  // крок фізики дрона
 
-    // величина оберту дрона в радіанах за одну ітерацію
-    float radInIteration;
-
     // час зупинки чи прискорення дрона згідно формули t = 2*S/v
     float timeAcceleration;
 
@@ -92,8 +89,8 @@ struct DroneConfig {
     float timeHitRadius;
 
     // Викликаємо після того, як заповнили структуру з JSON
-    void updateCalculatedParams() {
-      radInIteration = angularSpeed * timeStep;
+    void updateCalculatedParams()
+    {
       timeAcceleration = (2.0f * accelPath) / attackSpeed;
       acceleration = attackSpeed / timeAcceleration;
       timeHitRadius = hitRadius / attackSpeed;

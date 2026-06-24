@@ -54,7 +54,8 @@ public:
                   const int& counter,
                   const Drone& curMyDrone,
                   const DroneConfig& myDroneConfig,
-                  const float& distDuringFall);
+                  const float& distDuringFall,
+                  const float& t_pol);
   void setTargetProvider(std::unique_ptr<ITargetProvider> targetProvider);
   void setBallisticSolver(std::unique_ptr<IBallisticSolver> solver);
   void setConfigLoader(std::unique_ptr<IConfigLoader> configLoader);

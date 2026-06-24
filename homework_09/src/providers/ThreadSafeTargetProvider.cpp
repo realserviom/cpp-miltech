@@ -1,5 +1,6 @@
 #include "providers/ThreadSafeTargetProvider.h"
 #include "json.hpp"
+#include <cstddef>
 #include <fstream>
 #include <stdexcept>
 #include "Debug.h"
@@ -12,8 +13,20 @@ using json = nlohmann::json;
 ThreadSafeTargetProvider::ThreadSafeTargetProvider(const std::string& jsonFilePath)
   : AbstractTargetProvider(jsonFilePath)
 {
-  currentPositions = new Coord[m_targetCount];
-  prevPositions = new Coord[m_targetCount];
+}
+
+void ThreadSafeTargetProvider::init(int& numberCounterInTimeSpot)
+{
+  // 1. Спочатку викликаємо оригінальний метод з базового класу!
+  // Він завантажить JSON і правильно встановить m_targetCount.
+  AbstractTargetProvider::init(numberCounterInTimeSpot);
+
+  // 2. Тепер m_targetCount має реальне значення (наприклад, 5).
+  // Можемо безпечно виділяти пам'ять для векторів:
+  currentPositions.resize(m_targetCount, Coord{0.0, 0.0});
+  prevPositions.resize(m_targetCount, Coord{0.0, 0.0});
+
+  DEBUG("Вектори цілей успішно ініціалізовано. Кількість: " << m_targetCount);
 }
 
 void ThreadSafeTargetProvider::loadTargets()
@@ -53,37 +66,50 @@ void ThreadSafeTargetProvider::loadTargets()
   fin.close();
 }
 
+Coord ThreadSafeTargetProvider::getTargetPosition(const int target, const float time)
+{
+  throw std::runtime_error(
+    "Не можна тут використовувати getTargetPosition з часом, бо це не потокобезпечний метод. Використовуйте getTargetPosition без часу.");
+}
+
 Target ThreadSafeTargetProvider::getTargetPosition(const int targetId)
 {
   std::lock_guard<std::mutex> lock(targetMutex);
   Target targetPos;
   targetPos.pos = currentPositions[targetId];
-  targetPos.velocity = currentPositions[targetId] - prevPositions[targetId];
+  targetPos.velocity = (prevPositions[targetId].x != 0.00 && prevPositions[targetId].y != 0.00)
+                         ? (currentPositions[targetId] - prevPositions[targetId]) / getTargetTimeStep() / getTimeScale()
+                         : Coord{0.0, 0.0};
+
+  // DEBUG("Target " << targetId << " pos: (" << targetPos.pos.x << ", " << targetPos.pos.y << "), velocity: (" << targetPos.velocity.x <<
+  // ", "
+  //                 << targetPos.velocity.y << ")");
   return targetPos;
 }
 
 void ThreadSafeTargetProvider::setTargetPosition()
 {
-  std::copy(currentPositions, currentPositions + m_targetCount, prevPositions);
+  prevPositions = currentPositions;
 
   for (int i = 0; i < m_targetCount; i++) {
     const float time = stepCount * getTargetTimeStep();
 
     // ітерація координати (кожних myDrone.arrayTimeStep секунд нова координата)
-    int futureIterationForTarget = getIterationByTime(time, getArrayTimeStep());
+    const float arrayTimeStep = getArrayTimeStep();
+    int iterationForTarget = getIterationByTime(time, arrayTimeStep);
 
-    int nextFutureIterationForTarget = getNextIteration(futureIterationForTarget);
+    int nextIterationForTarget = getNextIteration(iterationForTarget);
 
     // час що залишився
     float remainderTimeInSpot = std::fmod(time, arrayTimeStep);
 
-    Coord targetPosIteration = getTargetPositionInIteration(i, futureIterationForTarget);
-    Coord targetPosNextIteration = getTargetPositionInIteration(i, nextFutureIterationForTarget);
+    Coord targetPosIteration = getTargetPositionInIteration(i, iterationForTarget);
+    Coord targetPosNextIteration = getTargetPositionInIteration(i, nextIterationForTarget);
 
     Coord deltaTargetPos = targetPosNextIteration - targetPosIteration;
 
     // швидкість Vtarget це швидкість зміни координатів
-    Coord Vtarget = deltaTargetPos / getArrayTimeStep();
+    Coord Vtarget = deltaTargetPos / arrayTimeStep;
 
     // прогнозована позиція цілі
     currentPositions[i] = targetPosIteration + Vtarget * remainderTimeInSpot;
@@ -154,9 +180,6 @@ ThreadSafeTargetProvider::~ThreadSafeTargetProvider()
     }
     delete[] m_targets;
   }
-
-  delete[] currentPositions;
-  currentPositions = nullptr;
 }
 
 // === БАГАТОПОТОЧНИЙ ІНТЕРФЕЙС ===
@@ -164,7 +187,7 @@ void ThreadSafeTargetProvider::start()
 {
   DEBUG("--- start target thread! ---");
   running = true;
-  targetsThread = std::thread(&ThreadSafeTargetProvider::physicsLoop);
+  targetsThread = std::thread(&ThreadSafeTargetProvider::physicsLoop, this);
 }
 
 void ThreadSafeTargetProvider::stop()
@@ -188,18 +211,31 @@ void ThreadSafeTargetProvider::physicsLoop()
   // Беремо абсолютний час старту симуляції
   auto startTime = std::chrono::high_resolution_clock::now();
 
-  while (running) {
-    {
-      std::lock_guard<std::mutex> lock(targetMutex);
-      setTargetPosition();
+  try {
+    while (running) {
+      {
+        std::lock_guard<std::mutex> lock(targetMutex);
+        setTargetPosition();
+      }
+
+      auto nextTimePoint = getNextTimePoint(startTime, getTargetTimeStep() / getTimeScale(), stepCount);
+      // Кажемо операційній системі прокинутися в певній точці"
+      std::this_thread::sleep_until(nextTimePoint);
+
+      stepCount++;
     }
-
-    stepCount++;
-
-    auto nextTimePoint = getNextTimePoint(startTime, getTargetTimeStep() / getTimeScale(), stepCount);
-    // Кажемо операційній системі прокинутися в певній точці"
-    std::this_thread::sleep_until(nextTimePoint);
+  }
+  // Перехоплюємо стандартні помилки C++ (наприклад, std::out_of_range, std::runtime_error)
+  catch (const std::exception& e) {
+    std::cerr << "[КРИТИЧНА ПОМИЛКА ПОТОКУ ЦІЛЕЙ]: " << e.what() << '\n';
+    running = false;  // Зупиняємо цикл
+  }
+  // Перехоплюємо будь-які інші невідомі помилки
+  catch (...) {
+    std::cerr << "[КРИТИЧНА ПОМИЛКА ПОТОКУ ЦІЛЕЙ]: Невідомий виняток!\n";
+    running = false;
   }
 
+  // Гарантуємо, що прапорець скинеться навіть у випадку аварійної зупинки циклу
   isReady = false;
 }

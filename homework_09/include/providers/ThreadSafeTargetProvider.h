@@ -7,16 +7,21 @@
 #include <thread>
 #include <mutex>
 #include <atomic>
+#include <vector>
 
 class ThreadSafeTargetProvider : public AbstractTargetProvider {
 public:
   int stepCount = 0;
-  Coord* currentPositions = nullptr;
-  Coord* prevPositions = nullptr;
+  std::vector<Coord> currentPositions;
+  std::vector<Coord> prevPositions;
+
+  void init(int& numberCounterInTimeSpot) override;
 
   ThreadSafeTargetProvider(const std::string& jsonFilePath);
 
   Target getTargetPosition(const int target) override;
+
+  Coord getTargetPosition(const int target, const float time) override;
 
   void setTargetPosition();
 
