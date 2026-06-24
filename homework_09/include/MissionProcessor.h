@@ -27,7 +27,10 @@ private:
   // масив який містить кут напрямку для кожної цілі відносто осі X в радіанах
   std::vector<float> targetAngles;
 
-  void init(DroneConfig& myDrone, const AmmoParams*& ammo, int& numberCounterInTimeSpot, int& numberOfTargets);
+  void missionLoop(Drone& curMyDrone);
+
+  std::atomic<bool> running{false};
+  std::atomic<bool> isReady{false};
 
 public:
   std::vector<SimStep> steps{MAX_STEPS};  // Масив кроків для симуляції
@@ -35,6 +38,11 @@ public:
   Coord dropPoint;        // точка скиду
   Coord aimPoint;         // куди впаде бомба
   Coord predictedTarget;  // прогнозована позиція цілі
+
+  int numberOfTargets = 0;
+  float distDuringFall = 0.0f;
+  float t_pol = 0.0f;
+  std::thread missionThread;
 
   MissionProcessor(std::unique_ptr<ITargetProvider> targetProvider,
                    std::unique_ptr<IBallisticSolver> solver,
@@ -49,17 +57,16 @@ public:
     predictedTarget = {0, 0};
   }
 
-  void fillArrays(bool& canChangeTarget,
-                  const int& numberOfTargets,
-                  const int& counter,
-                  const Drone& curMyDrone,
-                  const DroneConfig& myDroneConfig,
-                  const float& distDuringFall,
-                  const float& t_pol);
+  void init(DroneConfig& myDrone, const AmmoParams*& ammo);
+
+  void fillArrays(bool& canChangeTarget, const int& counter, const Drone& curMyDrone);
+
   void setTargetProvider(std::unique_ptr<ITargetProvider> targetProvider);
   void setBallisticSolver(std::unique_ptr<IBallisticSolver> solver);
   void setConfigLoader(std::unique_ptr<IConfigLoader> configLoader);
-  void executeMission();
   void addStep(const int counter, DroneTelemetry& telemetry);
   std::unique_ptr<IDroneState> changeTarget(float& targetAngle, const bool& canChangeTarget, Drone& curMyDrone);
+
+  void start(Drone& curMyDrone);
+  bool isThreadReady() const;
 };

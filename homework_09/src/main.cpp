@@ -13,6 +13,7 @@ Code, Compile, Run and Debug online from anywhere in world.
 #include "Types.h"
 #include "config/ComponentFactory.h"
 #include "MissionProcessor.h"
+#include <iomanip>
 
 // Визначення константи Пі, якщо її немає в cmath
 #ifndef M_PI
@@ -30,7 +31,59 @@ int main()
 
     MissionProcessor processor(std::move(targetProvider), std::move(analyticalSolver), std::move(configLoader));
 
-    processor.executeMission();
+    DroneConfig myDroneConfig;
+
+    const AmmoParams* ammo = nullptr;
+
+    // ініціалізація параметрів дрона і початкових параметрів руху
+    processor.init(myDroneConfig, ammo);
+
+    // Поточний стан дрона
+    Drone curMyDrone(myDroneConfig);
+
+    // Завантаження боєприпасу
+    ammo = configLoader->getAmmoParameters(myDroneConfig.ammoName);
+
+    if (ammo == nullptr) {
+      throw std::runtime_error("Помилка: боєприпас " + std::string(myDroneConfig.ammoName) + " не знайдено в базі!");
+    }
+
+    DEBUG("Знайдено боєприпас: " << myDroneConfig.ammoName);
+    DEBUG("Параметри: mass: " << std::fixed << std::setprecision(3) << ammo->mass << ", drag: " << ammo->drag << ", lift: " << ammo->lift);
+
+    float t_pol;  // час польоту
+    float distDuringFall = 0;
+
+    try {
+      distDuringFall = analyticalSolver->getDistDuringFall(t_pol, myDroneConfig, ammo);
+    }
+    catch (const std::runtime_error& e) {
+      throw std::runtime_error("[AnalyticalSolver] КРИТИЧНА ПОМИЛКА: " + std::string(e.what()));
+    }
+
+    DEBUG("Горизонтальна дистанція яку проходить дрон за час " << t_pol << " сек. рівна " << distDuringFall << " м.");
+    DEBUG("-----------------------------------");
+
+    if (distDuringFall <= 0) {
+      throw std::runtime_error("Горизонтальна дистанція повинна бути додатня");
+    }
+
+    processor.t_pol = t_pol;
+    processor.distDuringFall = distDuringFall;
+
+    targetProvider->setArrayTimeStep(myDroneConfig.arrayTimeStep);
+    targetProvider->setTargetTimeStep(myDroneConfig.targetTimeStep);
+    targetProvider->setTimeScale(myDroneConfig.timeScale);
+
+    curMyDrone.start();
+    targetProvider->start();
+    processor.start(curMyDrone);
+
+    while (!curMyDrone.isThreadReady() || !targetProvider->isThreadReady() || !processor.isThreadReady()) {
+      std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    }
+
+    processor.missionThread.join();
   }
   catch (const std::runtime_error& e) {
     std::cout << e.what() << std::endl;

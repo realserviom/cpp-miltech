@@ -105,6 +105,7 @@ struct SimStep {
     Coord dropPoint;    	// точка скиду (куди летить дрон)
 	Coord aimPoint;     	// куди впаде бомба (якщо скинути зараз)
 	Coord predictedTarget;  // прогнозована позиція цілі
+        float timeSecSinceStart;  // останнє оновлення фізики
 };
 
 enum class ProviderType { JSON, TIME };
@@ -132,6 +133,7 @@ struct DroneTelemetry {
   float angularState;
   DroneStateId stateId;  // ID поточного стану дрона
   std::string stateName;
+  float timeSecSinceStart;
 };
 
 #endif

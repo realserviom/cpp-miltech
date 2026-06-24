@@ -14,6 +14,7 @@ public:
   Coord pos;           // поточна позиція (x, y)
   float speed;         // поточна швидкість
   float angularState;  // поточне положення дрона відносно осі x
+  float timeSecSinceStart;  // час послідньої генерації фізики
 
   DroneConfig config;
 

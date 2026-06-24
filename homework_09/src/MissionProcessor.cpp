@@ -11,7 +11,7 @@
 #include "states/StateDecelerating.h"
 #include "functions.h"
 
-void MissionProcessor::init(DroneConfig& myDrone, const AmmoParams*& ammo, int& numberCounterInTimeSpot, int& numberOfTargets)
+void MissionProcessor::init(DroneConfig& myDrone, const AmmoParams*& ammo)
 {
   // Ініціалізація
   try {
@@ -29,7 +29,7 @@ void MissionProcessor::init(DroneConfig& myDrone, const AmmoParams*& ammo, int& 
     throw std::runtime_error("Помилка: Крок масиву не ділиться націло на крок симуляції!");
   }
 
-  numberCounterInTimeSpot = static_cast<int>(ratio);
+  int numberCounterInTimeSpot = static_cast<int>(ratio);
 
   // Отримуємо цілі
   try {
@@ -80,13 +80,8 @@ void MissionProcessor::addStep(const int counter, DroneTelemetry& telemetry)
                     telemetry.timeSecSinceStart};
 }
 
-void MissionProcessor::fillArrays(bool& canChangeTarget,
-                                  const int& numberOfTargets,
-                                  const int& counter,
-                                  const Drone& curMyDrone,
-                                  const DroneConfig& myDroneConfig,
-                                  const float& distDuringFall,
-                                  const float& t_pol)
+void MissionProcessor::fillArrays(bool& canChangeTarget, const int& counter, const Drone& curMyDrone)
+
 {
   for (int targetId = 0; targetId < numberOfTargets; targetId++) {
     Target targetOptions = m_targetProvider->getTargetPosition(targetId);
@@ -133,7 +128,7 @@ void MissionProcessor::fillArrays(bool& canChangeTarget,
       // а з іншої сторони в цей момент дрон вже має бути направлений на ціль
       float t_new = curMyDrone.calculateSmallArrivalTime(length - distDuringFall > 0 ? length - distDuringFall : length);
 
-      if (std::abs(t_new - t) < myDroneConfig.timeHitRadius) {
+      if (std::abs(t_new - t) < curMyDrone.config.timeHitRadius) {
         t = t_new;
       }
       else if (t_new < t) {
@@ -189,7 +184,19 @@ std::unique_ptr<IDroneState> MissionProcessor::changeTarget(float& targetAngle, 
   return nullptr;
 }
 
-void MissionProcessor::executeMission()
+bool MissionProcessor::isThreadReady() const
+{
+  return isReady;
+}
+
+void MissionProcessor::start(Drone& curMyDrone)
+{
+  DEBUG("--- start mission thread! ---");
+  running = true;
+  missionThread = std::thread(&MissionProcessor::missionLoop, this, std::ref(curMyDrone));
+}
+
+void MissionProcessor::missionLoop(Drone& curMyDrone)
 {
   if (!m_targetProvider || !m_solver || !m_configLoader) {
     std::cout << "[MissionProcessor] Помилка: Не всі компоненти підключені!\n";
@@ -197,61 +204,11 @@ void MissionProcessor::executeMission()
   }
   LOG("--- ПОЧАТОК МІСІЇ ---");
 
-  DroneConfig myDroneConfig;
-
-  int numberCounterInTimeSpot = 0;
-  int numberOfTargets = 0;
-  const AmmoParams* ammo = nullptr;
-
-  // ініціалізація параметрів дрона і початкових параметрів руху
-  init(myDroneConfig, ammo, numberCounterInTimeSpot, numberOfTargets);
-
-  // Поточний стан дрона
-  Drone curMyDrone(myDroneConfig);
-
-  // Завантаження боєприпасу
-  ammo = m_configLoader->getAmmoParameters(myDroneConfig.ammoName);
-
-  if (ammo == nullptr) {
-    throw std::runtime_error("Помилка: боєприпас " + std::string(myDroneConfig.ammoName) + " не знайдено в базі!");
-  }
-
-  DEBUG("Знайдено боєприпас: " << myDroneConfig.ammoName);
-  DEBUG("Параметри: mass: " << std::fixed << std::setprecision(3) << ammo->mass << ", drag: " << ammo->drag << ", lift: " << ammo->lift);
+  isReady = true;
 
   int counter = 0;              // лічильник часу
   bool canChangeTarget = true;  // мітка чи є дозвіл міняти ціль
-  // std::vector<SimStep> steps(MAX_STEPS);  // Масив кроків для симуляції
-
-  float t_pol;  // час польоту
-  float distDuringFall = 0;
-  float prevFinalDistance = 10000000;  // відхилення координат падіння боєприпаса від цілі в попередньому кроці
-
-  try {
-    distDuringFall = m_solver->getDistDuringFall(t_pol, myDroneConfig, ammo);  // дистанція падіння
-  }
-  catch (const std::runtime_error& e) {
-    throw std::runtime_error("[AnalyticalSolver] КРИТИЧНА ПОМИЛКА: " + std::string(e.what()));
-  }
-
-  m_targetProvider->setArrayTimeStep(myDroneConfig.arrayTimeStep);
-  m_targetProvider->setTargetTimeStep(myDroneConfig.targetTimeStep);
-  m_targetProvider->setTimeScale(myDroneConfig.timeScale);
-
-  curMyDrone.start();
-  m_targetProvider->start();
-
-  while (!curMyDrone.isThreadReady() || !m_targetProvider->isThreadReady()) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-  }
-
-  DEBUG("Горизонтальна дистанція яку проходить дрон за час " << t_pol << " сек. рівна " << distDuringFall << " м.");
-  DEBUG("-----------------------------------");
-
-  if (distDuringFall <= 0) {
-    throw std::runtime_error("Горизонтальна дистанція повинна бути додатня");
-  }
-
+  float prevFinalDistance = 100000000;
   // Беремо абсолютний час старту симуляції
   auto startTime = std::chrono::high_resolution_clock::now();
 
@@ -269,7 +226,7 @@ void MissionProcessor::executeMission()
 
     // ################## РОЗРАХУНОК ТОЧКИ СКИДУ #############################################
     // -----------  заповнення масивів для пошуку найближчих цілей ---------------------------
-    fillArrays(canChangeTarget, numberOfTargets, counter, curMyDrone, myDroneConfig, distDuringFall, t_pol);
+    fillArrays(canChangeTarget, counter, curMyDrone);
 
     // -----------  логіка розрахунку точки скиду ---------------------------
     // на скільки я знаю треба працювати без cos і sin тоу що це для процесора важкі операції
@@ -308,12 +265,12 @@ void MissionProcessor::executeMission()
     double finalDistance = calculateLength(aimPoint - predictedTarget);
 
     // умова при якій дрон попадає в ціль з точністю "curMyDrone.config.hitRadius / 20"
-    if (finalDistance <= myDroneConfig.hitRadius / 2 ||
-        (prevFinalDistance < finalDistance && !canChangeTarget && prevFinalDistance <= myDroneConfig.hitRadius / 4)) {
+    if (finalDistance <= curMyDrone.config.hitRadius / 2 ||
+        (prevFinalDistance < finalDistance && !canChangeTarget && prevFinalDistance <= curMyDrone.config.hitRadius / 4)) {
       LOG("--- БОЄПРИПАС СКИНУТИЙ! Ураження : " << std::fixed << std::setprecision(2) << finalDistance << " м від цілі номер " << target
                                                 << " ---");
       DEBUG("--- prevFinalDistance: " << std::setprecision(4) << prevFinalDistance << " м.  ---");
-      DEBUG("--- myDrone.arrayTimeStep: " << std::setprecision(4) << myDroneConfig.arrayTimeStep << " ---");
+      DEBUG("--- myDrone.arrayTimeStep: " << std::setprecision(4) << curMyDrone.config.arrayTimeStep << " ---");
       DEBUG("--- dropPoint: (" << telemetry.pos.x << ", " << telemetry.pos.y << ") ---");
       DEBUG("--- aimPoint: (" << aimPoint.x << ", " << aimPoint.y << ") ---");
       DEBUG("--- predictedTarget: (" << predictedTarget.x << ", " << predictedTarget.y << ") ---");

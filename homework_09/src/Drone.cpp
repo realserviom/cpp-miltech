@@ -89,24 +89,16 @@ void Drone::physicsLoop()
         }
       }
 
-      // Рахуємо фізичний крок під м'ютексом
       {
         std::lock_guard<std::mutex> lock(stateMutex);
         this->move();
         timeSecSinceStart = stepCount * config.physicsTimeStep;
       }
 
-      // Крок виконано успішно
       stepCount++;
 
       auto nextTimePoint = getNextTimePoint(startTime, (config.physicsTimeStep / config.timeScale), stepCount);
-      // Кажемо операційній системі прокинутися в певній точці
       std::this_thread::sleep_until(nextTimePoint);
-
-      // auto timeToSleep = getDurationTime(startTime, (config.physicsTimeStep / config.timeScale));
-
-      // // Потік засинає рівно на цей залишок часу
-      // std::this_thread::sleep_for(timeToSleep);
     }
   }
   catch (const std::exception& e) {

@@ -14,8 +14,6 @@ protected:
 
   Coord **m_targets = nullptr;
 
-  Coord *currentPositions = nullptr;
-
   float arrayTimeStep = 0.0f;
   float targetTimeStep = 0.0f;
   float timeScale = 1.0f;
