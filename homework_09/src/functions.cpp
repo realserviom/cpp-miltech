@@ -85,6 +85,7 @@ void saveOutputFileByStep(int length, const std::vector<SimStep>& steps)
     stepEntry["direction"] = it->direction;
     stepEntry["state"] = it->state;
     stepEntry["targetIndex"] = it->targetIdx;
+    stepEntry["timeSecSinceStart"] = it->timeSecSinceStart;
 
     // stepEntry["dropPoint"] = {{"x", it->dropPoint.x}, {"y", it->dropPoint.y}};
     // stepEntry["aimPoint"] = {{"x", it->aimPoint.x}, {"y", it->aimPoint.y}};
@@ -96,6 +97,19 @@ void saveOutputFileByStep(int length, const std::vector<SimStep>& steps)
   std::ofstream fout("../data/output.json");
   fout << out.dump(2);
   fout.close();
+}
+
+std::chrono::duration<float> getDurationTime(std::chrono::high_resolution_clock::time_point startTime, double dt)
+{
+  auto endTime = std::chrono::high_resolution_clock::now();
+  double delta = std::chrono::duration<double>(endTime - startTime).count();
+
+  if (delta > dt) {
+    throw std::runtime_error("[function.cpp] КРИТИЧНА ПОМИЛКА: час виконання більший за крок " + std::to_string(dt));
+  }
+
+  // Повертаємо саме ДУРЕЙШН (тривалість)
+  return std::chrono::duration<float>(static_cast<float>(dt - delta));
 }
 
 std::chrono::high_resolution_clock::time_point getNextTimePoint(std::chrono::high_resolution_clock::time_point startTime,

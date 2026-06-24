@@ -70,15 +70,14 @@ void MissionProcessor::setConfigLoader(std::unique_ptr<IConfigLoader> configLoad
 
 void MissionProcessor::addStep(const int counter, DroneTelemetry& telemetry)
 {
-  steps[counter] = {
-    {telemetry.pos.x, telemetry.pos.y},
-    telemetry.angularState,
-    telemetry.stateId,
-    target,
-    {dropPoint.x, dropPoint.y},
-    {aimPoint.x, aimPoint.y},
-    {predictedTarget.x, predictedTarget.y},
-  };
+  steps[counter] = {{telemetry.pos.x, telemetry.pos.y},
+                    telemetry.angularState,
+                    telemetry.stateId,
+                    target,
+                    {dropPoint.x, dropPoint.y},
+                    {aimPoint.x, aimPoint.y},
+                    {predictedTarget.x, predictedTarget.y},
+                    telemetry.timeSecSinceStart};
 }
 
 void MissionProcessor::fillArrays(bool& canChangeTarget,
@@ -115,7 +114,7 @@ void MissionProcessor::fillArrays(bool& canChangeTarget,
     // в цьому випадку ми вже ціль не можемо поміняти тому що недоцільно зупиняти і набирати знову швидкість
     // Хоча при умові що пороговий кут в межаш похибки тоді можна міняти але з іншої сторони ми можемо перепригувати
     // із цілі на ціль що дасть велику похибку (цікаво як роблять виробники ПЗ для ППО ?)
-    if (t < (t_pol + 2) && targetId == target) {
+    if (t < (t_pol + 1) && targetId == target) {
       canChangeTarget = false;
       // LOG("canChangeTarget: false");
 
@@ -224,7 +223,7 @@ void MissionProcessor::executeMission()
   bool canChangeTarget = true;  // мітка чи є дозвіл міняти ціль
   // std::vector<SimStep> steps(MAX_STEPS);  // Масив кроків для симуляції
 
-  float t_pol;               // час польоту
+  float t_pol;  // час польоту
   float distDuringFall = 0;
   float prevFinalDistance = 10000000;  // відхилення координат падіння боєприпаса від цілі в попередньому кроці
 
@@ -309,8 +308,8 @@ void MissionProcessor::executeMission()
     double finalDistance = calculateLength(aimPoint - predictedTarget);
 
     // умова при якій дрон попадає в ціль з точністю "curMyDrone.config.hitRadius / 20"
-    if (finalDistance <= myDroneConfig.hitRadius ||
-        (prevFinalDistance < finalDistance && !canChangeTarget && prevFinalDistance <= myDroneConfig.hitRadius / 2)) {
+    if (finalDistance <= myDroneConfig.hitRadius / 2 ||
+        (prevFinalDistance < finalDistance && !canChangeTarget && prevFinalDistance <= myDroneConfig.hitRadius / 4)) {
       LOG("--- БОЄПРИПАС СКИНУТИЙ! Ураження : " << std::fixed << std::setprecision(2) << finalDistance << " м від цілі номер " << target
                                                 << " ---");
       DEBUG("--- prevFinalDistance: " << std::setprecision(4) << prevFinalDistance << " м.  ---");
@@ -357,7 +356,7 @@ void MissionProcessor::executeMission()
     std::this_thread::sleep_until(nextTimePoint);
   }
 
-  curMyDrone.stop();  // Зупиняє physicsThread через join()
+  curMyDrone.stop();         // Зупиняє physicsThread через join()
   m_targetProvider->stop();  // Зупиняє targetsThread через join()
 
   if (counter <= MAX_STEPS) {

@@ -62,6 +62,7 @@ DroneTelemetry Drone::getTelemetry() const
   tel.angularState = angularState;
   tel.stateId = state->id();
   tel.stateName = state->name();
+  tel.timeSecSinceStart = timeSecSinceStart;
   return tel;
 }
 
@@ -92,6 +93,7 @@ void Drone::physicsLoop()
       {
         std::lock_guard<std::mutex> lock(stateMutex);
         this->move();
+        timeSecSinceStart = stepCount * config.physicsTimeStep;
       }
 
       // Крок виконано успішно
@@ -100,13 +102,16 @@ void Drone::physicsLoop()
       auto nextTimePoint = getNextTimePoint(startTime, (config.physicsTimeStep / config.timeScale), stepCount);
       // Кажемо операційній системі прокинутися в певній точці
       std::this_thread::sleep_until(nextTimePoint);
+
+      // auto timeToSleep = getDurationTime(startTime, (config.physicsTimeStep / config.timeScale));
+
+      // // Потік засинає рівно на цей залишок часу
+      // std::this_thread::sleep_for(timeToSleep);
     }
   }
-  // ТЕПЕР ДЕБАГЕР І ЛОГИ ГАРАНТОВАНО ЗЛОВЛЯТЬ ПОМИЛКУ ТУТ
   catch (const std::exception& e) {
-    // Замініть на ваш логер, якщо потрібно, але std::cerr виведе це в термінал
     std::cerr << "[КРИТИЧНА ПОМИЛКА ПОТОКУ ДРОНА]: " << e.what() << '\n';
-    running = false;  // Зупиняємо цикл, щоб він не крутився з помилкою
+    running = false;
   }
   catch (...) {
     std::cerr << "[КРИТИЧНА ПОМИЛКА ПОТОКУ ДРОНА]: Невідомий виняток!\n";
@@ -222,7 +227,7 @@ void Drone::move()
 
 void Drone::accelerate()
 {
-  speed += (config.acceleration * config.timeStep);
+  speed += (config.acceleration * config.physicsTimeStep);
   if (speed > config.attackSpeed) {
     speed = config.attackSpeed;
   }
@@ -230,7 +235,7 @@ void Drone::accelerate()
 
 void Drone::decelerate()
 {
-  speed -= (config.acceleration * config.timeStep);
+  speed -= (config.acceleration * config.physicsTimeStep);
   if (speed <= 0) {
     speed = 0;
   }
