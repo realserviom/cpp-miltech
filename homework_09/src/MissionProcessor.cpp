@@ -10,6 +10,7 @@
 #include "interfaces/IDroneState.h"
 #include "states/StateDecelerating.h"
 #include "functions.h"
+#include <stack>
 
 void MissionProcessor::init(DroneConfig& myDrone, const AmmoParams*& ammo)
 {
@@ -209,8 +210,13 @@ void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall
   int counter = 0;              // лічильник часу
   bool canChangeTarget = true;  // мітка чи є дозвіл міняти ціль
   float prevFinalDistance = 100000000;
+
+  int currentTargetIdForPositions = 1;
+
   // Беремо абсолютний час старту симуляції
   auto startTime = std::chrono::high_resolution_clock::now();
+
+  std::stack<Target> targetStack;
 
   while (true) {
     // розраховуємо всі дані для визначення поточної найближчої цілі
@@ -241,7 +247,23 @@ void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall
     DEBUG("--- targetPosition = " << targetPosition.pos.x << ", " << targetPosition.pos.y << " ---");
     DEBUG("--- targetVelocity = " << targetPosition.velocity.x << ", " << targetPosition.velocity.y << " ---");
 
-    predictedTarget = targetPosition.pos + targetPosition.velocity * t_pol;
+    currentTargetIdForPositions = !canChangeTarget ? target : -1;
+
+    if (!canChangeTarget) {
+      if (targetStack.size() > 2) {
+        targetStack.pop();
+      }
+
+      targetStack.push(targetPosition);
+    }
+
+    if (!canChangeTarget && currentTargetIdForPositions == target) {
+      predictedTarget = targetStack.size() > 2 ? predictTargetPosition(targetStack, t_pol, curMyDrone.config.timeStep)
+                                               : targetPosition.pos + targetPosition.velocity * t_pol;
+    }
+    else {
+      predictedTarget = targetPosition.pos + targetPosition.velocity * t_pol;
+    }
 
     DEBUG("--- predictedTarget: (" << predictedTarget.x << ", " << predictedTarget.y << ") ---");
 

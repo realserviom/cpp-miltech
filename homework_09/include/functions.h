@@ -5,7 +5,7 @@
 #include <cstdio>
 #include <vector>
 #include <thread>
-
+#include <stack>
 
 void saveFireCoordinates(double fireX, double fireY, double xd_i, double yd_i);
 
@@ -22,6 +22,10 @@ std::chrono::duration<float> getDurationTime(std::chrono::high_resolution_clock:
 std::chrono::high_resolution_clock::time_point getNextTimePoint(std::chrono::high_resolution_clock::time_point startTime,
                                                                 double dt,
                                                                 int counter);
+
+double normalizeAngle(double angle);
+
+Coord predictTargetPosition(std::stack<Target>& targetStack, float t_pol, float stepTime);
 
 template <typename T>
 int countFilledElements(const T arr[], int size, T marker);
