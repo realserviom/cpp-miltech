@@ -136,6 +136,48 @@ double normalizeAngle(double angle)
   return angle;
 }
 
+// Coord predictTargetPosition2(std::stack<Target>& targetStack, float t_pol, float stepTime) const
+// {
+//   DEBUG("розраховуємо рухом по колу");
+//   // Тимчасово витягуємо точки
+//   Target t3 = targetStack.top();
+//   targetStack.pop();
+//   Target t2 = targetStack.top();
+//   targetStack.pop();
+//   Target t1 = targetStack.top();
+//   targetStack.pop();
+
+//   // повертаємо їх назад у стек (у зворотному порядку! пізніше переробимо через масив або щось інше придумаємо)
+//   // не знаю як правильно чи можете підказати?
+//   targetStack.push(t1);
+//   targetStack.push(t2);
+//   targetStack.push(t3);
+
+//   double x1 = t1.pos.x, y1 = t1.pos.y;
+//   double x2 = t2.pos.x, y2 = t2.pos.y;
+//   double x3 = t3.pos.x, y3 = t3.pos.y;
+
+//   // 1. Обчислюємо швидкості на двох відрізках
+//   double v1x = (x2 - x1) / stepTime;
+//   double v1y = (y2 - y1) / stepTime;
+
+//   double v2x = (x3 - x2) / stepTime;
+//   double v2y = (y3 - y2) / stepTime;
+
+//   // 2. Обчислюємо прискорення
+//   double ax = (v2x - v1x) / stepTime;
+//   double ay = (v2y - v1y) / stepTime;
+
+//   // 3. Прогнозуємо позицію за формулою кінематики
+//   // S = V * t + (a * t^2) / 2
+
+//   Coord predictedPos;
+//   predictedPos.x = x3 + (v2x * t_pol) + (0.5 * ax * t_pol * t_pol);
+//   predictedPos.y = y3 + (v2y * t_pol) + (0.5 * ay * t_pol * t_pol);
+
+//   return predictedPos;
+// }
+
 // Функція для передбачення позиції
 Coord predictTargetPosition(std::stack<Target>& targetStack, float t_pol, float stepTime)
 {
