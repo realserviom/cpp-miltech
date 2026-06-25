@@ -78,7 +78,7 @@ Target ThreadSafeTargetProvider::getTargetPosition(const int targetId)
   Target targetPos;
   targetPos.pos = currentPositions[targetId];
   targetPos.velocity = (prevPositions[targetId].x != 0.00 && prevPositions[targetId].y != 0.00)
-                         ? (currentPositions[targetId] - prevPositions[targetId]) / getTargetTimeStep() / getTimeScale()
+                         ? (currentPositions[targetId] - prevPositions[targetId]) / getTargetTimeStep()
                          : Coord{0.0, 0.0};
 
   // DEBUG("Target " << targetId << " pos: (" << targetPos.pos.x << ", " << targetPos.pos.y << "), velocity: (" << targetPos.velocity.x <<
