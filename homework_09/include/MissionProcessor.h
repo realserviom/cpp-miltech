@@ -27,21 +27,19 @@ private:
   // масив який містить кут напрямку для кожної цілі відносто осі X в радіанах
   std::vector<float> targetAngles;
 
-  void missionLoop(Drone& curMyDrone);
+  void missionLoop(Drone& curMyDrone, const float distDuringFall, const float t_pol);
 
   std::atomic<bool> running{false};
   std::atomic<bool> isReady{false};
 
 public:
-  std::vector<SimStep> steps{MAX_STEPS};  // Масив кроків для симуляції
+  std::vector<SimStep> steps;  // Масив кроків для симуляції
 
   Coord dropPoint;        // точка скиду
   Coord aimPoint;         // куди впаде бомба
   Coord predictedTarget;  // прогнозована позиція цілі
 
   int numberOfTargets = 0;
-  float distDuringFall = 0.0f;
-  float t_pol = 0.0f;
   std::thread missionThread;
 
   MissionProcessor(std::shared_ptr<ITargetProvider> targetProvider,
@@ -59,7 +57,7 @@ public:
 
   void init(DroneConfig& myDrone, const AmmoParams*& ammo);
 
-  void fillArrays(bool& canChangeTarget, const int& counter, const Drone& curMyDrone);
+  void fillArrays(bool& canChangeTarget, const int& counter, const Drone& curMyDrone, const float distDuringFall, const float t_pol);
 
   void setTargetProvider(std::shared_ptr<ITargetProvider> targetProvider);
   void setBallisticSolver(std::shared_ptr<IBallisticSolver> solver);
@@ -67,6 +65,6 @@ public:
   void addStep(const int counter, DroneTelemetry& telemetry);
   std::unique_ptr<IDroneState> changeTarget(float& targetAngle, const bool& canChangeTarget, Drone& curMyDrone);
 
-  void start(Drone& curMyDrone);
+  void start(Drone& curMyDrone, const float distDuringFall, const float t_pol);
   bool isThreadReady() const;
 };

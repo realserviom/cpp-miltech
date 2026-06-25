@@ -4,8 +4,8 @@
 #include "../interfaces/IBallisticSolver.h"
 #include <memory>
 
-std::unique_ptr<ITargetProvider> createProvider(ProviderType type, const std::string& file_name);
-std::unique_ptr<IConfigLoader> createLoader(LoaderType type,
+std::shared_ptr<ITargetProvider> createProvider(ProviderType type, const std::string& file_name);
+std::shared_ptr<IConfigLoader> createLoader(LoaderType type,
                                             const std::string& file_drone_config_name,
                                             const std::string& file_list_ammo_name);
-std::unique_ptr<IBallisticSolver> createSolver(SolverType type);
+std::shared_ptr<IBallisticSolver> createSolver(SolverType type);

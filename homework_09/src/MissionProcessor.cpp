@@ -70,18 +70,18 @@ void MissionProcessor::setConfigLoader(std::shared_ptr<IConfigLoader> configLoad
 
 void MissionProcessor::addStep(const int counter, DroneTelemetry& telemetry)
 {
-  steps[counter] = {{telemetry.pos.x, telemetry.pos.y},
-                    telemetry.angularState,
-                    telemetry.stateId,
-                    target,
-                    {dropPoint.x, dropPoint.y},
-                    {aimPoint.x, aimPoint.y},
-                    {predictedTarget.x, predictedTarget.y},
-                    telemetry.timeSecSinceStart};
+  steps.push_back({{telemetry.pos.x, telemetry.pos.y},
+                   telemetry.angularState,
+                   telemetry.stateId,
+                   target,
+                   {dropPoint.x, dropPoint.y},
+                   {aimPoint.x, aimPoint.y},
+                   {predictedTarget.x, predictedTarget.y},
+                   telemetry.timeSecSinceStart});
 }
 
-void MissionProcessor::fillArrays(bool& canChangeTarget, const int& counter, const Drone& curMyDrone)
-
+void MissionProcessor::fillArrays(
+  bool& canChangeTarget, const int& counter, const Drone& curMyDrone, const float distDuringFall, const float t_pol)
 {
   for (int targetId = 0; targetId < numberOfTargets; targetId++) {
     Target targetOptions = m_targetProvider->getTargetPosition(targetId);
@@ -189,14 +189,14 @@ bool MissionProcessor::isThreadReady() const
   return isReady;
 }
 
-void MissionProcessor::start(Drone& curMyDrone)
+void MissionProcessor::start(Drone& curMyDrone, const float distDuringFall, const float t_pol)
 {
   DEBUG("--- start mission thread! ---");
   running = true;
-  missionThread = std::thread(&MissionProcessor::missionLoop, this, std::ref(curMyDrone));
+  missionThread = std::thread(&MissionProcessor::missionLoop, this, std::ref(curMyDrone), distDuringFall, t_pol);
 }
 
-void MissionProcessor::missionLoop(Drone& curMyDrone)
+void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall, const float t_pol)
 {
   if (!m_targetProvider || !m_solver || !m_configLoader) {
     std::cout << "[MissionProcessor] Помилка: Не всі компоненти підключені!\n";
@@ -226,7 +226,7 @@ void MissionProcessor::missionLoop(Drone& curMyDrone)
 
     // ################## РОЗРАХУНОК ТОЧКИ СКИДУ #############################################
     // -----------  заповнення масивів для пошуку найближчих цілей ---------------------------
-    fillArrays(canChangeTarget, counter, curMyDrone);
+    fillArrays(canChangeTarget, counter, curMyDrone, distDuringFall, t_pol);
 
     // -----------  логіка розрахунку точки скиду ---------------------------
     // на скільки я знаю треба працювати без cos і sin тоу що це для процесора важкі операції

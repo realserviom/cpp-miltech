@@ -68,16 +68,13 @@ int main()
       throw std::runtime_error("Горизонтальна дистанція повинна бути додатня");
     }
 
-    processor.t_pol = t_pol;
-    processor.distDuringFall = distDuringFall;
-
     targetProvider->setArrayTimeStep(myDroneConfig.arrayTimeStep);
     targetProvider->setTargetTimeStep(myDroneConfig.targetTimeStep);
     targetProvider->setTimeScale(myDroneConfig.timeScale);
 
     curMyDrone.start();
     targetProvider->start();
-    processor.start(curMyDrone);
+    processor.start(curMyDrone, distDuringFall, t_pol);
 
     while (!curMyDrone.isThreadReady() || !targetProvider->isThreadReady() || !processor.isThreadReady()) {
       std::this_thread::sleep_for(std::chrono::milliseconds(1000));
