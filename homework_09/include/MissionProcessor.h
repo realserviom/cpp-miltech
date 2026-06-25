@@ -12,9 +12,9 @@
 class MissionProcessor {
 private:
     // Вказівники на наші стратегії
-  std::unique_ptr<ITargetProvider> m_targetProvider = nullptr;
-  std::unique_ptr<IBallisticSolver> m_solver = nullptr;
-  std::unique_ptr<IConfigLoader> m_configLoader = nullptr;
+  std::shared_ptr<ITargetProvider> m_targetProvider = nullptr;
+  std::shared_ptr<IBallisticSolver> m_solver = nullptr;
+  std::shared_ptr<IConfigLoader> m_configLoader = nullptr;
 
   int target;
 
@@ -44,12 +44,12 @@ public:
   float t_pol = 0.0f;
   std::thread missionThread;
 
-  MissionProcessor(std::unique_ptr<ITargetProvider> targetProvider,
-                   std::unique_ptr<IBallisticSolver> solver,
-                   std::unique_ptr<IConfigLoader> configLoader)
-    : m_targetProvider(std::move(targetProvider))
-    , m_solver(std::move(solver))
-    , m_configLoader(std::move(configLoader))
+  MissionProcessor(std::shared_ptr<ITargetProvider> targetProvider,
+                   std::shared_ptr<IBallisticSolver> solver,
+                   std::shared_ptr<IConfigLoader> configLoader)
+    : m_targetProvider(targetProvider)
+    , m_solver(solver)
+    , m_configLoader(configLoader)
   {
     target = 0;
     dropPoint = {0, 0};
@@ -61,9 +61,9 @@ public:
 
   void fillArrays(bool& canChangeTarget, const int& counter, const Drone& curMyDrone);
 
-  void setTargetProvider(std::unique_ptr<ITargetProvider> targetProvider);
-  void setBallisticSolver(std::unique_ptr<IBallisticSolver> solver);
-  void setConfigLoader(std::unique_ptr<IConfigLoader> configLoader);
+  void setTargetProvider(std::shared_ptr<ITargetProvider> targetProvider);
+  void setBallisticSolver(std::shared_ptr<IBallisticSolver> solver);
+  void setConfigLoader(std::shared_ptr<IConfigLoader> configLoader);
   void addStep(const int counter, DroneTelemetry& telemetry);
   std::unique_ptr<IDroneState> changeTarget(float& targetAngle, const bool& canChangeTarget, Drone& curMyDrone);
 

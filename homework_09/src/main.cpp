@@ -23,13 +23,13 @@ Code, Compile, Run and Debug online from anywhere in world.
 int main()
 {
   try {
-    auto configLoader = createLoader(LoaderType::FILE, "../data/config.json", "../data/ammo.json");
+    std::shared_ptr<IConfigLoader> configLoader = createLoader(LoaderType::FILE, "../data/config.json", "../data/ammo.json");
 
-    auto targetProvider = createProvider(ProviderType::TIME, "../data/targets.json");
+    std::shared_ptr<ITargetProvider> targetProvider = createProvider(ProviderType::TIME, "../data/targets.json");
 
-    auto analyticalSolver = createSolver(SolverType::TABLE);
+    std::shared_ptr<IBallisticSolver> analyticalSolver = createSolver(SolverType::TABLE);
 
-    MissionProcessor processor(std::move(targetProvider), std::move(analyticalSolver), std::move(configLoader));
+    MissionProcessor processor(targetProvider, analyticalSolver, configLoader);
 
     DroneConfig myDroneConfig;
 
@@ -52,7 +52,7 @@ int main()
     DEBUG("Параметри: mass: " << std::fixed << std::setprecision(3) << ammo->mass << ", drag: " << ammo->drag << ", lift: " << ammo->lift);
 
     float t_pol;  // час польоту
-    float distDuringFall = 0;
+    float distDuringFall = 0;  // дистанція, яку проходить снаряд за час t_pol (горизонтальна відстань від точки скидання до цілі)
 
     try {
       distDuringFall = analyticalSolver->getDistDuringFall(t_pol, myDroneConfig, ammo);
@@ -84,6 +84,9 @@ int main()
     }
 
     processor.missionThread.join();
+
+    curMyDrone.stop();
+    targetProvider->stop();
   }
   catch (const std::runtime_error& e) {
     std::cout << e.what() << std::endl;

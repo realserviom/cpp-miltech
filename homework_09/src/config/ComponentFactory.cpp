@@ -5,39 +5,39 @@
 #include "solvers/AnalyticalSolver.h"
 #include "solvers/TableSolver.h"
 
-std::unique_ptr<ITargetProvider> createProvider(ProviderType type, const std::string& file_name)
+std::shared_ptr<ITargetProvider> createProvider(ProviderType type, const std::string& file_name)
 {
   switch (type) {
       // case ProviderType::JSON:
       //   return std::make_unique<JsonTargetProvider>(file_name);
 
     case ProviderType::TIME:
-      return std::make_unique<ThreadSafeTargetProvider>(file_name);
+      return std::make_shared<ThreadSafeTargetProvider>(file_name);
 
     default:
       return nullptr;
   }
 }
 
-std::unique_ptr<IConfigLoader> createLoader(LoaderType type,
+std::shared_ptr<IConfigLoader> createLoader(LoaderType type,
                                             const std::string& file_drone_config_name,
                                             const std::string& file_list_ammo_name)
 {
   switch (type) {
     case LoaderType::FILE:
-      return std::make_unique<FileConfigLoader>(file_drone_config_name, file_list_ammo_name);
+      return std::make_shared<FileConfigLoader>(file_drone_config_name, file_list_ammo_name);
     default:
       return nullptr;
   }
 }
 
-std::unique_ptr<IBallisticSolver> createSolver(SolverType type)
+std::shared_ptr<IBallisticSolver> createSolver(SolverType type)
 {
   switch (type) {
     case SolverType::ANALYTICAL:
-      return std::make_unique<AnalyticalSolver>();
+      return std::make_shared<AnalyticalSolver>();
     case SolverType::TABLE:
-      return std::make_unique<TableSolver>("../data/ballistic_table.txt");
+      return std::make_shared<TableSolver>("../data/ballistic_table.txt");
     default:
       return nullptr;
   }

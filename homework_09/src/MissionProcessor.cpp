@@ -53,19 +53,19 @@ void MissionProcessor::init(DroneConfig& myDrone, const AmmoParams*& ammo)
   DEBUG("===========================");
 }
 
-void MissionProcessor::setTargetProvider(std::unique_ptr<ITargetProvider> targetProvider)
+void MissionProcessor::setTargetProvider(std::shared_ptr<ITargetProvider> targetProvider)
 {
-  m_targetProvider = std::move(targetProvider);
+  m_targetProvider = targetProvider;
 }
 
-void MissionProcessor::setBallisticSolver(std::unique_ptr<IBallisticSolver> solver)
+void MissionProcessor::setBallisticSolver(std::shared_ptr<IBallisticSolver> solver)
 {
-  m_solver = std::move(solver);
+  m_solver = solver;
 }
 
-void MissionProcessor::setConfigLoader(std::unique_ptr<IConfigLoader> configLoader)
+void MissionProcessor::setConfigLoader(std::shared_ptr<IConfigLoader> configLoader)
 {
-  m_configLoader = std::move(configLoader);
+  m_configLoader = configLoader;
 }
 
 void MissionProcessor::addStep(const int counter, DroneTelemetry& telemetry)
@@ -312,9 +312,6 @@ void MissionProcessor::missionLoop(Drone& curMyDrone)
     auto nextTimePoint = getNextTimePoint(startTime, (curMyDrone.config.timeStep / curMyDrone.config.timeScale), counter);
     std::this_thread::sleep_until(nextTimePoint);
   }
-
-  curMyDrone.stop();         // Зупиняє physicsThread через join()
-  m_targetProvider->stop();  // Зупиняє targetsThread через join()
 
   if (counter <= MAX_STEPS) {
     saveOutputFileByStep(counter + 1, steps);

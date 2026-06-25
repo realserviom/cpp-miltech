@@ -9,6 +9,7 @@ void AbstractTargetProvider::init(int &numberCounterInTimeSpot)
   m_numberCounterInTimeSpot = numberCounterInTimeSpot;
   LOG("Preparing targets...");
   loadTargets();
+
   LOG("Targets ready");
 }
 
