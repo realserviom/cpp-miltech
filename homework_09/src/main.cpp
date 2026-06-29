@@ -5,6 +5,8 @@
 #include <cstring>
 #include "drone_link.h"  // Переконайся, що цей файл лежить поруч
 #include <fstream>
+#include <chrono>
+#include <thread>
 
 // Перевіряємо, чи ми на Raspberry Pi (зазвичай там доступний заголовок gpiod.h)
 // Якщо ти тестуєш в контейнері, де gpiod.h взагалі не встановлено,
@@ -72,10 +74,7 @@ public:
       gpiod_line_set_value(start_line, value);
 #else
     std::cout << "[MOCK GPIO] Лiнiя START -> " << value << " (" << (value ? "ГОТОВИЙ" : "ВИМК") << ")" << std::endl;
-
-    // Нам треба створити файл 24 (або line24) в папці банки
-    // std::ofstream автоматично створить файл, якщо його немає
-    std::ofstream file("/tmp/my_gpio_bank/24");
+    std::ofstream file("/tmp/my_gpio_bank/sim_gpio24/value");
 
     if (file.is_open()) {
       file << value;  // Записуємо '1' або '0'
@@ -83,16 +82,7 @@ public:
       std::cout << "[MOCK GPIO] Створено файл і записано START = " << value << std::endl;
     }
     else {
-      // Якщо не знайшло '24', спробуємо створити 'line24'
-      std::ofstream file_alt("/tmp/my_gpio_bank/line24");
-      if (file_alt.is_open()) {
-        file_alt << value;
-        file_alt.close();
-        std::cout << "[MOCK GPIO] Створено файл і записано line24 = " << value << std::endl;
-      }
-      else {
-        std::cerr << "[MOCK GPIO] Помилка: не вдалося створити файл лінії в /tmp/my_gpio_bank/" << std::endl;
-      }
+      std::cerr << "[MOCK GPIO] Помилка: не вдалося створити файл лінії в /tmp/my_gpio_bank/sim_gpio24/value" << std::endl;
     }
 #endif
   }
@@ -101,20 +91,36 @@ public:
   {
     std::cout << "[GPIO] Виклик команди DROP!" << std::endl;
 #if REAL_GPIO
+    std::cout << "[MOCK GPIO] Лiнiя START -> " << value << " (" << (value ? "ГОТОВИЙ" : "ВИМК") << ")" << std::endl;
     if (is_ready)
       gpiod_line_set_value(drop_line, 1);
-    usleep(80000);  // тримаємо 75 мс (в межах 50-100 мс)
+    usleep(80000);  // тримаємо 80 мс (в межах 50-100 мс)
     if (is_ready)
       gpiod_line_set_value(drop_line, 0);
 #else
-    std::cout << "[MOCK GPIO] Лiнiя DROP -> 1 (Імпульс 75 мс почався)" << std::endl;
-    usleep(80000);
-    std::cout << "[MOCK GPIO] Лiнiя DROP -> 0 (Імпульс завершено)" << std::endl;
+    std::ofstream file("/tmp/my_gpio_bank/sim_gpio23/value");
+
+    if (file.is_open()) {
+      file << 1;  // Записуємо '1' або '0'
+      file.close();
+
+      std::cout << "[MOCK GPIO] Створено файл і записано START = " << 1 << std::endl;
+
+      usleep(80000);
+
+      std::ofstream file("/tmp/my_gpio_bank/sim_gpio23/value");
+
+      file << 0;
+      file.close();
+    }
+    else {
+      std::cerr << "[MOCK GPIO] Помилка: не вдалося створити файл лінії в /tmp/my_gpio_bank/sim_gpio23/value" << std::endl;
+    }
 #endif
   }
 };
 
-// Функція налаштування UART, яку ми розбирали
+// Функція налаштування UART
 int openUart(const char* dev)
 {
   int fd = open(dev, O_RDWR | O_NOCTTY | O_NONBLOCK);
@@ -136,7 +142,7 @@ int openUart(const char* dev)
 
 int main()
 {
-  // 1. Відкриваємо порт.
+  // Відкриваємо порт
   // Якщо тестуєш на комп'ютері з віртуальним портом, заміни на "/tmp/ttyA"
 
   // Налаштування socat для тестування:
@@ -168,6 +174,9 @@ int main()
   uint8_t outPayload[260];
   bool already_dropped = false;
 
+  auto startTime = std::chrono::high_resolution_clock::now();
+  auto nextTimePoint = startTime + std::chrono::seconds(20);
+
   // Головний робочий цикл програми
   while (true) {
     // --- НЕБЛОКУЮЧЕ ЧИТАННЯ З UART ---
@@ -187,6 +196,37 @@ int main()
         // залежно від того, чи це телеметрія (0x01), чи ціль (0x02)
         if (outType == 0x01) {
           std::cout << " -> Оброблено пакет ТЕЛЕМЕТРІЇ" << std::endl;
+          if (outLen == sizeof(Telemetry)) {
+            Telemetry dron;
+            // Копіюємо байти у структуру
+            std::memcpy(&dron, outPayload, sizeof(Telemetry));
+
+            // Виводимо параметри балістики в консоль
+            std::cout << "\n[Парсер] Отримано параметри дрону!" << std::endl;
+            std::cout << " -> Час від старту: " << dron.t_ms << std::endl;
+            std::cout << " -> Позиція дрона: " << dron.x << "," << dron.y << std::endl;
+            std::cout << " -> Висота дрона: " << dron.z << std::endl;
+            std::cout << " -> Швидкість vx, vy дрона: " << dron.vx << "," << dron.vy << std::endl;
+            std::cout << " -> Швидкість speed дрона: " << dron.speed << std::endl;
+            std::cout << " -> Курс дрона: " << dron.dir << std::endl;
+            std::cout << " -> State дрона: " << dron.state << std::endl;
+          }
+        }
+
+        // позиція цілі
+        if (outType == 0x02) {
+          std::cout << " -> Оброблено пакет ЦІЛІ" << std::endl;
+          if (outLen == sizeof(TargetPos)) {
+            TargetPos target;
+
+            std::memcpy(&target, outPayload, sizeof(TargetPos));
+
+            // Виводимо параметри балістики в консоль
+            std::cout << "\n[Парсер] Отримано параметри цілі!" << std::endl;
+            std::cout << "ID цілі -> : " << target.id << std::endl;
+            std::cout << "X положеня цілі -> : " << target.x << std::endl;
+            std::cout << "Y положеня цілі -> : " << target.y << std::endl;
+          }
         }
 
         if (outType == 0x03) {  // PKT_AMMO
@@ -208,12 +248,31 @@ int main()
           }
         }
 
-        // Наприклад, якщо балістичний калькулятор порахував, що дрон над ціллю:
-        if (!already_dropped) {
-          gpio.pulse_drop();  // Одноразовий імпульс
-          already_dropped = true;
+        // позиція цілі
+        if (outType == 0x04) {
+          std::cout << " -> Вердикт чекера " << std::endl;
+          if (outLen == sizeof(Result)) {
+            Result result;
+
+            std::memcpy(&result, outPayload, sizeof(Result));
+
+            // Виводимо параметри балістики в консоль
+            std::cout << "\n[Result] Отримано результати попадання!" << std::endl;
+            std::cout << "Влучив чи промах -> : " << result.hit << std::endl;
+            std::cout << "targetId цілі -> : " << result.targetId << std::endl;
+            std::cout << "Промах, м. -> : " << result.miss_m << std::endl;
+            std::cout << "Час коли скид спрацював, с. -> : " << result.drop_t_ms << std::endl;
+          }
         }
       }
+    }
+
+    auto currentTime = std::chrono::high_resolution_clock::now();
+
+    // Наприклад, якщо балістичний калькулятор порахував, що дрон над ціллю:
+    if (!already_dropped && currentTime >= nextTimePoint) {
+      gpio.pulse_drop();  // Одноразовий імпульс
+      already_dropped = true;
     }
 
     // Маленька пауза, щоб не навантажувати процесор ПК на 100% у порожньому циклі.
