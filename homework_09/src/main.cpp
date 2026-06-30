@@ -74,17 +74,15 @@ int main()
     // }
 
     uartProcessor->start();
-    return 0;
+    processor.start();
 
-    processor.start(curMyDrone, distDuringFall, t_pol);
-
-    while (!curMyDrone.isThreadReady() || !uartProcessor->isThreadReady() || !processor.isThreadReady()) {
+    while (!uartProcessor->isThreadReady() || !processor.isThreadReady()) {
       std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
 
     processor.missionThread.join();
 
-    curMyDrone.stop();
+    // curMyDrone.stop();
     uartProcessor->stop();
   }
   catch (const std::runtime_error& e) {

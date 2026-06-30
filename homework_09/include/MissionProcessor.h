@@ -1,11 +1,9 @@
 #pragma once
 #include "./interfaces/IBallisticSolver.h"
 #include "./interfaces/IConfigLoader.h"
-#include "./interfaces/ITargetProvider.h"
 #include <vector>
 #include <memory>
 #include "Debug.h"
-#include "constants.h"
 #include "Drone.h"
 #include "interfaces/IDroneState.h"
 #include "UARTProcessor.h"
@@ -28,7 +26,7 @@ private:
   // масив який містить кут напрямку для кожної цілі відносто осі X в радіанах
   std::vector<float> targetAngles;
 
-  void missionLoop(Drone& curMyDrone);
+  void missionLoop();
 
   std::atomic<bool> running{false};
   std::atomic<bool> isReady{false};
@@ -63,6 +61,6 @@ public:
   void addStep(const int counter, DroneTelemetry& telemetry);
   std::unique_ptr<IDroneState> changeTarget(float& targetAngle, const bool& canChangeTarget, Drone& curMyDrone);
 
-  void start(Drone& curMyDrone);
+  void start();
   bool isThreadReady() const;
 };
