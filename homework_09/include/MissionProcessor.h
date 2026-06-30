@@ -55,7 +55,7 @@ public:
     predictedTarget = {0, 0};
   }
 
-  void init(DroneConfig& myDrone, const AmmoParams*& ammo);
+  void init(DroneConfig& myDrone);
 
   void fillArrays(bool& canChangeTarget, const int& counter, const Drone& curMyDrone, const float distDuringFall, const float t_pol);
 

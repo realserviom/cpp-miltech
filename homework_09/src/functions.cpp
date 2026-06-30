@@ -8,6 +8,8 @@
 #include "Types.h"
 #include <stdbool.h>
 #include "json.hpp"
+#include <fcntl.h>
+#include <termios.h>
 
 using json = nlohmann::ordered_json;
 
@@ -124,4 +126,24 @@ std::chrono::high_resolution_clock::time_point getNextTimePoint(std::chrono::hig
 
   // Додаємо до startTime. Тепер C++ збереже ідеальну точність у наносекундах
   return startTime + std::chrono::duration_cast<std::chrono::high_resolution_clock::duration>(durationOffset);
+}
+
+// Функція налаштування UART
+int openUart(const char* dev)
+{
+  int fd = open(dev, O_RDWR | O_NOCTTY | O_NONBLOCK);
+  if (fd < 0) {
+    std::perror("Помилка відкриття UART");
+    return -1;
+  }
+
+  termios tio{};
+  tcgetattr(fd, &tio);
+  cfmakeraw(&tio);  // 8N1, сирий бінарний режим
+  cfsetispeed(&tio, B115200);
+  cfsetospeed(&tio, B115200);  // швидкість 115200
+  tio.c_cflag |= (CLOCAL | CREAD);
+  tcsetattr(fd, TCSANOW, &tio);
+
+  return fd;
 }

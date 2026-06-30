@@ -11,12 +11,25 @@
 #include "states/StateDecelerating.h"
 #include "functions.h"
 
-void MissionProcessor::init(DroneConfig& myDrone, const AmmoParams*& ammo)
+void MissionProcessor::init(DroneConfig& myDrone)
 {
   // Ініціалізація
   try {
-    m_configLoader->init(myDrone);
+    myDrone.startPos.x = j["drone"]["position"]["x"];
+    myDrone.startPos.y = j["drone"]["position"]["y"];
+    myDrone.altitude = j["drone"]["altitude"];
+    myDrone.initialDir = j["drone"]["initialDirection"];
+    myDrone.attackSpeed = j["drone"]["attackSpeed"];
+    myDrone.accelPath = j["drone"]["accelerationPath"];
+    myDrone.angularSpeed = j["drone"]["angularSpeed"];
+    myDrone.turnThreshold = j["drone"]["turnThreshold"];
+    myDrone.arrayTimeStep = j["targetArrayTimeStep"];
+    myDrone.simTimeStep = j["simulation"]["timeStep"];
+
+    myDrone.hitRadius = j["simulation"]["hitRadius"];
+    myDrone.ammoName = j["ammo"].get<std::string>();
     myDrone.updateCalculatedParams();
+
     LOG("Дрон успішно налаштований та готовий до польоту!");
   }
   catch (const std::runtime_error& e) {
