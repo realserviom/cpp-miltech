@@ -19,7 +19,7 @@
 
 #include <cstdint>
 #include <cstring>
-
+#include "interfaces/DroneStateId.h"
 
 namespace dlink {
 
@@ -48,7 +48,7 @@ struct Telemetry {
     float    vx, vy;   // швидкість у площині, м/с
     float    speed;    // модуль горизонтальної швидкості, м/с
     float    dir;      // курс (напрямок польоту), радіани
-    uint8_t  state;    // стан стейт-машини (0..4, як у DZ3)
+    DroneStateId state;  // стан стейт-машини (0..4, як у DZ3)
 };
 
 
@@ -131,29 +131,47 @@ struct Parser {
     // type/payload/payloadLen — вихідні (валідні лише при true).
     bool feed(uint8_t byte, uint8_t& outType, uint8_t* outPayload, uint8_t& outLen) {
         switch (st) {
-        case S_M0: if (byte == MAGIC0) st = S_M1; break;
-        case S_M1: st = (byte == MAGIC1) ? S_TYPE : S_M0; break;
-        case S_TYPE: type = byte; st = S_LEN; break;
-        case S_LEN:  len = byte; idx = 0; st = len ? S_PAYLOAD : S_CRC0; break;
-        case S_PAYLOAD:
-            buf[idx++] = byte;
-            if (idx >= len) st = S_CRC0;
+          case S_M0:
+            if (byte == MAGIC0)
+              st = S_M1;
             break;
-        case S_CRC0: crc_rx = byte; st = S_CRC1; break;
-        case S_CRC1: {
+          case S_M1:
+            st = (byte == MAGIC1) ? S_TYPE : S_M0;
+            break;
+          case S_TYPE:
+            type = byte;
+            st = S_LEN;
+            break;
+          case S_LEN:
+            len = byte;
+            idx = 0;
+            st = len ? S_PAYLOAD : S_CRC0;
+            break;
+          case S_PAYLOAD:
+            buf[idx++] = byte;
+            if (idx >= len)
+              st = S_CRC0;
+            break;
+          case S_CRC0:
+            crc_rx = byte;
+            st = S_CRC1;
+            break;
+          case S_CRC1: {
             crc_rx |= (uint16_t)byte << 8;
             st = S_M0;
             // перерахувати CRC по TYPE+LEN+payload
             uint8_t tmp[262];
-            tmp[0] = type; tmp[1] = len;
+            tmp[0] = type;
+            tmp[1] = len;
             std::memcpy(tmp + 2, buf, len);
             if (crc16(tmp, (size_t)len + 2) == crc_rx) {
-                outType = type; outLen = len;
-                std::memcpy(outPayload, buf, len);
-                return true;
+              outType = type;
+              outLen = len;
+              std::memcpy(outPayload, buf, len);
+              return true;
             }
-            break; // биті дані — кадр відкинуто, синхронізуємось далі
-        }
+            break;  // биті дані — кадр відкинуто, синхронізуємось далі
+          }
         }
         return false;
     }

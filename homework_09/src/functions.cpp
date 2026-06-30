@@ -68,39 +68,6 @@ int getIndexByMinValue(const std::vector<float>& targetTimes)
   return std::distance(targetTimes.begin(), minIt);
 }
 
-void saveOutputFileByStep(int length, const std::vector<SimStep>& steps)
-{
-  json out;
-  out["totalSteps"] = length;
-
-  printf("============== length = %d ===========\n", length);
-
-  out["steps"] = json::array();
-
-  auto endIt = (static_cast<size_t>(length) <= steps.size()) ? steps.begin() + length : steps.end();
-
-  for (auto it = steps.begin(); it != endIt; ++it) {
-    json stepEntry;
-
-    stepEntry["position"] = {{"x", it->pos.x}, {"y", it->pos.y}};
-
-    stepEntry["direction"] = it->direction;
-    stepEntry["state"] = it->state;
-    stepEntry["targetIndex"] = it->targetIdx;
-    stepEntry["timeSecSinceStart"] = it->timeSecSinceStart;
-
-    // stepEntry["dropPoint"] = {{"x", it->dropPoint.x}, {"y", it->dropPoint.y}};
-    // stepEntry["aimPoint"] = {{"x", it->aimPoint.x}, {"y", it->aimPoint.y}};
-    // stepEntry["predictedTarget"] = {{"x", it->predictedTarget.x}, {"y", it->predictedTarget.y}};
-
-    out["steps"].push_back(stepEntry);
-  }
-
-  std::ofstream fout("../data/output.json");
-  fout << out.dump(2);
-  fout.close();
-}
-
 std::chrono::duration<float> getDurationTime(std::chrono::high_resolution_clock::time_point startTime, double dt)
 {
   auto endTime = std::chrono::high_resolution_clock::now();

@@ -11,9 +11,11 @@
 #include <thread>
 #include "Debug.h"
 #include "functions.h"
+#include "drone_link.h"
 
-Drone::Drone(const DroneConfig& config)
+Drone::Drone(const DroneConfig& config, int& fd)
   : config(config)
+  , m_fd(fd)
 {
   pos.x = config.startPos.x;
   pos.y = config.startPos.y;
@@ -44,36 +46,23 @@ bool Drone::isThreadReady() const
   return isReady;
 }
 
+void Drone::sendControl(float accel, float turnRate)
+{
+  dlink::Control c{accel, turnRate};
+  uint8_t out[64];
+  size_t m = dlink::encode(dlink::PKT_CONTROL, &c, sizeof c, out);
+  write(m_fd, out, m);
+}
+
 void Drone::sendCommand(DroneCommand cmd)
 {
   commandQueue.push(std::move(cmd));  // Переміщуємо команду прямо всередину черги
-}
-
-DroneTelemetry Drone::getTelemetry() const
-{
-  std::lock_guard<std::mutex> lock(stateMutex);
-  DroneTelemetry tel;
-  tel.pos = this->pos;
-
-  // Повертаємо нормалізований вектор швидкості
-  tel.normSpeed.x = std::cos(angularState) * speed;
-  tel.normSpeed.y = std::sin(angularState) * speed;
-  tel.speed = speed;
-  tel.angularState = angularState;
-  tel.stateId = state->id();
-  tel.stateName = state->name();
-  tel.timeSecSinceStart = timeSecSinceStart;
-  return tel;
 }
 
 // === ВНУТРІШНІЙ ЦИКЛ ПОТОКУ ФІЗИКИ ===
 void Drone::physicsLoop()
 {
   isReady = true;
-  int stepCount = 0;
-
-  // Беремо абсолютний час старту симуляції
-  auto startTime = std::chrono::high_resolution_clock::now();
 
   // Загортаємо ВЕСЬ робочий цикл у try-catch
   try {
@@ -92,13 +81,7 @@ void Drone::physicsLoop()
       {
         std::lock_guard<std::mutex> lock(stateMutex);
         this->move();
-        timeSecSinceStart = stepCount * config.physicsTimeStep;
       }
-
-      stepCount++;
-
-      auto nextTimePoint = getNextTimePoint(startTime, (config.physicsTimeStep / config.timeScale), stepCount);
-      std::this_thread::sleep_until(nextTimePoint);
     }
   }
   catch (const std::exception& e) {

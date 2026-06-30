@@ -2,7 +2,6 @@
 #include "Types.h"
 #include "ThreadSafeQueue.h"  // Твоя шаблонна черга команд
 #include <memory>
-#include <vector>
 #include <thread>
 #include <mutex>
 #include <atomic>
@@ -17,10 +16,11 @@ public:
   float timeSecSinceStart;  // час послідньої генерації фізики
 
   DroneConfig config;
+  int m_fd;
 
-  explicit Drone(const DroneConfig& config);
+  explicit Drone(const DroneConfig& config, int& fd);
 
-  std::unique_ptr<IDroneState> state;  // поточний стан
+  std::unique_ptr<IDroneState> state;
   bool updateRotation(float turnThreshold = 0.0f);
 
   void updatePosition();
@@ -45,9 +45,10 @@ public:
   void stop();
   bool isThreadReady() const;
 
+  void sendControl(float accel, float turnRate);
+
   // Потокобезпечний інтерфейс для MissionProcessor
   void sendCommand(DroneCommand cmd);
-  DroneTelemetry getTelemetry() const;
 
 private:
   void physicsLoop();  // Головний цикл фонового потоку

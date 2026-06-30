@@ -9,11 +9,37 @@
 #include "constants.h"
 #include <iomanip>
 #include <cmath>
+#include <thread>
 #include "interfaces/IDroneState.h"
 #include "states/StateDecelerating.h"
 #include "functions.h"
 
-void MissionProcessor::init(DroneConfig& myDrone, const int numberOfTargets)
+MissionProcessor::MissionProcessor(std::shared_ptr<UARTProcessor> uartProcessor,
+                                   std::shared_ptr<IBallisticSolver> solver,
+                                   std::shared_ptr<IConfigLoader> configLoader,
+                                   int& fd)
+  : m_uartProcessor(uartProcessor)
+  , m_solver(solver)
+  , m_configLoader(configLoader)
+  , m_fd(fd)
+  , target(0)
+  , dropPoint({0, 0})
+  , aimPoint({0, 0})
+  , predictedTarget({0, 0})
+{
+}
+
+void MissionProcessor::setNumberOfTarget(uint8_t number)
+{
+  numberOfTargets = number;
+}
+
+void MissionProcessor::setHitRadius(float number)
+{
+  hitRadius = number;
+}
+
+void MissionProcessor::init(DroneConfig& myDrone)
 {
   // Ініціалізація
   try {
@@ -36,25 +62,12 @@ void MissionProcessor::init(DroneConfig& myDrone, const int numberOfTargets)
   DEBUG("===========================");
 }
 
-void MissionProcessor::addStep(const int counter, DroneTelemetry& telemetry)
+void MissionProcessor::fillArrays(bool& canChangeTarget, const Drone& curMyDrone, const float distDuringFall, const float t_pol)
 {
-  steps.push_back({{telemetry.pos.x, telemetry.pos.y},
-                   telemetry.angularState,
-                   telemetry.stateId,
-                   target,
-                   {dropPoint.x, dropPoint.y},
-                   {aimPoint.x, aimPoint.y},
-                   {predictedTarget.x, predictedTarget.y},
-                   telemetry.timeSecSinceStart});
-}
+  for (uint8_t targetId = 0; targetId < numberOfTargets; targetId++) {
+    auto targetOptions = m_uartProcessor->getTargetPosition(targetId);
 
-void MissionProcessor::fillArrays(
-  bool& canChangeTarget, const int& counter, const Drone& curMyDrone, const float distDuringFall, const float t_pol)
-{
-  for (int targetId = 0; targetId < numberOfTargets; targetId++) {
-    Target targetOptions = m_targetProvider->getTargetPosition(targetId);
-
-    Coord targetPos = targetOptions.pos;
+    Coord targetPos = targetOptions->pos;
 
     float length = calculateLength(targetPos - curMyDrone.pos);
 
@@ -81,7 +94,7 @@ void MissionProcessor::fillArrays(
       canChangeTarget = false;
       // LOG("canChangeTarget: false");
 
-      Coord velocity = targetOptions.velocity;
+      Coord velocity = targetOptions->velocity;
 
       // прогнозована позиція цілі
       Coord targetEndPoint = targetPos + velocity * t;
@@ -206,11 +219,14 @@ void MissionProcessor::missionLoop()
           ammoParams.drag = ammo->drag;
           ammoParams.lift = ammo->lift;
 
+          setNumberOfTarget(ammo->nTargets);
+          setHitRadius(ammo->hitRadius);
+
           // ініціалізація параметрів дрона і початкових параметрів руху
-          init(myDroneConfig, ammo->nTargets);
+          init(myDroneConfig);
 
           // Поточний стан дрона
-          curMyDrone = std::make_unique<Drone>(myDroneConfig);
+          curMyDrone = std::make_unique<Drone>(myDroneConfig, m_fd);
 
           distDuringFall = m_solver->getDistDuringFall(t_pol, myDroneConfig, &ammoParams);
         }
@@ -236,20 +252,22 @@ void MissionProcessor::missionLoop()
       std::cout << "[Ballistics] Команду DROP виконано!" << std::endl;
     }
 
-    if (curMyDrone != nullptr) {
-      // розраховуємо всі дані для визначення поточної найближчої цілі
-      DroneTelemetry telemetry = curMyDrone.getTelemetry();
+    DroneTelemetry telemetry;
 
+    if (curMyDrone != nullptr && m_uartProcessor->getTelemetry(telemetry)) {
       DEBUG("--- curDroneX = " << std::fixed << std::setprecision(8) << telemetry.pos.x << " м ---");
       DEBUG("--- curDroneY = " << std::fixed << std::setprecision(8) << telemetry.pos.y << " м ---");
-      // DEBUG("--- curMyDrone.angularState = " << std::fixed << std::setprecision(2) << telemetry.angularState << " р. ---");
-      DEBUG("--- curDroneSpeed = " << telemetry.speed << " ---");
-      // DEBUG("--- curDroneStateName = " << telemetry.stateName << " ---");
-      DEBUG("--- currentTarget = " << target << " ---");
+      DEBUG("--- curDroneZ = " << std::fixed << std::setprecision(8) << telemetry.z << " м ---");
+      DEBUG("--- curDroneT_ms = " << std::fixed << std::setprecision(8) << telemetry.t_ms << " мc ---");
+      DEBUG("--- curDrone_vx = " << std::fixed << std::setprecision(8) << telemetry.normSpeed.x << " м/c ---");
+      DEBUG("--- curDrone_vy = " << std::fixed << std::setprecision(8) << telemetry.normSpeed.y << " м/c ---");
+      DEBUG("--- curDrone_speed = " << std::fixed << std::setprecision(8) << telemetry.speed << " мс/c ---");
+      DEBUG("--- curDrone_dir = " << std::fixed << std::setprecision(8) << telemetry.angularState << " р. ---");
+      // DEBUG("--- curDrone_state = " << std::fixed << std::setprecision(8) << telemetry.stateId << " ---");
 
       // ################## РОЗРАХУНОК ТОЧКИ СКИДУ #############################################
       // -----------  заповнення масивів для пошуку найближчих цілей ---------------------------
-      fillArrays(canChangeTarget, counter, curMyDrone, distDuringFall, t_pol);
+      fillArrays(canChangeTarget, *curMyDrone, distDuringFall, t_pol);
 
       // -----------  логіка розрахунку точки скиду ---------------------------
       // на скільки я знаю треба працювати без cos і sin тоу що це для процесора важкі операції
@@ -259,12 +277,16 @@ void MissionProcessor::missionLoop()
       // мітка часу в таблиці targets для визначення майбутньої позиції цілі
       // ми взяли весь час що пройшов + час коли боєприпас долетить до землі якщо буде випущений в даний момент
 
-      Target targetPosition = UARTProcessor->getTargetPosition(target);
+      auto targetPosition = m_uartProcessor->getTargetPosition(target);
 
-      DEBUG("--- targetPosition = " << targetPosition.pos.x << ", " << targetPosition.pos.y << " ---");
-      DEBUG("--- targetVelocity = " << targetPosition.velocity.x << ", " << targetPosition.velocity.y << " ---");
+      if (!targetPosition.has_value()) {
+        continue;
+      }
 
-      predictedTarget = targetPosition.pos + targetPosition.velocity * t_pol;
+      DEBUG("--- targetPosition = " << targetPosition->pos.x << ", " << targetPosition->pos.y << " ---");
+      DEBUG("--- targetVelocity = " << targetPosition->velocity.x << ", " << targetPosition->velocity.y << " ---");
+
+      predictedTarget = targetPosition->pos + targetPosition->velocity * t_pol;
 
       DEBUG("--- predictedTarget: (" << predictedTarget.x << ", " << predictedTarget.y << ") ---");
 
@@ -278,8 +300,6 @@ void MissionProcessor::missionLoop()
       DEBUG("--- dropPoint: (" << telemetry.pos.x << ", " << telemetry.pos.y << ") ---");
       DEBUG("--- aimPoint: (" << aimPoint.x << ", " << aimPoint.y << ") ---");
 
-      addStep(counter, telemetry);
-
       // точний розрахунок коли наближаємся до вже запланованої цілі
       if (!canChangeTarget) {
         targetAngles[target] = atan2(predictedTarget.y - telemetry.pos.y, predictedTarget.x - telemetry.pos.x);
@@ -288,15 +308,22 @@ void MissionProcessor::missionLoop()
       double finalDistance = calculateLength(aimPoint - predictedTarget);
 
       // умова при якій дрон попадає в ціль з точністю "curMyDrone.config.hitRadius / 20"
-      if (finalDistance <= curMyDrone.config.hitRadius / 2 ||
-          (prevFinalDistance < finalDistance && !canChangeTarget && prevFinalDistance <= curMyDrone.config.hitRadius / 4)) {
+      if (finalDistance <= hitRadius / 2 || (prevFinalDistance < finalDistance && !canChangeTarget && prevFinalDistance <= hitRadius / 4)) {
         LOG("--- БОЄПРИПАС СКИНУТИЙ! Ураження : " << std::fixed << std::setprecision(2) << finalDistance << " м від цілі номер " << target
                                                   << " ---");
         DEBUG("--- prevFinalDistance: " << std::setprecision(4) << prevFinalDistance << " м.  ---");
-        DEBUG("--- myDrone.arrayTimeStep: " << std::setprecision(4) << curMyDrone.config.arrayTimeStep << " ---");
         DEBUG("--- dropPoint: (" << telemetry.pos.x << ", " << telemetry.pos.y << ") ---");
         DEBUG("--- aimPoint: (" << aimPoint.x << ", " << aimPoint.y << ") ---");
         DEBUG("--- predictedTarget: (" << predictedTarget.x << ", " << predictedTarget.y << ") ---");
+
+        auto currentTime = std::chrono::high_resolution_clock::now();
+
+        if (!already_dropped && currentTime >= nextTimePoint) {
+          // Викликаємо GPIO з цього потоку! Потік UART при цьому не блокується на 80 мс
+          gpio.pulse_drop();
+          already_dropped = true;
+          std::cout << "[Ballistics] Команду DROP виконано!" << std::endl;
+        }
 
         break;
       }
@@ -311,37 +338,21 @@ void MissionProcessor::missionLoop()
         canChangeTarget = true;
       }
 
-      counter++;
-
-      if (counter > MAX_STEPS) {
-        LOG("============== спрацював ліміт ітерацій  ==============");
-        break;
-      }
-
       // зміна цілі і прорахунок руху дрона
       float targetAngle;
 
-      std::unique_ptr<IDroneState> newState = changeTarget(targetAngle, canChangeTarget, curMyDrone);
+      std::unique_ptr<IDroneState> newState = changeTarget(targetAngle, canChangeTarget, *curMyDrone);
 
       // Створюємо команду
       DroneCommand cmd;
       cmd.targetAngle = targetAngle;  // Кут передаємо завжди, щоб дрон знав, куди тримати курс
-
       cmd.state = newState != nullptr ? std::move(newState) : nullptr;
 
       // Безповоротно віддаємо команду в чергу дрона
-      curMyDrone.sendCommand(std::move(cmd));
-
-      auto nextTimePoint = getNextTimePoint(startTime, (curMyDrone.config.timeStep / curMyDrone.config.timeScale), counter);
-      std::this_thread::sleep_until(nextTimePoint);
+      curMyDrone->sendCommand(std::move(cmd));
     }
 
     // Крок балістичного циклу (наприклад, 100 Гц або 1000 Гц)
     usleep(10000);  // 10 мс
-  }
-
-  if (counter <= MAX_STEPS) {
-    saveOutputFileByStep(counter + 1, steps);
-    LOG("--- МІСІЮ ЗАВЕРШЕНО!!! ---");
   }
 }

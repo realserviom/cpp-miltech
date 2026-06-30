@@ -11,8 +11,6 @@ void saveFireCoordinates(double fireX, double fireY, double xd_i, double yd_i);
 
 int getIndexByMinValue(const std::vector<float>& targetTimes);
 
-void saveOutputFileByStep(int length, const std::vector<SimStep>& steps);
-
 Coord normalize(const Coord& c);
 
 float calculateLength(const Coord& c);

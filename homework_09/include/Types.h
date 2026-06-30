@@ -69,7 +69,7 @@ struct DroneConfig {
     float initialDir;       // початковий напрямок (рад)
     float attackSpeed;      // швидкість атаки (м/с)
     float accelPath;        // шлях розгону (м)
-    def_ammoName ammoName;     // обрані боєприпаси
+    def_ammoName ammoName;  // обрані боєприпаси
     float arrayTimeStep;    // крок часу масиву цілей
     float timeStep;         // крок симуляції
     float timeScale;        // крок маштабування кроку
@@ -97,17 +97,6 @@ struct DroneConfig {
     }
 };
 
-struct SimStep {
-    Coord pos;          // позиція дрона
-    float direction;    // напрямок (рад)
-    DroneStateId state;  // стан дрона (0-4)
-    int   targetIdx;    // індекс поточної цілі
-    Coord dropPoint;    	// точка скиду (куди летить дрон)
-	Coord aimPoint;     	// куди впаде бомба (якщо скинути зараз)
-	Coord predictedTarget;  // прогнозована позиція цілі
-        float timeSecSinceStart;  // останнє оновлення фізики
-};
-
 enum class ProviderType { JSON, TIME };
 
 enum class LoaderType { 
@@ -128,12 +117,12 @@ struct DroneCommand {
 
 struct DroneTelemetry {
   Coord pos;
-  Coord normSpeed;  // Нормалізована швидкість (вектор)
+  Coord normSpeed;
   float speed;
   float angularState;
-  DroneStateId stateId;  // ID поточного стану дрона
-  std::string stateName;
-  float timeSecSinceStart;
+  float z;
+  int t_ms;
+  DroneStateId stateId;
 };
 
 #endif

@@ -6,6 +6,7 @@
 #include "Types.h"
 #include "drone_link.h"
 #include <vector>
+#include <optional>
 
 class UARTProcessor {
 private:
@@ -47,9 +48,9 @@ private:
     const dlink::AmmoCfg* getAmmoConfigPtr();
 
     // Повертає true, якщо телеметрія є, і копіює її у вашу змінну
-    bool getTelemetry(dlink::Telemetry& outTelemetry);
+    bool getTelemetry(DroneTelemetry& outTelemetry);
 
-    Target getTargetPosition(const int targetId);
+    std::optional<Target> getTargetPosition(const uint8_t targetId);
 
     // Повертає true, якщо прийшов вердикт від чекера
     bool getResult(dlink::Result& outResult);

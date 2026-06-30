@@ -50,7 +50,7 @@ int main()
 
     std::shared_ptr<IConfigLoader> configLoader = createLoader(LoaderType::FILE, "../data/config.json");
 
-    MissionProcessor processor(uartProcessor, analyticalSolver, configLoader);
+    MissionProcessor processor(uartProcessor, analyticalSolver, configLoader, uartFd);
 
     // std::cout << "Запуск головного циклу опитування..." << std::endl;
 
