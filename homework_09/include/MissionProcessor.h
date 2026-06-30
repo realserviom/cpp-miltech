@@ -8,11 +8,12 @@
 #include "constants.h"
 #include "Drone.h"
 #include "interfaces/IDroneState.h"
+#include "UARTProcessor.h"
 
 class MissionProcessor {
 private:
     // Вказівники на наші стратегії
-  std::shared_ptr<ITargetProvider> m_targetProvider = nullptr;
+  std::shared_ptr<UARTProcessor> m_uartProcessor;
   std::shared_ptr<IBallisticSolver> m_solver = nullptr;
   std::shared_ptr<IConfigLoader> m_configLoader = nullptr;
 
@@ -27,7 +28,7 @@ private:
   // масив який містить кут напрямку для кожної цілі відносто осі X в радіанах
   std::vector<float> targetAngles;
 
-  void missionLoop(Drone& curMyDrone, const float distDuringFall, const float t_pol);
+  void missionLoop(Drone& curMyDrone);
 
   std::atomic<bool> running{false};
   std::atomic<bool> isReady{false};
@@ -42,10 +43,10 @@ public:
   int numberOfTargets = 0;
   std::thread missionThread;
 
-  MissionProcessor(std::shared_ptr<ITargetProvider> targetProvider,
+  MissionProcessor(std::shared_ptr<UARTProcessor> uartProcessor,
                    std::shared_ptr<IBallisticSolver> solver,
                    std::shared_ptr<IConfigLoader> configLoader)
-    : m_targetProvider(targetProvider)
+    : m_uartProcessor(uartProcessor)
     , m_solver(solver)
     , m_configLoader(configLoader)
   {
@@ -55,16 +56,13 @@ public:
     predictedTarget = {0, 0};
   }
 
-  void init(DroneConfig& myDrone);
+  void init(DroneConfig& myDrone, const int numberOfTargets);
 
   void fillArrays(bool& canChangeTarget, const int& counter, const Drone& curMyDrone, const float distDuringFall, const float t_pol);
 
-  void setTargetProvider(std::shared_ptr<ITargetProvider> targetProvider);
-  void setBallisticSolver(std::shared_ptr<IBallisticSolver> solver);
-  void setConfigLoader(std::shared_ptr<IConfigLoader> configLoader);
   void addStep(const int counter, DroneTelemetry& telemetry);
   std::unique_ptr<IDroneState> changeTarget(float& targetAngle, const bool& canChangeTarget, Drone& curMyDrone);
 
-  void start(Drone& curMyDrone, const float distDuringFall, const float t_pol);
+  void start(Drone& curMyDrone);
   bool isThreadReady() const;
 };

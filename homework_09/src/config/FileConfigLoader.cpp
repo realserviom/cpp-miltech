@@ -5,45 +5,9 @@
 
 using json = nlohmann::json;
 
-FileConfigLoader::FileConfigLoader(const std::string& filePathDroneConfig, const std::string& filePathListAmmo)
+FileConfigLoader::FileConfigLoader(const std::string& filePathDroneConfig)
   : m_filePath_droneConfig(filePathDroneConfig)
-  , m_filePath_listAmmo(filePathListAmmo)
 {
-}
-
-void FileConfigLoader::loadAmmo()
-{
-  std::ifstream fin(m_filePath_listAmmo);
-
-  if (!fin.is_open()) {
-    throw std::runtime_error("Не вдалося відкрити файл конфігурації: " + m_filePath_listAmmo);
-  }
-
-  json j;
-
-  try {
-    fin >> j;
-  }
-  catch (const json::parse_error& e) {
-    throw std::runtime_error("Помилка парсингу файлу " + m_filePath_listAmmo + ": " + std::string(e.what()));
-    fin.close();
-  }
-
-  ammoList.clear();
-
-  if (j.is_array()) {
-    for (const auto& ammoJson : j) {
-      AmmoParams singleAmmo;
-
-      std::string nameStr = ammoJson.value("name", "Unknown");
-      singleAmmo.mass = ammoJson.value("mass", 0.0f);
-      singleAmmo.drag = ammoJson.value("drag", 0.0f);
-      singleAmmo.lift = ammoJson.value("lift", 0.0f);
-      ammoList[nameStr] = singleAmmo;
-    }
-  }
-
-  fin.close();
 }
 
 void FileConfigLoader::tunningDrone(DroneConfig& myDrone)
@@ -76,7 +40,6 @@ void FileConfigLoader::tunningDrone(DroneConfig& myDrone)
   myDrone.hitRadius = j["simulation"]["hitRadius"];
   myDrone.targetTimeStep = j["simulation"]["targetTimeStep"];
   myDrone.physicsTimeStep = j["simulation"]["physicsTimeStep"];
-  myDrone.ammoName = j["ammo"].get<std::string>();
 
   fin.close();
 }

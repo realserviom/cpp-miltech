@@ -1,5 +1,7 @@
 #include <iostream>
+#include "GPIOController.h"
 #include "Types.h"
+#include "UARTProcessor.h"
 #include "functions.h"
 #include "Drone.h"
 #include "MissionProcessor.h"
@@ -11,49 +13,17 @@
 #include "states/StateDecelerating.h"
 #include "functions.h"
 
-void MissionProcessor::init(DroneConfig& myDrone)
+void MissionProcessor::init(DroneConfig& myDrone, const int numberOfTargets)
 {
   // Ініціалізація
   try {
-    myDrone.startPos.x = j["drone"]["position"]["x"];
-    myDrone.startPos.y = j["drone"]["position"]["y"];
-    myDrone.altitude = j["drone"]["altitude"];
-    myDrone.initialDir = j["drone"]["initialDirection"];
-    myDrone.attackSpeed = j["drone"]["attackSpeed"];
-    myDrone.accelPath = j["drone"]["accelerationPath"];
-    myDrone.angularSpeed = j["drone"]["angularSpeed"];
-    myDrone.turnThreshold = j["drone"]["turnThreshold"];
-    myDrone.arrayTimeStep = j["targetArrayTimeStep"];
-    myDrone.simTimeStep = j["simulation"]["timeStep"];
-
-    myDrone.hitRadius = j["simulation"]["hitRadius"];
-    myDrone.ammoName = j["ammo"].get<std::string>();
+    m_configLoader->init(myDrone);
     myDrone.updateCalculatedParams();
-
     LOG("Дрон успішно налаштований та готовий до польоту!");
   }
   catch (const std::runtime_error& e) {
     throw std::runtime_error("[FileConfigLoader] КРИТИЧНА ПОМИЛКА: " + std::string(e.what()));
   }
-
-  float ratio = myDrone.arrayTimeStep / myDrone.timeStep;
-
-  if (std::abs(ratio - std::floor(ratio)) > 0.0001f) {
-    throw std::runtime_error("Помилка: Крок масиву не ділиться націло на крок симуляції!");
-  }
-
-  int numberCounterInTimeSpot = static_cast<int>(ratio);
-
-  // Отримуємо цілі
-  try {
-    m_targetProvider->init(numberCounterInTimeSpot);
-    LOG("Цілі успішно загруженні в систему!");
-  }
-  catch (const std::runtime_error& e) {
-    throw std::runtime_error("[JsonTargetProvider] КРИТИЧНА ПОМИЛКА: " + std::string(e.what()));
-  }
-
-  numberOfTargets = m_targetProvider->getTargetCount();
 
   targetTimes.resize(numberOfTargets, 0.0f);
   targetDistances.resize(numberOfTargets, 0.0f);
@@ -64,21 +34,6 @@ void MissionProcessor::init(DroneConfig& myDrone)
   DEBUG("Прискорення дрона: " << myDrone.acceleration << " м/с2 ---");
   DEBUG("Швидкість обертання: " << myDrone.angularSpeed << " р/с ---");
   DEBUG("===========================");
-}
-
-void MissionProcessor::setTargetProvider(std::shared_ptr<ITargetProvider> targetProvider)
-{
-  m_targetProvider = targetProvider;
-}
-
-void MissionProcessor::setBallisticSolver(std::shared_ptr<IBallisticSolver> solver)
-{
-  m_solver = solver;
-}
-
-void MissionProcessor::setConfigLoader(std::shared_ptr<IConfigLoader> configLoader)
-{
-  m_configLoader = configLoader;
 }
 
 void MissionProcessor::addStep(const int counter, DroneTelemetry& telemetry)
@@ -202,15 +157,124 @@ bool MissionProcessor::isThreadReady() const
   return isReady;
 }
 
-void MissionProcessor::start(Drone& curMyDrone, const float distDuringFall, const float t_pol)
+void MissionProcessor::start(Drone& curMyDrone)
 {
   DEBUG("--- start mission thread! ---");
   running = true;
-  missionThread = std::thread(&MissionProcessor::missionLoop, this, std::ref(curMyDrone), distDuringFall, t_pol);
+  missionThread = std::thread(&MissionProcessor::missionLoop, this, std::ref(curMyDrone));
 }
 
-void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall, const float t_pol)
+void MissionProcessor::missionLoop(Drone& curMyDrone)
 {
+  DroneConfig myDroneConfig;
+
+  // ініціалізація параметрів дрона і початкових параметрів руху
+
+  // Створюємо GPIO контролер. В контейнері він автоматично увімкне імітацію!
+  GPIOController gpio;
+
+  std::cout << "Запуск головного циклу опитування..." << std::endl;
+
+  // START — на ніжці підняти вольтаж на 1 одразу на старті й тримати. (сигнал про готовність дрона)
+  gpio.set_start(1);
+
+  // Локальні змінні для потоку балістики/main
+  const dlink::AmmoCfg* ammo = nullptr;
+  std::unique_ptr<Drone> curMyDrone = nullptr;
+
+  float t_pol;               // час польоту снаряду
+  float distDuringFall = 0;  // дистанція, яку проходить снаряд за час t_pol (горизонтальна відстань від точки скидання до цілі)
+
+  dlink::Telemetry droneData;
+
+  bool already_dropped = false;
+  auto nextTimePoint = std::chrono::high_resolution_clock::now() + std::chrono::seconds(20);
+
+  std::cout << "[Main/Ballistics] Потік балістики запущено!" << std::endl;
+
+  // Головний цикл цього потоку (Балістичний калькулятор + Скид)
+  while (true) {
+    // Перевіряємо, чи отримали конфіг боєприпасу
+    if (ammo == nullptr) {
+      ammo = m_uartProcessor->getAmmoConfigPtr();
+      if (ammo != nullptr) {
+        std::cout << "[Ballistics] Отримано конфіг з UART! Name = " << ammo->name << std::endl;
+        std::cout << "[Ballistics] Розраховуємо час польоту снаряду і відстань що він проходить!" << std::endl;
+
+        try {
+          AmmoParams ammoParams;
+
+          ammoParams.mass = ammo->mass;
+          ammoParams.drag = ammo->drag;
+          ammoParams.lift = ammo->lift;
+
+          init(myDroneConfig, ammo->nTargets);
+
+          // Поточний стан дрона
+
+          curMyDrone = std::make_unique<Drone>(myDroneConfig);
+
+          distDuringFall = m_solver->getDistDuringFall(t_pol, myDroneConfig, &ammoParams);
+        }
+        catch (const std::runtime_error& e) {
+          throw std::runtime_error("[AnalyticalSolver] КРИТИЧНА ПОМИЛКА: " + std::string(e.what()));
+        }
+
+        if (distDuringFall <= 0) {
+          throw std::runtime_error("Горизонтальна дистанція повинна бути додатня");
+        }
+
+        DEBUG("Горизонтальна дистанція яку проходить дрон за час " << t_pol << " сек. рівна " << distDuringFall << " м.");
+        DEBUG("-----------------------------------");
+      }
+    }
+
+    if (curMyDrone != nullptr) {
+    }
+
+    //  Забираємо свіжу телеметрію та координати цілі, якщо вони є
+    bool hasFreshData = uartProcessor->getTelemetry(droneData);
+
+    if (hasFreshData && ammo != nullptr) {
+      // ТУТ ПРАЦЮЄ ВАШ БАЛІСТИЧНИЙ КАЛЬКУЛЯТОР
+      // Він використовує: droneData (де зараз дрон), targetData (де ціль) та ammo (вага/опір)
+
+      // Наприклад, калькулятор вирахував, що пора міняти nextTimePoint або скидати прямо зараз
+    }
+
+    // КРОК C: Логіка виконання скиду
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    if (!already_dropped && currentTime >= nextTimePoint) {
+      // Викликаємо GPIO з цього потоку! Потік UART при цьому не блокується на 80 мс
+      gpio.pulse_drop();
+      already_dropped = true;
+      std::cout << "[Ballistics] Команду DROP виконано!" << std::endl;
+    }
+
+    // Крок балістичного циклу (наприклад, 100 Гц або 1000 Гц)
+    usleep(10000);  // 10 мс
+  }
+
+  uartProcessor->start();
+  return 0;
+
+  processor.start(curMyDrone, distDuringFall, t_pol);
+
+  while (!curMyDrone.isThreadReady() || !uartProcessor->isThreadReady() || !processor.isThreadReady()) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+  }
+
+  processor.missionThread.join();
+
+  curMyDrone.stop();
+  uartProcessor->stop();
+}
+catch (const std::runtime_error& e)
+{
+  std::cout << e.what() << std::endl;
+  return -1;
+}
+
   if (!m_targetProvider || !m_solver || !m_configLoader) {
     std::cout << "[MissionProcessor] Помилка: Не всі компоненти підключені!\n";
     return;
@@ -249,7 +313,7 @@ void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall
     // мітка часу в таблиці targets для визначення майбутньої позиції цілі
     // ми взяли весь час що пройшов + час коли боєприпас долетить до землі якщо буде випущений в даний момент
 
-    Target targetPosition = m_targetProvider->getTargetPosition(target);
+    Target targetPosition = UARTProcessor->getTargetPosition(target);
 
     DEBUG("--- targetPosition = " << targetPosition.pos.x << ", " << targetPosition.pos.y << " ---");
     DEBUG("--- targetVelocity = " << targetPosition.velocity.x << ", " << targetPosition.velocity.y << " ---");

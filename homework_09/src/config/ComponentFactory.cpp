@@ -19,13 +19,11 @@ std::shared_ptr<ITargetProvider> createProvider(ProviderType type, const std::st
   }
 }
 
-std::shared_ptr<IConfigLoader> createLoader(LoaderType type,
-                                            const std::string& file_drone_config_name,
-                                            const std::string& file_list_ammo_name)
+std::shared_ptr<IConfigLoader> createLoader(LoaderType type, const std::string& file_drone_config_name)
 {
   switch (type) {
     case LoaderType::FILE:
-      return std::make_shared<FileConfigLoader>(file_drone_config_name, file_list_ammo_name);
+      return std::make_shared<FileConfigLoader>(file_drone_config_name);
     default:
       return nullptr;
   }

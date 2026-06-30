@@ -5,16 +5,13 @@
 
 class FileConfigLoader : public AbstractConfigProvider {
 private:
-    static constexpr int MAX_AMMO_TYPES = 5;
-    std::string m_filePath_droneConfig;
-    std::string m_filePath_listAmmo;
+  std::string m_filePath_droneConfig;
 
 public:
-    FileConfigLoader(const std::string& filePathDroneConfig, const std::string& filePathListAmmo);
+  FileConfigLoader(const std::string& filePathDroneConfig);
 
-    void loadAmmo() override;
-    void tunningDrone(DroneConfig &myDrone) override;
-    ~FileConfigLoader() override = default;
+  void tunningDrone(DroneConfig& myDrone) override;
+  ~FileConfigLoader() override = default;
 };
 
 

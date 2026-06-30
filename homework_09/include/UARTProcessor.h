@@ -3,8 +3,9 @@
 #include <thread>
 #include <atomic>
 #include <mutex>
-#include "drone_link.h"  // Переконайся, що цей файл лежить поруч
-
+#include "Types.h"
+#include "drone_link.h"
+#include <vector>
 
 class UARTProcessor {
 private:
@@ -12,7 +13,9 @@ private:
     dlink::Parser parser;
 
     std::thread workerThread;
-    std::atomic<bool> isRunning;
+    std::atomic<bool> running;
+    std::atomic<bool> isReady{false};
+
     std::mutex dataMutex;
 
     // Сховища для даних
@@ -21,32 +24,35 @@ private:
     dlink::AmmoCfg currentAmmo;
     dlink::Result currentResult;
 
+    std::vector<Coord> positionTargets;
+    std::vector<Coord> velocityTargets;
+
+    std::vector<std::chrono::time_point<std::chrono::high_resolution_clock>> lastTelemetryTime;
+
     // Прапорці наявності даних
     bool hasTelemetry = false;
-    bool hasTarget = false;
     bool hasAmmo = false;
     bool hasResult = false;
 
     void processLoop();
 
-public:
+  public:
     UARTProcessor(int fd);
     ~UARTProcessor();
 
     void start();
     void stop();
 
-    // --- БЕЗПЕЧНІ МЕТОДИ ДЛЯ ІНШИХ ПОТОКІВ ---
-    
     // Повертає вказівник на конфіг боєприпасу (якщо прийшов, інакше nullptr)
     const dlink::AmmoCfg* getAmmoConfigPtr();
 
     // Повертає true, якщо телеметрія є, і копіює її у вашу змінну
     bool getTelemetry(dlink::Telemetry& outTelemetry);
 
-    // Повертає true, якщо ціль є, і копіює її у вашу змінну
-    bool getTarget(dlink::TargetPos& outTarget);
+    Target getTargetPosition(const int targetId);
 
     // Повертає true, якщо прийшов вердикт від чекера
     bool getResult(dlink::Result& outResult);
+
+    bool isThreadReady() const;
 };
