@@ -2,11 +2,15 @@
 #include <unistd.h>
 #include <cmath>
 #include "interfaces/IDroneState.h"
+#include "states/StateAccelerating.h"
+#include "states/StateDecelerating.h"
+#include "states/StateMoving.h"
 #include "states/StateStopped.h"
 #include <iostream>
 #include <thread>
 #include "Debug.h"
 #include "UARTProcessor.h"
+#include "states/StateTurning.h"
 #include <unistd.h>
 
 Drone::Drone(const DroneConfig& config, std::shared_ptr<UARTProcessor> uart)
@@ -31,6 +35,8 @@ void Drone::start()
 
 void Drone::sendMovementCommand(float accel, float turnRate)
 {
+  DEBUG("Send accel, turnRate" << accel << ", " << turnRate);
+
   m_uartProcessor->sendControl(accel, turnRate);
 }
 
@@ -60,6 +66,33 @@ void Drone::setDroneParams(DroneTelemetry& telemetry)
   z = telemetry.z;
   t_ms = telemetry.t_ms;
   normSpeed = telemetry.normSpeed;
+
+  switch (telemetry.stateId) {
+    case DroneStateId::STOPPED: {
+      state = std::make_unique<StateStopped>();
+      break;
+    }
+    case DroneStateId::ACCELERATING: {
+      state = std::make_unique<StateAccelerating>();
+      break;
+    }
+    case DroneStateId::DECELERATING: {
+      state = std::make_unique<StateDecelerating>();
+      break;
+    }
+    case DroneStateId::TURNING: {
+      state = std::make_unique<StateTurning>();
+      break;
+    }
+    case DroneStateId::MOVING: {
+      state = std::make_unique<StateMoving>();
+      break;
+    }
+    default: {
+      state = std::make_unique<StateStopped>();
+      break;
+    }
+  }
 }
 
 // === ВНУТРІШНІЙ ЦИКЛ ПОТОКУ ФІЗИКИ ===
@@ -87,7 +120,7 @@ void Drone::physicsLoop()
       }
     }
 
-    usleep(20000);  // 20 мс пауза між ітераціями
+    usleep(10000);  // 10 мс пауза між ітераціями
   }
   catch (const std::exception& e) {
     std::cerr << "[КРИТИЧНА ПОМИЛКА ПОТОКУ ДРОНА]: " << e.what() << '\n';

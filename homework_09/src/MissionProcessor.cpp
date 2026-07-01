@@ -252,17 +252,18 @@ void MissionProcessor::missionLoop()
 
     DroneTelemetry telemetry;
 
-    if (curMyDrone != nullptr && m_uartProcessor->getTelemetry(telemetry)) {
-      curMyDrone->setDroneParams(telemetry);
-      DEBUG("--- curDroneX = " << std::fixed << std::setprecision(8) << telemetry.pos.x << " м ---");
-      DEBUG("--- curDroneY = " << std::fixed << std::setprecision(8) << telemetry.pos.y << " м ---");
-      DEBUG("--- curDroneZ = " << std::fixed << std::setprecision(8) << telemetry.z << " м ---");
-      DEBUG("--- curDroneT_ms = " << std::fixed << std::setprecision(8) << telemetry.t_ms << " мc ---");
-      DEBUG("--- curDrone_vx = " << std::fixed << std::setprecision(8) << telemetry.normSpeed.x << " м/c ---");
-      DEBUG("--- curDrone_vy = " << std::fixed << std::setprecision(8) << telemetry.normSpeed.y << " м/c ---");
-      DEBUG("--- curDrone_speed = " << std::fixed << std::setprecision(8) << telemetry.speed << " мс/c ---");
-      DEBUG("--- curDrone_dir = " << std::fixed << std::setprecision(8) << telemetry.angularState << " р. ---");
-      // DEBUG("--- curDrone_state = " << std::fixed << std::setprecision(8) << telemetry.stateId << " ---");
+    if (curMyDrone != nullptr) {
+      if (m_uartProcessor->getTelemetry(telemetry)) {
+        curMyDrone->setDroneParams(telemetry);
+        DEBUG("--- curDroneX = " << std::fixed << std::setprecision(8) << telemetry.pos.x << " м ---");
+        DEBUG("--- curDroneY = " << std::fixed << std::setprecision(8) << telemetry.pos.y << " м ---");
+        DEBUG("--- curDroneZ = " << std::fixed << std::setprecision(8) << telemetry.z << " м ---");
+        DEBUG("--- curDroneT_ms = " << std::fixed << std::setprecision(8) << telemetry.t_ms << " мc ---");
+        DEBUG("--- curDrone_vx = " << std::fixed << std::setprecision(8) << telemetry.normSpeed.x << " м/c ---");
+        DEBUG("--- curDrone_vy = " << std::fixed << std::setprecision(8) << telemetry.normSpeed.y << " м/c ---");
+        DEBUG("--- curDrone_speed = " << std::fixed << std::setprecision(8) << telemetry.speed << " мс/c ---");
+        DEBUG("--- curDrone_dir = " << std::fixed << std::setprecision(8) << telemetry.angularState << " р. ---");
+      }
 
       // ################## РОЗРАХУНОК ТОЧКИ СКИДУ #############################################
       // -----------  заповнення масивів для пошуку найближчих цілей ---------------------------
@@ -271,7 +272,7 @@ void MissionProcessor::missionLoop()
       // -----------  логіка розрахунку точки скиду ---------------------------
       // на скільки я знаю треба працювати без cos і sin тоу що це для процесора важкі операції
       // в майбутньому перепишу
-      Coord droneDir = {(float)cos(telemetry.angularState), (float)sin(telemetry.angularState)};
+      Coord droneDir = {(float)cos(curMyDrone->angularState), (float)sin(curMyDrone->angularState)};
 
       // мітка часу в таблиці targets для визначення майбутньої позиції цілі
       // ми взяли весь час що пройшов + час коли боєприпас долетить до землі якщо буде випущений в даний момент
@@ -291,17 +292,17 @@ void MissionProcessor::missionLoop()
 
       // точка скиду (куди летить дрон)
       // TODO  тут ще можна підкоригувати напрямок дрону маючи dirToDrone
-      Coord dirToDrone = normalize(telemetry.pos - predictedTarget);
+      Coord dirToDrone = normalize(curMyDrone->pos - predictedTarget);
       dropPoint = predictedTarget - dirToDrone * (float)distDuringFall;
 
       // Знаходимо точку, куди прилетить боєприпас
-      aimPoint = telemetry.pos + normalize(droneDir) * distDuringFall;
-      DEBUG("--- dropPoint: (" << telemetry.pos.x << ", " << telemetry.pos.y << ") ---");
+      aimPoint = curMyDrone->pos + normalize(droneDir) * distDuringFall;
+      DEBUG("--- dropPoint: (" << curMyDrone->pos.x << ", " << curMyDrone->pos.y << ") ---");
       DEBUG("--- aimPoint: (" << aimPoint.x << ", " << aimPoint.y << ") ---");
 
       // точний розрахунок коли наближаємся до вже запланованої цілі
       if (!canChangeTarget) {
-        targetAngles[target] = atan2(predictedTarget.y - telemetry.pos.y, predictedTarget.x - telemetry.pos.x);
+        targetAngles[target] = atan2(predictedTarget.y - curMyDrone->pos.y, predictedTarget.x - curMyDrone->pos.x);
       }
 
       double finalDistance = calculateLength(aimPoint - predictedTarget);
@@ -311,25 +312,25 @@ void MissionProcessor::missionLoop()
         LOG("--- БОЄПРИПАС СКИНУТИЙ! Ураження : " << std::fixed << std::setprecision(2) << finalDistance << " м від цілі номер " << target
                                                   << " ---");
         DEBUG("--- prevFinalDistance: " << std::setprecision(4) << prevFinalDistance << " м.  ---");
-        DEBUG("--- dropPoint: (" << telemetry.pos.x << ", " << telemetry.pos.y << ") ---");
+        DEBUG("--- dropPoint: (" << curMyDrone->pos.x << ", " << curMyDrone->pos.y << ") ---");
         DEBUG("--- aimPoint: (" << aimPoint.x << ", " << aimPoint.y << ") ---");
         DEBUG("--- predictedTarget: (" << predictedTarget.x << ", " << predictedTarget.y << ") ---");
 
-          // Викликаємо GPIO з цього потоку! Потік UART при цьому не блокується на 80 мс
-          gpio.pulse_drop();
-          already_dropped = true;
-          std::cout << "[Ballistics] Команду DROP виконано!" << std::endl;
-          isReady = false;
-          running = false;
+        // Викликаємо GPIO з цього потоку! Потік UART при цьому не блокується на 80 мс
+        gpio.pulse_drop();
+        already_dropped = true;
+        std::cout << "[Ballistics] Команду DROP виконано!" << std::endl;
+        isReady = false;
+        running = false;
 
-          break;
+        break;
       }
 
       prevFinalDistance = finalDistance;
 
       // якщо в нас відстань між дроном і цілю почала збільшуватися
       // тоді запускаємо пошук цілі знову тому що дрон не вийшов на позицію
-      if (calculateLength(telemetry.pos - predictedTarget) < distDuringFall) {
+      if (calculateLength(curMyDrone->pos - predictedTarget) < distDuringFall) {
         LOG("Поточна ціль: " << target);
         LOG("canChangeTarget: true");
         canChangeTarget = true;

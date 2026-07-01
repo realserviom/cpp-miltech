@@ -68,6 +68,8 @@ void UARTProcessor::processLoop()
 
         if (outType == 0x01 && outLen == sizeof(dlink::Telemetry)) {
           std::memcpy(&currentTelemetry, outPayload, sizeof(dlink::Telemetry));
+
+          DEBUG("GET TELEMETRY!");
           hasTelemetry = true;
         }
         else if (outType == 0x02 && outLen == sizeof(dlink::TargetPos)) {
@@ -85,13 +87,19 @@ void UARTProcessor::processLoop()
                                                     std::chrono::duration<float>(time - lastTelemetryTime[currentTarget.id]).count();
           positionTargets[currentTarget.id] = newPosition;
           lastTelemetryTime[currentTarget.id] = time;
+
+          // DEBUG("GET TargetPos!");
+          // DEBUG("Target " << std::to_string(currentTarget.id) << " pos: (" << newPosition.x << ", " << newPosition.y << "), velocity: ("
+          //                 << velocityTargets[currentTarget.id].x << ", " << velocityTargets[currentTarget.id].y << ")");
         }
         else if (outType == 0x03 && outLen == sizeof(dlink::AmmoCfg)) {
           std::memcpy(&currentAmmo, outPayload, sizeof(dlink::AmmoCfg));
+          DEBUG("GET AmmoCfg!");
           hasAmmo = true;
         }
         else if (outType == 0x04 && outLen == sizeof(dlink::Result)) {
           std::memcpy(&currentResult, outPayload, sizeof(dlink::Result));
+          DEBUG("GET Result!");
           hasResult = true;
         }
       }
@@ -123,7 +131,6 @@ bool UARTProcessor::getTelemetry(DroneTelemetry& tel)
   tel.stateId = currentTelemetry.state;
   tel.z = currentTelemetry.z;
   tel.t_ms = currentTelemetry.t_ms;
-
   return true;
 }
 
