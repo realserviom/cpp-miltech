@@ -4,13 +4,16 @@
 
 std::unique_ptr<IDroneState> StateDecelerating::execute(Drone& curMyDrone)
 {
-  curMyDrone.updatePosition();
+  std::unique_ptr<IDroneState> newState = nullptr;
+  curMyDrone.sendMovementCommand(-1.0f, 0.0f);  // Гальмуємо на повну, не крутимося
 
   if (curMyDrone.getSpeed() <= 0.0f) {
-    return std::make_unique<StateTurning>();
+    newState = std::make_unique<StateTurning>();
   }
 
-  return std::make_unique<StateDecelerating>();
+  newState = std::make_unique<StateDecelerating>();
+
+  return newState;
 }
 
 const std::string StateDecelerating::name() const

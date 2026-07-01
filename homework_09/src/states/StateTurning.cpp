@@ -6,12 +6,18 @@
 
 std::unique_ptr<IDroneState> StateTurning::execute(Drone& curMyDrone)
 {
-  if (!curMyDrone.updateRotation(curMyDrone.config.turnThreshold)) {
-    DEBUG("--- Повернулися! Газуємо! ---");
-    return std::make_unique<StateAccelerating>();  // Повернулися? Газуємо!
-  }
+  std::unique_ptr<IDroneState> newState = nullptr;
 
-  return std::make_unique<StateTurning>();
+  float accel, turnRate;
+
+  if (!curMyDrone.updateRotation(accel, turnRate, curMyDrone.config.turnThreshold)) {
+    DEBUG("--- Повернулися! Газуємо! ---");
+    newState = std::make_unique<StateAccelerating>();  // Повернулися? Газуємо!
+  }
+  curMyDrone.sendMovementCommand(accel, turnRate);
+  newState = std::make_unique<StateTurning>();
+
+  return newState;
 }
 
 const std::string StateTurning::name() const

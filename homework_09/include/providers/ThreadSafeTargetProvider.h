@@ -1,6 +1,4 @@
 #pragma once
-#include "interfaces/ITargetProvider.h"
-#include <memory>
 #include <mutex>
 #include "AbstractTargetProvider.h"
 #include <string>

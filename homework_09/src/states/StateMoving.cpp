@@ -2,9 +2,12 @@
 
 std::unique_ptr<IDroneState> StateMoving::execute(Drone& curMyDrone)
 {
+  float accel, turnRate;
+
   // Рівномірний рух з мінімальним обертанням
-  curMyDrone.updateRotation();
-  curMyDrone.updatePosition();
+  curMyDrone.updateRotation(accel, turnRate);
+  accel = 1.0f;                                     // Газуємо на повну
+  curMyDrone.sendMovementCommand(accel, turnRate);  // Рухаємося на повну, і крутимося
 
   return std::make_unique<StateMoving>();
 }

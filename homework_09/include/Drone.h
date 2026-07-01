@@ -25,9 +25,9 @@ public:
   explicit Drone(const DroneConfig& config, std::shared_ptr<UARTProcessor> uart);
 
   std::unique_ptr<IDroneState> state;
-  bool updateRotation(float turnThreshold = 0.0f);
+  bool updateRotation(float& accel, float& turnRate, float turnThreshold = 0.0f);
 
-  void updatePosition();
+  void updatePosition(float& accel, float& turnRate);
 
   float getSpeed();
 

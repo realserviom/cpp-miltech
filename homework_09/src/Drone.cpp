@@ -1,16 +1,13 @@
 #include "Drone.h"
+#include <unistd.h>
 #include <cmath>
 #include "interfaces/IDroneState.h"
 #include "states/StateStopped.h"
-#include "states/StateDecelerating.h"
-#include "states/StateAccelerating.h"
-#include "states/StateTurning.h"
-#include "states/StateMoving.h"
-#include <cstddef>
 #include <iostream>
 #include <thread>
 #include "Debug.h"
 #include "UARTProcessor.h"
+#include <unistd.h>
 
 Drone::Drone(const DroneConfig& config, std::shared_ptr<UARTProcessor> uart)
   : config(config)
@@ -89,6 +86,8 @@ void Drone::physicsLoop()
         this->move();
       }
     }
+
+    usleep(20000);  // 20 мс пауза між ітераціями
   }
   catch (const std::exception& e) {
     std::cerr << "[КРИТИЧНА ПОМИЛКА ПОТОКУ ДРОНА]: " << e.what() << '\n';
@@ -102,44 +101,29 @@ void Drone::physicsLoop()
   isReady = false;
 }
 
-bool Drone::updateRotation(float turnThreshold)
+bool Drone::updateRotation(float& accel, float& turnRate, float turnThreshold)
 {
   float angleDiff = currentTargetAngle - angularState;
 
   angleDiff = std::atan2(std::sin(angleDiff), std::cos(angleDiff));
 
   if (std::abs(angleDiff) < config.angularSpeed * config.physicsTimeStep) {
-    angularState = currentTargetAngle;
+    accel = 1.0f;     // Газуємо на повну
+    turnRate = 0.0f;  // Не крутимося
     return false;
   }
 
   // Якщо різниця більша за поріг — крутимо туди, куди ближче
   if (std::abs(angleDiff) > turnThreshold) {
-    if (angleDiff > 0) {
-      // angleDiff додатний -> крутимо проти годинникової
-
-      angularState += config.angularSpeed * config.physicsTimeStep;
-    }
-    else {
-      // angleDiff від'ємний -> крутимо за годинниковою
-      angularState -= config.angularSpeed * config.physicsTimeStep;
-    }
-
-    if (angularState > M_PI * 2) {
-      angularState -= M_PI * 2;
-    }
-
-    if (angularState < 0) {
-      angularState += M_PI * 2;
-    }
-
+    accel = 0.0f;                         // Не газуємо
+    turnRate = (angleDiff > 0) ? 1 : -1;  // Крутимо в напрямку цілі +1 це вліво
     return true;
   }
 
   return false;
 }
 
-void Drone::updatePosition()
+void Drone::updatePosition(float& accel, float& turnRate)
 {
   Coord direction = {(float)cos(angularState), (float)sin(angularState)};
   Coord velocity = direction * speed;

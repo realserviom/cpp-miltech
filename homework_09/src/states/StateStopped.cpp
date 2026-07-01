@@ -7,18 +7,22 @@
 
 std::unique_ptr<IDroneState> StateStopped::execute(Drone& curMyDrone)
 {
-  if (curMyDrone.updateRotation(curMyDrone.config.turnThreshold)) {
+  std::unique_ptr<IDroneState> newState = nullptr;
+
+  float accel, turnRate;
+
+  if (curMyDrone.updateRotation(accel, turnRate, curMyDrone.config.turnThreshold)) {
     DEBUG("--- Стояли. Починаємо повертатися! ---");
-    return std::make_unique<StateTurning>();
+    newState = std::make_unique<StateTurning>();
   }
   else {
-    curMyDrone.updateRotation();  // Легке підрулювання
-    curMyDrone.updatePosition();
     DEBUG("--- Стояли. Повертатися не треба! Почали рух! ---");
-    return std::make_unique<StateAccelerating>();
+    newState = std::make_unique<StateAccelerating>();
   }
 
-  return std::make_unique<StateAccelerating>();
+  curMyDrone.sendMovementCommand(accel, turnRate);
+
+  return newState;
 }
 
 const std::string StateStopped::name() const

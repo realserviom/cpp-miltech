@@ -13,11 +13,8 @@ Code, Compile, Run and Debug online from anywhere in world.
 #include "Types.h"
 #include "config/ComponentFactory.h"
 #include "MissionProcessor.h"
-#include <iomanip>
-#include "GPIOController.h"
 #include "functions.h"
 #include "UARTProcessor.h"
-#include "drone_link.h"
 
 // Визначення константи Пі, якщо її немає в cmath
 #ifndef M_PI
@@ -30,6 +27,9 @@ int main()
     // Налаштування socat для тестування:
     // sudo apt update && sudo apt install -y socat - встановлення
     // socat -d -d pty,raw,echo=0,link=/tmp/ttyA pty,raw,echo=0,link=/tmp/ttyB - налаштування
+    // ./build/checker_linux_x86_64 1 --uart /tmp/ttyB --start-line 24 --drop-line 23 --sim --sim-bank /tmp/my_gpio_bank
+
+    // cd src && ../build/targets3 --uart /tmp/ttyA --gpiochip /tmp/my_gpio_bank --start-line 24 --drop-line 23
 
     // const char* uartDevice = "/dev/ttyAMA1"; - це для Raspberry Pi
     const char* uartDevice = "/tmp/ttyA";  // це socat
@@ -52,27 +52,6 @@ int main()
 
     MissionProcessor processor(uartProcessor, analyticalSolver, configLoader, uartFd);
 
-    // std::cout << "Запуск головного циклу опитування..." << std::endl;
-
-    // // START — на ніжці підняти вольтаж на 1 одразу на старті й тримати. (сигнал про готовність дрона)
-    // gpio.set_start(1);
-
-    // Головний цикл цього потоку (Балістичний калькулятор + Скид)
-    // while (true) {
-
-    //   // КРОК C: Логіка виконання скиду
-    //   auto currentTime = std::chrono::high_resolution_clock::now();
-    //   if (!already_dropped && currentTime >= nextTimePoint) {
-    //     // Викликаємо GPIO з цього потоку! Потік UART при цьому не блокується на 80 мс
-    //     gpio.pulse_drop();
-    //     already_dropped = true;
-    //     std::cout << "[Ballistics] Команду DROP виконано!" << std::endl;
-    //   }
-
-    //   // Крок балістичного циклу (наприклад, 100 Гц або 1000 Гц)
-    //   usleep(10000);  // 10 мс
-    // }
-
     uartProcessor->start();
     processor.start();
 
@@ -81,8 +60,6 @@ int main()
     }
 
     processor.missionThread.join();
-
-    // curMyDrone.stop();
     uartProcessor->stop();
   }
   catch (const std::runtime_error& e) {

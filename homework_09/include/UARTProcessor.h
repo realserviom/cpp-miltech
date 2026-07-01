@@ -7,6 +7,7 @@
 #include "drone_link.h"
 #include <vector>
 #include <optional>
+#include <unordered_map>
 
 class UARTProcessor {
 private:
@@ -25,10 +26,9 @@ private:
     dlink::AmmoCfg currentAmmo;
     dlink::Result currentResult;
 
-    std::vector<Coord> positionTargets;
-    std::vector<Coord> velocityTargets;
-
-    std::vector<std::chrono::time_point<std::chrono::high_resolution_clock>> lastTelemetryTime;
+    std::unordered_map<int, Coord> velocityTargets;
+    std::unordered_map<int, Coord> positionTargets;
+    std::unordered_map<int, std::chrono::time_point<std::chrono::high_resolution_clock>> lastTelemetryTime;
 
     // Прапорці наявності даних
     bool hasTelemetry = false;

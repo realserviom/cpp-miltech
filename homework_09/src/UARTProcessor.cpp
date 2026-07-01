@@ -22,6 +22,11 @@ void UARTProcessor::sendControl(float accel, float turnRate)
 UARTProcessor::~UARTProcessor()
 {
   stop();
+
+  if (uartFd >= 0) {
+    ::close(uartFd);
+    uartFd = -1;  // Хороша звичка — занулити або виставити в -1
+  }
 }
 
 void UARTProcessor::start()
@@ -71,7 +76,10 @@ void UARTProcessor::processLoop()
           std::memcpy(&currentTarget, outPayload, sizeof(dlink::TargetPos));
 
           Coord newPosition = Coord{currentTarget.x, currentTarget.y};
-          velocityTargets[currentTarget.id] = lastTelemetryTime[currentTarget.id].time_since_epoch().count() == 0
+
+          auto it = lastTelemetryTime.find(currentTarget.id);
+
+          velocityTargets[currentTarget.id] = it != lastTelemetryTime.end()
                                                 ? Coord{0, 0}
                                                 : (newPosition - positionTargets[currentTarget.id]) /
                                                     std::chrono::duration<float>(time - lastTelemetryTime[currentTarget.id]).count();

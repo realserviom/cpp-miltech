@@ -6,13 +6,13 @@
 #include "Drone.h"
 #include "MissionProcessor.h"
 #include "Debug.h"
-#include "constants.h"
 #include <iomanip>
 #include <cmath>
 #include <thread>
 #include "interfaces/IDroneState.h"
 #include "states/StateDecelerating.h"
 #include "functions.h"
+#include <unistd.h>
 
 MissionProcessor::MissionProcessor(std::shared_ptr<UARTProcessor> uartProcessor,
                                    std::shared_ptr<IBallisticSolver> solver,
@@ -234,6 +234,8 @@ void MissionProcessor::missionLoop()
           curMyDrone = std::make_unique<Drone>(myDroneConfig, m_uartProcessor);
 
           distDuringFall = m_solver->getDistDuringFall(t_pol, myDroneConfig, &ammoParams);
+
+          curMyDrone->start();  // Запускаємо потік фізики дрона
         }
         catch (const std::runtime_error& e) {
           throw std::runtime_error("[AnalyticalSolver] КРИТИЧНА ПОМИЛКА: " + std::string(e.what()));
@@ -246,15 +248,6 @@ void MissionProcessor::missionLoop()
         DEBUG("Горизонтальна дистанція яку проходить дрон за час " << t_pol << " сек. рівна " << distDuringFall << " м.");
         DEBUG("-----------------------------------");
       }
-    }
-
-    // КРОК C: Логіка виконання скиду
-    auto currentTime = std::chrono::high_resolution_clock::now();
-    if (!already_dropped && currentTime >= nextTimePoint) {
-      // Викликаємо GPIO з цього потоку! Потік UART при цьому не блокується на 80 мс
-      gpio.pulse_drop();
-      already_dropped = true;
-      std::cout << "[Ballistics] Команду DROP виконано!" << std::endl;
     }
 
     DroneTelemetry telemetry;
@@ -322,16 +315,14 @@ void MissionProcessor::missionLoop()
         DEBUG("--- aimPoint: (" << aimPoint.x << ", " << aimPoint.y << ") ---");
         DEBUG("--- predictedTarget: (" << predictedTarget.x << ", " << predictedTarget.y << ") ---");
 
-        auto currentTime = std::chrono::high_resolution_clock::now();
-
-        if (!already_dropped && currentTime >= nextTimePoint) {
           // Викликаємо GPIO з цього потоку! Потік UART при цьому не блокується на 80 мс
           gpio.pulse_drop();
           already_dropped = true;
           std::cout << "[Ballistics] Команду DROP виконано!" << std::endl;
-        }
+          isReady = false;
+          running = false;
 
-        break;
+          break;
       }
 
       prevFinalDistance = finalDistance;
@@ -358,7 +349,9 @@ void MissionProcessor::missionLoop()
       curMyDrone->sendCommand(std::move(cmd));
     }
 
-    // Крок балістичного циклу (наприклад, 100 Гц або 1000 Гц)
     usleep(10000);  // 10 мс
   }
+
+  curMyDrone->stop();  // Зупиняємо потік фізики дрона
+  LOG("--- КІНЕЦЬ МІСІЇ ---");
 }

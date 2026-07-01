@@ -1,6 +1,7 @@
 #include "GPIOController.h"
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 
 #ifdef REAL_GPIO
 #include <gpiod.h>
@@ -8,6 +9,8 @@
 #else
 #include <unistd.h> // для usleep в mock-режимі
 #endif
+
+namespace fs = std::filesystem;
 
 GPIOController::GPIOController() {
 #ifdef REAL_GPIO
@@ -44,14 +47,23 @@ void GPIOController::set_start(int value) {
         gpiod_line_set_value(start_line, value);
 #else
     std::cout << "[MOCK GPIO] Лiнiя START -> " << value << " (" << (value ? "ГОТОВИЙ" : "ВИМК") << ")" << std::endl;
-    std::ofstream file("/tmp/my_gpio_bank/sim_gpio24/value");
+    std::string dirPath = "/tmp/my_gpio_bank/sim_gpio24";
+    std::string filePath = dirPath + "/value";
 
-    if (file.is_open()) {
-        file << value;
+    try {
+      fs::create_directories(dirPath);
+      std::ofstream file(filePath);
+      if (file.is_open()) {
+        file << "1";
         file.close();
-        std::cout << "[MOCK GPIO] Записано START = " << value << std::endl;
-    } else {
-        std::cerr << "[MOCK GPIO] Помилка файлу START" << std::endl;
+        std::cout << "Дані успішно записано!" << std::endl;
+      }
+      else {
+        std::cerr << "Не вдалося відкрити файл для запису!" << std::endl;
+      }
+    }
+    catch (const fs::filesystem_error& e) {
+      std::cerr << "Помилка файлової системи: " << e.what() << std::endl;
     }
 #endif
 }
@@ -65,22 +77,36 @@ void GPIOController::pulse_drop() {
     if (is_ready)
         gpiod_line_set_value(drop_line, 0);
 #else
-    std::ofstream file("/tmp/my_gpio_bank/sim_gpio23/value");
-    if (file.is_open()) {
-        file << 1;
+
+    std::cout << "[MOCK GPIO] Лiнiя START -> " << 1 << " (" << (1 ? "ГОТОВИЙ" : "ВИМК") << ")" << std::endl;
+    std::string dirPath = "/tmp/my_gpio_bank/sim_gpio24";
+    std::string filePath = dirPath + "/value";
+
+    try {
+      fs::create_directories(dirPath);
+      std::ofstream file(filePath);
+      if (file.is_open()) {
+        file << "1";
         file.close();
-        std::cout << "[MOCK GPIO] DROP -> 1" << std::endl;
+        std::cout << "Дані успішно записано!" << std::endl;
+      }
+      else {
+        std::cerr << "Не вдалося відкрити файл для запису!" << std::endl;
+      }
 
-        usleep(80000);
+      usleep(80000);
 
-        file.open("/tmp/my_gpio_bank/sim_gpio23/value");
-        if (file.is_open()) {
-            file << 0;
-            file.close();
-            std::cout << "[MOCK GPIO] DROP -> 0" << std::endl;
-        }
-    } else {
-        std::cerr << "[MOCK GPIO] Помилка файлу DROP" << std::endl;
+      if (file.is_open()) {
+        file << "0";
+        file.close();
+        std::cout << "Дані успішно записано!" << std::endl;
+      }
+      else {
+        std::cerr << "Не вдалося відкрити файл для запису!" << std::endl;
+      }
+    }
+    catch (const fs::filesystem_error& e) {
+      std::cerr << "Помилка файлової системи: " << e.what() << std::endl;
     }
 #endif
 }

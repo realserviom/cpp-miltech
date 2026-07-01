@@ -4,14 +4,23 @@
 
 std::unique_ptr<IDroneState> StateAccelerating::execute(Drone& curMyDrone)
 {
-  curMyDrone.updateRotation();
-  curMyDrone.updatePosition();
+  std::unique_ptr<IDroneState> newState = nullptr;
+
+  float accel, turnRate;
+
+  curMyDrone.updateRotation(accel, turnRate);
+
+  accel = 1.0f;  // Газуємо на повну
+
+  curMyDrone.sendMovementCommand(accel, turnRate);
 
   if (curMyDrone.getSpeed() >= curMyDrone.config.attackSpeed) {
-    return std::make_unique<StateMoving>();
+    newState = std::make_unique<StateMoving>();
   }
 
-  return std::make_unique<StateAccelerating>();
+  newState = std::make_unique<StateAccelerating>();
+
+  return newState;
 }
 
 const std::string StateAccelerating::name() const
