@@ -5,20 +5,24 @@
 #include <thread>
 #include <mutex>
 #include <atomic>
+#include "UARTProcessor.h"
 
 class IDroneState;
 
 class Drone {
 public:
   Coord pos;           // поточна позиція (x, y)
+  Coord normSpeed;     // нормалізований вектор швидкості (vx, vy)
   float speed;         // поточна швидкість
   float angularState;  // поточне положення дрона відносно осі x
-  float timeSecSinceStart;  // час послідньої генерації фізики
 
   DroneConfig config;
-  int m_fd;
+  float t_ms;  // поточний час польоту дрона в мілісекундах
+  float z;     // поточна висота польоту дрона в метрах
 
-  explicit Drone(const DroneConfig& config, int& fd);
+  std::shared_ptr<UARTProcessor> m_uartProcessor;
+
+  explicit Drone(const DroneConfig& config, std::shared_ptr<UARTProcessor> uart);
 
   std::unique_ptr<IDroneState> state;
   bool updateRotation(float turnThreshold = 0.0f);
@@ -47,8 +51,13 @@ public:
 
   void sendControl(float accel, float turnRate);
 
+  void sendMovementCommand(float accel, float turnRate);
+
   // Потокобезпечний інтерфейс для MissionProcessor
   void sendCommand(DroneCommand cmd);
+
+  // Проставляємо параметри дрона що прийшли по телеметрії
+  void setDroneParams(DroneTelemetry& telemetry);
 
 private:
   void physicsLoop();  // Головний цикл фонового потоку

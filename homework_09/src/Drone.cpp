@@ -10,12 +10,11 @@
 #include <iostream>
 #include <thread>
 #include "Debug.h"
-#include "functions.h"
-#include "drone_link.h"
+#include "UARTProcessor.h"
 
-Drone::Drone(const DroneConfig& config, int& fd)
+Drone::Drone(const DroneConfig& config, std::shared_ptr<UARTProcessor> uart)
   : config(config)
-  , m_fd(fd)
+  , m_uartProcessor(uart)
 {
   pos.x = config.startPos.x;
   pos.y = config.startPos.y;
@@ -33,6 +32,11 @@ void Drone::start()
   physicsThread = std::thread(&Drone::physicsLoop, this);
 }
 
+void Drone::sendMovementCommand(float accel, float turnRate)
+{
+  m_uartProcessor->sendControl(accel, turnRate);
+}
+
 void Drone::stop()
 {
   running = false;
@@ -46,17 +50,19 @@ bool Drone::isThreadReady() const
   return isReady;
 }
 
-void Drone::sendControl(float accel, float turnRate)
-{
-  dlink::Control c{accel, turnRate};
-  uint8_t out[64];
-  size_t m = dlink::encode(dlink::PKT_CONTROL, &c, sizeof c, out);
-  write(m_fd, out, m);
-}
-
 void Drone::sendCommand(DroneCommand cmd)
 {
   commandQueue.push(std::move(cmd));  // Переміщуємо команду прямо всередину черги
+}
+
+void Drone::setDroneParams(DroneTelemetry& telemetry)
+{
+  pos = telemetry.pos;
+  speed = telemetry.speed;
+  angularState = telemetry.angularState;
+  z = telemetry.z;
+  t_ms = telemetry.t_ms;
+  normSpeed = telemetry.normSpeed;
 }
 
 // === ВНУТРІШНІЙ ЦИКЛ ПОТОКУ ФІЗИКИ ===
@@ -111,6 +117,7 @@ bool Drone::updateRotation(float turnThreshold)
   if (std::abs(angleDiff) > turnThreshold) {
     if (angleDiff > 0) {
       // angleDiff додатний -> крутимо проти годинникової
+
       angularState += config.angularSpeed * config.physicsTimeStep;
     }
     else {
@@ -197,22 +204,6 @@ void Drone::move()
 
   if (nextState) {
     state = std::move(nextState);
-  }
-}
-
-void Drone::accelerate()
-{
-  speed += (config.acceleration * config.physicsTimeStep);
-  if (speed > config.attackSpeed) {
-    speed = config.attackSpeed;
-  }
-}
-
-void Drone::decelerate()
-{
-  speed -= (config.acceleration * config.physicsTimeStep);
-  if (speed <= 0) {
-    speed = 0;
   }
 }
 

@@ -5,7 +5,6 @@
 std::unique_ptr<IDroneState> StateDecelerating::execute(Drone& curMyDrone)
 {
   curMyDrone.updatePosition();
-  curMyDrone.decelerate();
 
   if (curMyDrone.getSpeed() <= 0.0f) {
     return std::make_unique<StateTurning>();

@@ -11,6 +11,14 @@ UARTProcessor::UARTProcessor(int fd)
 {
 }
 
+void UARTProcessor::sendControl(float accel, float turnRate)
+{
+  dlink::Control c{accel, turnRate};
+  uint8_t out[64];
+  size_t m = dlink::encode(dlink::PKT_CONTROL, &c, sizeof c, out);
+  write(uartFd, out, m);
+}
+
 UARTProcessor::~UARTProcessor()
 {
   stop();
@@ -83,8 +91,6 @@ void UARTProcessor::processLoop()
     usleep(1000);  // 1 мс пауза
   }
 }
-
-// Реалізація безпечних методів доступу (потокобезпечні гетери)
 
 const dlink::AmmoCfg* UARTProcessor::getAmmoConfigPtr()
 {

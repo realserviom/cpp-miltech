@@ -56,4 +56,6 @@ private:
     bool getResult(dlink::Result& outResult);
 
     bool isThreadReady() const;
+
+    void sendControl(float accel, float turnRate);
 };

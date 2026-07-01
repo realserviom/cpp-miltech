@@ -148,7 +148,12 @@ std::unique_ptr<IDroneState> MissionProcessor::changeTarget(float& targetAngle, 
 
   targetAngle = targetAngles[target];
 
-  if (currentStateName != "STOPPED" && currentStateName != "DECELERATING" && canChangeTarget && newTarget != target) {
+  // canChangeTarget - мітка чи є дозвіл міняти ціль (якщо дрон вже летить на ціль і вона не далеко, то міняти ціль не можна)
+  // newTarget != target - перевірка чи дійсно нова ціль? Щоб лишній раз не гальмувати і обертати
+  // (хоча іноді навіть поточна ціль може критично змінити напрямок руху і тоді треба буде гальмувати і розвертатися але це не враховано)
+  // currentStateName != "STOPPED" - перевірка чи дрон не стоїть на місці (якщо стоїть то можна міняти ціль)
+  // currentStateName != "DECELERATING" - перевірка чи дрон
+  if (canChangeTarget && newTarget != target && currentStateName != "STOPPED" && currentStateName != "DECELERATING") {
     DEBUG("Нова ціль: " << newTarget);
     target = newTarget;
     targetAngle = targetAngles[newTarget];
@@ -226,7 +231,7 @@ void MissionProcessor::missionLoop()
           init(myDroneConfig);
 
           // Поточний стан дрона
-          curMyDrone = std::make_unique<Drone>(myDroneConfig, m_fd);
+          curMyDrone = std::make_unique<Drone>(myDroneConfig, m_uartProcessor);
 
           distDuringFall = m_solver->getDistDuringFall(t_pol, myDroneConfig, &ammoParams);
         }
@@ -255,6 +260,7 @@ void MissionProcessor::missionLoop()
     DroneTelemetry telemetry;
 
     if (curMyDrone != nullptr && m_uartProcessor->getTelemetry(telemetry)) {
+      curMyDrone->setDroneParams(telemetry);
       DEBUG("--- curDroneX = " << std::fixed << std::setprecision(8) << telemetry.pos.x << " м ---");
       DEBUG("--- curDroneY = " << std::fixed << std::setprecision(8) << telemetry.pos.y << " м ---");
       DEBUG("--- curDroneZ = " << std::fixed << std::setprecision(8) << telemetry.z << " м ---");
@@ -307,7 +313,7 @@ void MissionProcessor::missionLoop()
 
       double finalDistance = calculateLength(aimPoint - predictedTarget);
 
-      // умова при якій дрон попадає в ціль з точністю "curMyDrone.config.hitRadius / 20"
+      // умова при якій дрон попадає в ціль з точністю "hitRadius / 2"
       if (finalDistance <= hitRadius / 2 || (prevFinalDistance < finalDistance && !canChangeTarget && prevFinalDistance <= hitRadius / 4)) {
         LOG("--- БОЄПРИПАС СКИНУТИЙ! Ураження : " << std::fixed << std::setprecision(2) << finalDistance << " м від цілі номер " << target
                                                   << " ---");
