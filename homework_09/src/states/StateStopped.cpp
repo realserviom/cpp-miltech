@@ -1,28 +1,13 @@
 #include "states/StateStopped.h"
-#include "states/StateAccelerating.h"
-#include "states/StateTurning.h"
 #include "Drone.h"
 #include "Debug.h"
 #include "interfaces/IDroneState.h"
 
-std::unique_ptr<IDroneState> StateStopped::execute(Drone& curMyDrone)
+void StateStopped::execute(Drone& curMyDrone)
 {
-  std::unique_ptr<IDroneState> newState = nullptr;
-
   float accel, turnRate;
-
-  if (curMyDrone.updateRotation(accel, turnRate, curMyDrone.config.turnThreshold)) {
-    DEBUG("--- Стояли. Починаємо повертатися! ---");
-    newState = std::make_unique<StateTurning>();
-  }
-  else {
-    DEBUG("--- Стояли. Повертатися не треба! Почали рух! ---");
-    newState = std::make_unique<StateAccelerating>();
-  }
-
+  curMyDrone.updateRotation(accel, turnRate, curMyDrone.config.turnThreshold);
   curMyDrone.sendMovementCommand(accel, turnRate);
-
-  return newState;
 }
 
 const std::string StateStopped::name() const

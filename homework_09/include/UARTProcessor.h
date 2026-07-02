@@ -33,6 +33,7 @@ private:
     bool hasTelemetry = false;
     bool hasAmmo = false;
     bool hasResult = false;
+    bool hasTarget = false;
 
     void processLoop();
 
@@ -57,4 +58,6 @@ private:
     bool isThreadReady() const;
 
     void sendControl(float accel, float turnRate);
+
+    bool getTargetPosition2(dlink::TargetPos& target);
 };

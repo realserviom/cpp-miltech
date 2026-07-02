@@ -12,6 +12,7 @@
 #include "UARTProcessor.h"
 #include "states/StateTurning.h"
 #include <unistd.h>
+#include "constants.h"
 
 Drone::Drone(const DroneConfig& config, std::shared_ptr<UARTProcessor> uart)
   : config(config)
@@ -35,8 +36,7 @@ void Drone::start()
 
 void Drone::sendMovementCommand(float accel, float turnRate)
 {
-  DEBUG("Send accel, turnRate: " << accel << ", " << turnRate);
-
+  // DEBUG("Send accel, turnRate: " << accel << ", " << turnRate);
   m_uartProcessor->sendControl(accel, turnRate);
 }
 
@@ -116,10 +116,13 @@ void Drone::physicsLoop()
 
       {
         std::lock_guard<std::mutex> lock(stateMutex);
-        this->move();
+        if (state != nullptr) {
+          state->execute(*this);
+          state = nullptr;
+        }
       }
 
-      usleep(100000000);
+      usleep(100000);
     }
   }
 
@@ -135,26 +138,24 @@ void Drone::physicsLoop()
   isReady = false;
 }
 
-bool Drone::updateRotation(float& accel, float& turnRate, float turnThreshold)
+void Drone::updateRotation(float& accel, float& turnRate, float turnThreshold)
 {
   float angleDiff = currentTargetAngle - angularState;
 
   angleDiff = std::atan2(std::sin(angleDiff), std::cos(angleDiff));
 
-  if (std::abs(angleDiff) < config.angularSpeed * config.physicsTimeStep) {
-    accel = 1.0f;     // Газуємо на повну
-    turnRate = 0.0f;  // Не крутимося
-    return false;
+  if (std::abs(angleDiff) - turnThreshold < 0.0001f) {
+    accel = MAX_ACCEL;  // Газуємо на повну
+    turnRate = 0;       // Не крутимося
   }
-
-  // Якщо різниця більша за поріг — крутимо туди, куди ближче
-  if (std::abs(angleDiff) > turnThreshold) {
+  else if (std::abs(angleDiff) < turnThreshold) {
+    accel = MAX_ACCEL;                                            // Газуємо на повну
+    turnRate = (angleDiff > 0) ? MAX_TURN_RATE : -MAX_TURN_RATE;  // Крутимо в напрямку цілі +1 це вліво
+  }
+  else if (std::abs(angleDiff) > turnThreshold) {
     accel = 0.0f;                               // Не газуємо
-    turnRate = (angleDiff > 0) ? -1.0f : 1.0f;  // Крутимо в напрямку цілі +1 це вліво
-    return true;
+    turnRate = (angleDiff > 0) ? MAX_TURN_RATE : -MAX_TURN_RATE;  // Крутимо в напрямку цілі +1 це вліво
   }
-
-  return false;
 }
 
 bool Drone::needRotation(float targetAngle, float turnThreshold) const
@@ -192,15 +193,6 @@ float Drone::calculateSmallArrivalTime(float distance) const
     return distance / config.attackSpeed;
 
   return (-speed + std::sqrt(D)) / config.acceleration;
-}
-
-void Drone::move()
-{
-  auto nextState = state->execute(*this);
-
-  if (nextState) {
-    state = std::move(nextState);
-  }
 }
 
 float Drone::getSpeed()

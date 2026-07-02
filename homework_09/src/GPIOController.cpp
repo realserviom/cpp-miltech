@@ -78,8 +78,8 @@ void GPIOController::pulse_drop() {
         gpiod_line_set_value(drop_line, 0);
 #else
 
-    std::cout << "[MOCK GPIO] Лiнiя START -> " << 1 << " (" << (1 ? "ГОТОВИЙ" : "ВИМК") << ")" << std::endl;
-    std::string dirPath = "/tmp/my_gpio_bank/sim_gpio24";
+    std::cout << "[MOCK GPIO] Лінія DROP -> ГОТОВИЙ" << std::endl;
+    std::string dirPath = "/tmp/my_gpio_bank/sim_gpio23";
     std::string filePath = dirPath + "/value";
 
     try {
@@ -87,19 +87,12 @@ void GPIOController::pulse_drop() {
       std::ofstream file(filePath);
       if (file.is_open()) {
         file << "1";
+        file.flush();
+        usleep(80000);
+        // Переміщуємо курсор запису на початок файлу (на нульову позицію)
+        file.seekp(0);
+        file << "0";  // Запише "0" поверх "1"
         file.close();
-        std::cout << "Дані успішно записано!" << std::endl;
-      }
-      else {
-        std::cerr << "Не вдалося відкрити файл для запису!" << std::endl;
-      }
-
-      usleep(80000);
-
-      if (file.is_open()) {
-        file << "0";
-        file.close();
-        std::cout << "Дані успішно записано!" << std::endl;
       }
       else {
         std::cerr << "Не вдалося відкрити файл для запису!" << std::endl;

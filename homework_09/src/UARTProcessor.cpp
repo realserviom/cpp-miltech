@@ -74,6 +74,7 @@ void UARTProcessor::processLoop()
           auto time = std::chrono::high_resolution_clock::now();
 
           std::memcpy(&currentTarget, outPayload, sizeof(dlink::TargetPos));
+          hasTarget = true;
 
           Coord newPosition = Coord{currentTarget.x, currentTarget.y};
 
@@ -86,9 +87,9 @@ void UARTProcessor::processLoop()
           positionTargets[currentTarget.id] = newPosition;
           lastTelemetryTime[currentTarget.id] = time;
 
-          DEBUG("GET TargetPos!");
-          DEBUG("Target " << std::to_string(currentTarget.id) << " pos: (" << newPosition.x << ", " << newPosition.y << "), velocity: ("
-                          << velocityTargets[currentTarget.id].x << ", " << velocityTargets[currentTarget.id].y << ")");
+          // DEBUG("GET TargetPos!");
+          // DEBUG("Target " << std::to_string(currentTarget.id) << " pos: (" << newPosition.x << ", " << newPosition.y << "), velocity: ("
+          //                 << velocityTargets[currentTarget.id].x << ", " << velocityTargets[currentTarget.id].y << ")");
         }
         else if (outType == dlink::PKT_AMMO && outLen == sizeof(dlink::AmmoCfg)) {
           std::memcpy(&currentAmmo, outPayload, sizeof(dlink::AmmoCfg));
@@ -105,7 +106,7 @@ void UARTProcessor::processLoop()
         }
       }
     }
-    usleep(100000);  // 10 мс пауза
+    usleep(100000);  // 100 мс пауза
   }
 }
 
@@ -135,13 +136,22 @@ bool UARTProcessor::getTelemetry(DroneTelemetry& tel)
   return true;
 }
 
+bool UARTProcessor::getTargetPosition2(dlink::TargetPos& target)
+{
+  std::lock_guard<std::mutex> lock(dataMutex);
+  if (!hasResult)
+    return false;
+  target = currentTarget;
+  return true;
+}
+
 std::optional<Target> UARTProcessor::getTargetPosition(const uint8_t targetId)
 {
   std::lock_guard<std::mutex> lock(dataMutex);
 
   // Перевірка меж
   if (targetId < 0 || targetId >= positionTargets.size() || targetId >= velocityTargets.size()) {
-    DEBUG("Error: targetId " << std::to_string(targetId) << " not found!");
+    // DEBUG("Error: targetId " << std::to_string(targetId) << " not found!");
     return std::nullopt;  // Повертаємо "нічого"
   }
 

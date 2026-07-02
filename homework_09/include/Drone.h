@@ -25,9 +25,7 @@ public:
   explicit Drone(const DroneConfig& config, std::shared_ptr<UARTProcessor> uart);
 
   std::unique_ptr<IDroneState> state;
-  bool updateRotation(float& accel, float& turnRate, float turnThreshold = 0.0f);
-
-  void updatePosition(float& accel, float& turnRate);
+  void updateRotation(float& accel, float& turnRate, float turnThreshold = 0.0f);
 
   float getSpeed();
 
@@ -39,8 +37,6 @@ public:
   float calculateArrivalTime(float targetAngle, float distance, float distFall) const;
 
   float calculateSmallArrivalTime(float distance) const;
-
-  void move();
 
   // =========================================================================
   // КЕРУВАННЯ ПОТОКОМ ФІЗИКИ
