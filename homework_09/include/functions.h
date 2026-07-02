@@ -4,8 +4,9 @@
 #include "Types.h"
 #include <cstdio>
 #include <vector>
-#include <thread>
 #include <stack>
+#include <unistd.h>
+#include <thread>
 
 void saveFireCoordinates(double fireX, double fireY, double xd_i, double yd_i);
 

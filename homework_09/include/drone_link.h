@@ -16,10 +16,8 @@
 #ifndef DRONE_LINK_H
 #define DRONE_LINK_H
 
-
 #include <cstdint>
 #include <cstring>
-#include "interfaces/DroneStateId.h"
 
 namespace dlink {
 
@@ -48,7 +46,7 @@ struct Telemetry {
     float    vx, vy;   // швидкість у площині, м/с
     float    speed;    // модуль горизонтальної швидкості, м/с
     float    dir;      // курс (напрямок польоту), радіани
-    DroneStateId state;  // стан стейт-машини (0..4, як у DZ3)
+    uint8_t state;     // стан стейт-машини (0..4, як у DZ3)
 };
 
 

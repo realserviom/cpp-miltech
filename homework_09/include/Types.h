@@ -5,7 +5,6 @@
 #include <string>
 #include <cassert>
 #include <memory>
-#include "interfaces/DroneStateId.h"
 #include "interfaces/IDroneState.h"
 
 // імя боєприпасу
@@ -122,7 +121,7 @@ struct DroneTelemetry {
   float angularState;
   float z;
   int t_ms;
-  DroneStateId stateId;
+  uint8_t stateId;
 };
 
 #endif

@@ -5,7 +5,6 @@
 #include <mutex>
 #include "Types.h"
 #include "drone_link.h"
-#include <vector>
 #include <optional>
 #include <unordered_map>
 
@@ -26,9 +25,9 @@ private:
     dlink::AmmoCfg currentAmmo;
     dlink::Result currentResult;
 
-    std::unordered_map<int, Coord> velocityTargets;
-    std::unordered_map<int, Coord> positionTargets;
-    std::unordered_map<int, std::chrono::time_point<std::chrono::high_resolution_clock>> lastTelemetryTime;
+    std::unordered_map<uint8_t, Coord> velocityTargets;
+    std::unordered_map<uint8_t, Coord> positionTargets;
+    std::unordered_map<uint8_t, std::chrono::time_point<std::chrono::high_resolution_clock>> lastTelemetryTime;
 
     // Прапорці наявності даних
     bool hasTelemetry = false;
