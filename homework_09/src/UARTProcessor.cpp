@@ -1,9 +1,9 @@
 #include "UARTProcessor.h"
-#include <iostream>
 #include <cstring>
 #include <optional>
 #include <unistd.h>
 #include "Debug.h"
+#include "drone_link.h"
 
 UARTProcessor::UARTProcessor(int fd)
   : uartFd(fd)
@@ -66,13 +66,11 @@ void UARTProcessor::processLoop()
         // Захищаємо запис м'ютексом
         std::lock_guard<std::mutex> lock(dataMutex);
 
-        if (outType == 0x01 && outLen == sizeof(dlink::Telemetry)) {
+        if (outType == dlink::PKT_TELEMETRY && outLen == sizeof(dlink::Telemetry)) {
           std::memcpy(&currentTelemetry, outPayload, sizeof(dlink::Telemetry));
-
-          DEBUG("GET TELEMETRY!");
           hasTelemetry = true;
         }
-        else if (outType == 0x02 && outLen == sizeof(dlink::TargetPos)) {
+        else if (outType == dlink::PKT_TARGET && outLen == sizeof(dlink::TargetPos)) {
           auto time = std::chrono::high_resolution_clock::now();
 
           std::memcpy(&currentTarget, outPayload, sizeof(dlink::TargetPos));
@@ -81,30 +79,33 @@ void UARTProcessor::processLoop()
 
           auto it = lastTelemetryTime.find(currentTarget.id);
 
-          velocityTargets[currentTarget.id] = it != lastTelemetryTime.end()
+          velocityTargets[currentTarget.id] = it == lastTelemetryTime.end()
                                                 ? Coord{0, 0}
                                                 : (newPosition - positionTargets[currentTarget.id]) /
                                                     std::chrono::duration<float>(time - lastTelemetryTime[currentTarget.id]).count();
           positionTargets[currentTarget.id] = newPosition;
           lastTelemetryTime[currentTarget.id] = time;
 
-          // DEBUG("GET TargetPos!");
-          // DEBUG("Target " << std::to_string(currentTarget.id) << " pos: (" << newPosition.x << ", " << newPosition.y << "), velocity: ("
-          //                 << velocityTargets[currentTarget.id].x << ", " << velocityTargets[currentTarget.id].y << ")");
+          DEBUG("GET TargetPos!");
+          DEBUG("Target " << std::to_string(currentTarget.id) << " pos: (" << newPosition.x << ", " << newPosition.y << "), velocity: ("
+                          << velocityTargets[currentTarget.id].x << ", " << velocityTargets[currentTarget.id].y << ")");
         }
-        else if (outType == 0x03 && outLen == sizeof(dlink::AmmoCfg)) {
+        else if (outType == dlink::PKT_AMMO && outLen == sizeof(dlink::AmmoCfg)) {
           std::memcpy(&currentAmmo, outPayload, sizeof(dlink::AmmoCfg));
           DEBUG("GET AmmoCfg!");
           hasAmmo = true;
         }
-        else if (outType == 0x04 && outLen == sizeof(dlink::Result)) {
+        else if (outType == dlink::PKT_RESULT && outLen == sizeof(dlink::Result)) {
           std::memcpy(&currentResult, outPayload, sizeof(dlink::Result));
           DEBUG("GET Result!");
           hasResult = true;
         }
+        else {
+          DEBUG("NO NAME! outType: " << outType);
+        }
       }
     }
-    usleep(1000);  // 1 мс пауза
+    usleep(100000);  // 10 мс пауза
   }
 }
 
@@ -148,8 +149,8 @@ std::optional<Target> UARTProcessor::getTargetPosition(const uint8_t targetId)
   targetPos.pos = positionTargets[targetId];
   targetPos.velocity = velocityTargets[targetId];
 
-  DEBUG("Target " << std::to_string(targetId) << " pos: (" << targetPos.pos.x << ", " << targetPos.pos.y << "), velocity: ("
-                  << targetPos.velocity.x << ", " << targetPos.velocity.y << ")");
+  // DEBUG("Target " << std::to_string(targetId) << " pos: (" << targetPos.pos.x << ", " << targetPos.pos.y << "), velocity: ("
+  //                 << targetPos.velocity.x << ", " << targetPos.velocity.y << ")");
 
   return targetPos;
 }

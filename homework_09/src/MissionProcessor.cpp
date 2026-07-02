@@ -13,6 +13,8 @@
 #include "states/StateDecelerating.h"
 #include "functions.h"
 #include <unistd.h>
+#include <chrono>
+#include <thread>
 
 MissionProcessor::MissionProcessor(std::shared_ptr<UARTProcessor> uartProcessor,
                                    std::shared_ptr<IBallisticSolver> solver,
@@ -64,6 +66,8 @@ void MissionProcessor::init(DroneConfig& myDrone)
 
 void MissionProcessor::fillArrays(bool& canChangeTarget, const Drone& curMyDrone, const float distDuringFall, const float t_pol)
 {
+  DEBUG("fillArrays numberOfTargets: " << numberOfTargets);
+
   for (uint8_t targetId = 0; targetId < numberOfTargets; targetId++) {
     auto targetOptions = m_uartProcessor->getTargetPosition(targetId);
 
@@ -128,7 +132,7 @@ void MissionProcessor::fillArrays(bool& canChangeTarget, const Drone& curMyDrone
 
       //  записуємо тільки один раз кут зміщення це коли вже пряма наводка до цілі
       targetAngles[targetId] = targetAngle;
-      DEBUG("Перерахували кут напрямку для цілі: " << targetId);
+      DEBUG("Перерахували кут напрямку для цілі: " << std::to_string(targetId));
     }
 
     if (targetId == target) {
@@ -214,7 +218,7 @@ void MissionProcessor::missionLoop()
     if (ammo == nullptr) {
       ammo = m_uartProcessor->getAmmoConfigPtr();
       if (ammo != nullptr) {
-        std::cout << "[Ballistics] Отримано конфіг з UART! Name = " << ammo->name << std::endl;
+        std::cout << "[Ballistics] Отримано конфіг з UART! Name = " << ammo->nTargets << std::endl;
         std::cout << "[Ballistics] Розраховуємо час польоту снаряду і відстань що він проходить!" << std::endl;
 
         try {
@@ -224,8 +228,10 @@ void MissionProcessor::missionLoop()
           ammoParams.drag = ammo->drag;
           ammoParams.lift = ammo->lift;
 
-          setNumberOfTarget(ammo->nTargets);
-          setHitRadius(ammo->hitRadius);
+          DEBUG("ammo->nTargets: " << ammo->nTargets);
+
+          setNumberOfTarget(5);
+          setHitRadius(3);
 
           // ініціалізація параметрів дрона і початкових параметрів руху
           init(myDroneConfig);
@@ -288,7 +294,7 @@ void MissionProcessor::missionLoop()
 
       predictedTarget = targetPosition->pos + targetPosition->velocity * t_pol;
 
-      DEBUG("--- predictedTarget: (" << predictedTarget.x << ", " << predictedTarget.y << ") ---");
+      // DEBUG("--- predictedTarget: (" << predictedTarget.x << ", " << predictedTarget.y << ") ---");
 
       // точка скиду (куди летить дрон)
       // TODO  тут ще можна підкоригувати напрямок дрону маючи dirToDrone
@@ -297,8 +303,8 @@ void MissionProcessor::missionLoop()
 
       // Знаходимо точку, куди прилетить боєприпас
       aimPoint = curMyDrone->pos + normalize(droneDir) * distDuringFall;
-      DEBUG("--- dropPoint: (" << curMyDrone->pos.x << ", " << curMyDrone->pos.y << ") ---");
-      DEBUG("--- aimPoint: (" << aimPoint.x << ", " << aimPoint.y << ") ---");
+      // DEBUG("--- dropPoint: (" << curMyDrone->pos.x << ", " << curMyDrone->pos.y << ") ---");
+      // DEBUG("--- aimPoint: (" << aimPoint.x << ", " << aimPoint.y << ") ---");
 
       // точний розрахунок коли наближаємся до вже запланованої цілі
       if (!canChangeTarget) {
@@ -350,7 +356,7 @@ void MissionProcessor::missionLoop()
       curMyDrone->sendCommand(std::move(cmd));
     }
 
-    usleep(10000);  // 10 мс
+    std::this_thread::sleep_for(std::chrono::nanoseconds(100000000));
   }
 
   curMyDrone->stop();  // Зупиняємо потік фізики дрона

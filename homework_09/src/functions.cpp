@@ -7,9 +7,10 @@
 #include "functions.h"
 #include "Types.h"
 #include <stdbool.h>
-#include "json.hpp"
 #include <fcntl.h>
 #include <termios.h>
+#include <chrono>
+#include "json.hpp"
 
 using json = nlohmann::ordered_json;
 

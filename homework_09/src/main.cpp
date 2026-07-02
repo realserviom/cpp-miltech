@@ -29,7 +29,7 @@ int main()
     // socat -d -d pty,raw,echo=0,link=/tmp/ttyA pty,raw,echo=0,link=/tmp/ttyB - налаштування
     // ./build/checker_linux_x86_64 1 --uart /tmp/ttyB --start-line 24 --drop-line 23 --sim --sim-bank /tmp/my_gpio_bank
 
-    // cd src && ../build/targets3 --uart /tmp/ttyA --gpiochip /tmp/my_gpio_bank --start-line 24 --drop-line 23
+    // cd src && ../build/targets3
 
     // const char* uartDevice = "/dev/ttyAMA1"; - це для Raspberry Pi
     const char* uartDevice = "/tmp/ttyA";  // це socat

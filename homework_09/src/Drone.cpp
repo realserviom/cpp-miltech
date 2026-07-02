@@ -35,7 +35,7 @@ void Drone::start()
 
 void Drone::sendMovementCommand(float accel, float turnRate)
 {
-  DEBUG("Send accel, turnRate" << accel << ", " << turnRate);
+  DEBUG("Send accel, turnRate: " << accel << ", " << turnRate);
 
   m_uartProcessor->sendControl(accel, turnRate);
 }
@@ -68,23 +68,23 @@ void Drone::setDroneParams(DroneTelemetry& telemetry)
   normSpeed = telemetry.normSpeed;
 
   switch (telemetry.stateId) {
-    case DroneStateId::STOPPED: {
+    case 0: {
       state = std::make_unique<StateStopped>();
       break;
     }
-    case DroneStateId::ACCELERATING: {
+    case 1: {
       state = std::make_unique<StateAccelerating>();
       break;
     }
-    case DroneStateId::DECELERATING: {
+    case 2: {
       state = std::make_unique<StateDecelerating>();
       break;
     }
-    case DroneStateId::TURNING: {
+    case 3: {
       state = std::make_unique<StateTurning>();
       break;
     }
-    case DroneStateId::MOVING: {
+    case 4: {
       state = std::make_unique<StateMoving>();
       break;
     }
@@ -118,10 +118,11 @@ void Drone::physicsLoop()
         std::lock_guard<std::mutex> lock(stateMutex);
         this->move();
       }
-    }
 
-    usleep(10000);  // 10 мс пауза між ітераціями
+      usleep(100000000);
+    }
   }
+
   catch (const std::exception& e) {
     std::cerr << "[КРИТИЧНА ПОМИЛКА ПОТОКУ ДРОНА]: " << e.what() << '\n';
     running = false;
@@ -148,34 +149,12 @@ bool Drone::updateRotation(float& accel, float& turnRate, float turnThreshold)
 
   // Якщо різниця більша за поріг — крутимо туди, куди ближче
   if (std::abs(angleDiff) > turnThreshold) {
-    accel = 0.0f;                         // Не газуємо
-    turnRate = (angleDiff > 0) ? 1 : -1;  // Крутимо в напрямку цілі +1 це вліво
+    accel = 0.0f;                               // Не газуємо
+    turnRate = (angleDiff > 0) ? -1.0f : 1.0f;  // Крутимо в напрямку цілі +1 це вліво
     return true;
   }
 
   return false;
-}
-
-void Drone::updatePosition(float& accel, float& turnRate)
-{
-  Coord direction = {(float)cos(angularState), (float)sin(angularState)};
-  Coord velocity = direction * speed;
-  Coord acceleration = direction * config.acceleration;
-
-  float dt = config.physicsTimeStep;
-  float stepSq = (dt * dt) / 2.0f;
-
-  std::string currentStateName = state->name();
-
-  if (currentStateName == "MOVING") {
-    pos = pos + (velocity * dt);
-  }
-  else if (currentStateName == "ACCELERATING") {
-    pos = pos + (velocity * dt) + (acceleration * stepSq);
-  }
-  else if (currentStateName == "DECELERATING") {
-    pos = pos + (velocity * dt) - (acceleration * stepSq);
-  }
 }
 
 bool Drone::needRotation(float targetAngle, float turnThreshold) const
