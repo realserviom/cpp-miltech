@@ -24,18 +24,16 @@ void JsonTargetProvider::loadTargets()
   }
   catch (const json::parse_error& e) {
     throw std::runtime_error("Помилка парсингу файлу " + m_filePath + ": " + std::string(e.what()));
-    fin.close();
   }
 
   m_targetCount = j["targetCount"];
   m_timeSteps = j["timeSteps"];
 
-  // можна було використати std::vector<std::vector<Coord>>
-  // але мені щось не дуже подобається
-  m_targets = new Coord*[m_targetCount];
+  m_targets.resize(m_targetCount);
 
   for (int i = 0; i < m_targetCount; i++) {
-    m_targets[i] = new Coord[m_timeSteps];
+    m_targets[i].resize(m_timeSteps);
+
     auto& positionsJson = j["targets"][i]["positions"];
 
     for (int t = 0; t < m_timeSteps; t++) {
@@ -43,8 +41,6 @@ void JsonTargetProvider::loadTargets()
       m_targets[i][t].y = positionsJson[t]["y"];
     }
   }
-
-  fin.close();
 }
 
 Coord JsonTargetProvider::getTargetPosition(const int target, const float time)
@@ -82,9 +78,11 @@ Coord JsonTargetProvider::getTargetPositionInCounter(int& targetId, const int& c
 {
   int timeIteration = this->getIterationByCounter(counter);
 
-  if (this->m_targets && targetId >= 0 && targetId < m_targetCount) {
-    return this->m_targets[targetId][timeIteration];
+  if (targetId >= 0 && targetId < static_cast<int>(m_targets.size()) && timeIteration >= 0 &&
+      timeIteration < static_cast<int>(m_targets[targetId].size())) {
+    return m_targets[targetId][timeIteration];
   }
+
   return Coord{0.0, 0.0};
 }
 
@@ -105,9 +103,11 @@ int JsonTargetProvider::getIterationByTime(float time, const float& arrayTimeSte
 
 Coord JsonTargetProvider::getTargetPositionInIteration(const int& index, int& timeIteration)
 {
-  if (this->m_targets && index >= 0 && index < m_targetCount) {
-    return this->m_targets[index][timeIteration];
+  if (index >= 0 && index < static_cast<int>(m_targets.size()) && timeIteration >= 0 &&
+      timeIteration < static_cast<int>(m_targets[index].size())) {
+    return m_targets[index][timeIteration];
   }
+
   return Coord{0.0, 0.0};
 }
 
@@ -128,14 +128,4 @@ int JsonTargetProvider::getIterationByCounter(const int& counter)
   const int new_counter = counter >= wholeRangeCounters ? static_cast<int>(counter % wholeRangeCounters) : counter;
 
   return static_cast<int>(std::floor(new_counter / this->m_numberCounterInTimeSpot));
-}
-
-JsonTargetProvider::~JsonTargetProvider()
-{
-  if (m_targets != nullptr) {
-    for (int i = 0; i < m_targetCount; i++) {
-      delete[] m_targets[i];
-    }
-    delete[] m_targets;
-  }
 }
