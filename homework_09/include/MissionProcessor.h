@@ -16,6 +16,8 @@ private:
   std::shared_ptr<IBallisticSolver> m_solver = nullptr;
   std::shared_ptr<IConfigLoader> m_configLoader = nullptr;
 
+  mutable std::mutex proccessMutex;
+
   RollingTargetStack targetStack;
 
   int target;
@@ -59,13 +61,20 @@ public:
 
   void init(DroneConfig& myDrone, const AmmoParams*& ammo);
 
-  void fillArrays(bool& canChangeTarget, const int& counter, const Drone& curMyDrone, const float distDuringFall, const float t_pol);
+  void fillArrays(bool& canChangeTarget,
+                  const int& counter,
+                  const DroneTelemetry& telemetry,
+                  const Drone& curMyDrone,
+                  const float distDuringFall,
+                  const float t_pol);
 
   void setTargetProvider(std::shared_ptr<ITargetProvider> targetProvider);
   void setBallisticSolver(std::shared_ptr<IBallisticSolver> solver);
   void setConfigLoader(std::shared_ptr<IConfigLoader> configLoader);
   void addStep(const int counter, DroneTelemetry& telemetry);
-  std::unique_ptr<IDroneState> changeTarget(float& targetAngle, const bool& canChangeTarget, Drone& curMyDrone);
+
+  std::unique_ptr<IDroneState> changeTarget(
+    float& targetAngle, const bool& canChangeTarget, const std::string& currentStateName, float dir, Drone& curMyDrone);
 
   void start(Drone& curMyDrone, const float distDuringFall, const float t_pol);
   bool isThreadReady() const;

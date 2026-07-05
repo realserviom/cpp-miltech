@@ -77,9 +77,6 @@ Target ThreadSafeTargetProvider::getTargetPosition(const int targetId)
                          ? (currentPositions[targetId] - prevPositions[targetId]) / getTargetTimeStep()
                          : Coord{0.0, 0.0};
 
-  // DEBUG("Target " << targetId << " pos: (" << targetPos.pos.x << ", " << targetPos.pos.y << "), velocity: (" << targetPos.velocity.x <<
-  // ", "
-  //                 << targetPos.velocity.y << ")");
   return targetPos;
 }
 
@@ -152,14 +149,6 @@ Coord ThreadSafeTargetProvider::getTargetPositionInIteration(const int& index, i
 
   return Coord{0.0, 0.0};
 }
-
-// Coord ThreadSafeTargetProvider::getTargetNextPos(int& targetId, const int& counter)
-// {
-//   int timeIteration = getIterationByCounter(counter);
-//   int nextIteration = getNextIteration(timeIteration);
-
-//   return getTargetPositionInIteration(targetId, nextIteration);
-// }
 
 int ThreadSafeTargetProvider::getIterationByCounter(const int& counter)
 {

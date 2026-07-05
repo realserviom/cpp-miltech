@@ -89,6 +89,19 @@ void Drone::physicsLoop()
 
       {
         std::lock_guard<std::mutex> lock(stateMutex);
+
+        DEBUG("----------- Physic ----------------");
+        DEBUG("-- Physic.stepCount: " << stepCount << " --");
+        DEBUG("-- Physic.angularState: " << angularState << " --");
+        DEBUG("-- Physic.pox.x: " << pos.x << " --");
+        DEBUG("-- Physic.pox.y: " << pos.y << " --");
+        DEBUG("-- Physic.speed: " << speed << " --");
+        DEBUG("-- Physic.state.name: " << state->name() << " --");
+
+        // if (stepCount > 1980) {
+        //   throw std::runtime_error("[stepCount runtime_error]");
+        // }
+
         this->move();
         // timeSecSinceStart буде повертати одне і те саме число якщо ми:
         // проставимо різний timeScale:
@@ -176,14 +189,14 @@ void Drone::updatePosition()
   }
 }
 
-bool Drone::needRotation(float targetAngle, float turnThreshold) const
+bool Drone::needRotation(float targetAngle, float dir) const
 {
-  return std::abs(targetAngle - angularState) > turnThreshold;
+  return std::abs(targetAngle - dir) > config.turnThreshold;
 }
 
-float Drone::calculateArrivalTime(float targetAngle, float distance, float distFall) const
+float Drone::calculateArrivalTime(float targetAngle, float distance, float distFall, float dir) const
 {
-  float angleDiff = targetAngle - angularState;
+  float angleDiff = targetAngle - dir;
   angleDiff = std::atan2(std::sin(angleDiff), std::cos(angleDiff));
 
   float actualAngleToTurn = std::abs(angleDiff);
@@ -240,4 +253,15 @@ void Drone::decelerate()
 float Drone::getSpeed()
 {
   return speed;
+}
+
+std::mutex& Drone::getMutex() const
+{
+  return stateMutex;
+}
+
+std::string Drone::getStateName() const
+{
+  std::lock_guard<std::mutex> lock(stateMutex);
+  return state ? state->name() : "STOPPED";
 }

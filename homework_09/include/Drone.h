@@ -30,13 +30,17 @@ public:
   void accelerate();
   void decelerate();
 
-  bool needRotation(float targetAngle, float turnThreshold = 0.0f) const;
+  bool needRotation(float targetAngle, float dir) const;
 
-  float calculateArrivalTime(float targetAngle, float distance, float distFall) const;
+  float calculateArrivalTime(float targetAngle, float distance, float distFall, float dir) const;
 
   float calculateSmallArrivalTime(float distance) const;
 
   void move();
+
+  std::mutex& getMutex() const;
+
+  std::string getStateName() const;
 
   // =========================================================================
   // КЕРУВАННЯ ПОТОКОМ ФІЗИКИ
