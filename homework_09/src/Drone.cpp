@@ -194,7 +194,7 @@ bool Drone::needRotation(float targetAngle, float dir) const
   return std::abs(targetAngle - dir) > config.turnThreshold;
 }
 
-float Drone::calculateArrivalTime(float targetAngle, float distance, float distFall, float dir) const
+float Drone::calculateArrivalTime(float targetAngle, float distance, float distFall, float dir, float speed) const
 {
   float angleDiff = targetAngle - dir;
   angleDiff = std::atan2(std::sin(angleDiff), std::cos(angleDiff));
@@ -210,20 +210,20 @@ float Drone::calculateArrivalTime(float targetAngle, float distance, float distF
   }
   else {
     float smallDistance = (distance - distFall > 0) ? (distance - distFall) : distance;
-    return timeTurned + calculateSmallArrivalTime(smallDistance);
+    return timeTurned + calculateSmallArrivalTime(speed, smallDistance);
   }
 }
 
-float Drone::calculateSmallArrivalTime(float distance) const
+float Drone::calculateSmallArrivalTime(float s, float distance) const
 {
-  if (speed == config.attackSpeed) {
+  if (s == config.attackSpeed) {
     return distance / config.attackSpeed;
   }
-  float D = speed * speed + 2.0f * config.acceleration * distance;
+  float D = s * s + 2.0f * config.acceleration * distance;
   if (D < 0)
     return distance / config.attackSpeed;
 
-  return (-speed + std::sqrt(D)) / config.acceleration;
+  return (-s + std::sqrt(D)) / config.acceleration;
 }
 
 void Drone::move()

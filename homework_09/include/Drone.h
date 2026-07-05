@@ -32,9 +32,9 @@ public:
 
   bool needRotation(float targetAngle, float dir) const;
 
-  float calculateArrivalTime(float targetAngle, float distance, float distFall, float dir) const;
+  float calculateArrivalTime(float targetAngle, float distance, float distFall, float dir, float speed) const;
 
-  float calculateSmallArrivalTime(float distance) const;
+  float calculateSmallArrivalTime(float speed, float distance) const;
 
   void move();
 

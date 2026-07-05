@@ -101,7 +101,7 @@ void MissionProcessor::fillArrays(bool& canChangeTarget,
     float angle_in_rad = atan2(deltaY, deltaX);
     targetAngles[targetId] = angle_in_rad;
 
-    float t = curMyDrone.calculateArrivalTime(targetAngles[targetId], length, distDuringFall, telemetry.angularState);
+    float t = curMyDrone.calculateArrivalTime(targetAngles[targetId], length, distDuringFall, telemetry.angularState, telemetry.speed);
 
     if (t < (t_pol + 1) && targetId == target) {
       canChangeTarget = false;
@@ -112,7 +112,7 @@ void MissionProcessor::fillArrays(bool& canChangeTarget,
       float length = calculateLength(targetEndPoint - telemetry.pos);
       targetDistances[targetId] = length;
 
-      float t_new = curMyDrone.calculateSmallArrivalTime(length - distDuringFall > 0 ? length - distDuringFall : length);
+      float t_new = curMyDrone.calculateSmallArrivalTime(telemetry.speed, length - distDuringFall > 0 ? length - distDuringFall : length);
 
       if (std::abs(t_new - t) < curMyDrone.config.timeHitRadius) {
         t = t_new;
