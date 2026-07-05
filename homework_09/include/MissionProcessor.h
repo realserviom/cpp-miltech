@@ -5,9 +5,9 @@
 #include <vector>
 #include <memory>
 #include "Debug.h"
-#include "constants.h"
 #include "Drone.h"
 #include "interfaces/IDroneState.h"
+#include "RollingTargetStack.h"
 
 class MissionProcessor {
 private:
@@ -15,6 +15,8 @@ private:
   std::shared_ptr<ITargetProvider> m_targetProvider = nullptr;
   std::shared_ptr<IBallisticSolver> m_solver = nullptr;
   std::shared_ptr<IConfigLoader> m_configLoader = nullptr;
+
+  RollingTargetStack targetStack;
 
   int target;
 

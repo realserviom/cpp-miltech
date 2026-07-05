@@ -5,6 +5,7 @@
 #include <string.h>
 #include <fstream>
 #include "functions.h"
+#include "RollingTargetStack.h"
 #include "Types.h"
 #include <stdbool.h>
 #include "json.hpp"
@@ -106,4 +107,54 @@ std::chrono::high_resolution_clock::time_point getNextTimePoint(std::chrono::hig
 
   // Додаємо до startTime. Тепер C++ збереже ідеальну точність у наносекундах
   return startTime + std::chrono::duration_cast<std::chrono::high_resolution_clock::duration>(durationOffset);
+}
+
+Coord predictTargetPosition(const RollingTargetStack& targetStack, float t_pol, float stepTime)
+{
+  if (targetStack.empty()) {
+    return Coord{0.0, 0.0};
+  }
+
+  // Беремо останню відому точку
+  const auto& lastPoint = targetStack.top();
+  return lastPoint.pos + lastPoint.velocity * t_pol;
+
+  return lastPoint.pos + lastPoint.velocity * t_pol;
+  // Обробка випадку, коли точок менше ніж 3 (лінійне прогнозування або дефолт)
+  if (targetStack.size() < 3) {
+    if (targetStack.empty()) {
+      return Coord{0.0, 0.0};
+    }
+
+    // Беремо останню відому точку
+    const auto& lastPoint = targetStack.top();
+    return lastPoint.pos + lastPoint.velocity * t_pol;
+  }
+
+  // Рівномірно-прискорений прогноз по 3 точкам
+  const auto& t1 = targetStack[0];  // Найстаріша точка
+  const auto& t2 = targetStack[1];  // Середня точка
+  const auto& t3 = targetStack[2];  // Найновіша точка
+
+  double x1 = t1.pos.x, y1 = t1.pos.y;
+  double x2 = t2.pos.x, y2 = t2.pos.y;
+  double x3 = t3.pos.x, y3 = t3.pos.y;
+
+  // Обчислюємо швидкості на двох відрізках
+  double v1x = (x2 - x1) / stepTime;
+  double v1y = (y2 - y1) / stepTime;
+
+  double v2x = (x3 - x2) / stepTime;
+  double v2y = (y3 - y2) / stepTime;
+
+  // Обчислюємо прискорення
+  double ax = (v2x - v1x) / stepTime;
+  double ay = (v2y - v1y) / stepTime;
+
+  // Прогнозуємо позицію за формулою кінематики
+  Coord predictedPos;
+  predictedPos.x = x3 + (v2x * t_pol) + (0.5 * ax * t_pol * t_pol);
+  predictedPos.y = y3 + (v2y * t_pol) + (0.5 * ay * t_pol * t_pol);
+
+  return predictedPos;
 }

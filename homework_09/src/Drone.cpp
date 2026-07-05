@@ -3,16 +3,12 @@
 #include "Types.h"
 #include "interfaces/IDroneState.h"
 #include "states/StateStopped.h"
-#include "states/StateDecelerating.h"
-#include "states/StateAccelerating.h"
-#include "states/StateTurning.h"
-#include "states/StateMoving.h"
-#include <cstddef>
 #include <iostream>
 #include <thread>
-
 #include "Debug.h"
 #include "functions.h"
+#include <cmath>
+#include <algorithm>
 
 Drone::Drone(const DroneConfig& config)
   : config(config)
@@ -94,11 +90,15 @@ void Drone::physicsLoop()
       {
         std::lock_guard<std::mutex> lock(stateMutex);
         this->move();
+        // timeSecSinceStart буде повертати одне і те саме число якщо ми:
+        // проставимо різний timeScale:
+        // 1) якщо physicsTimeStep = 0.001 тоді stepCount буде наприклад 1000 (за період 1 секунду) тобто в 10 раз швидше збільшуватися
+        // 2) якщо physicsTimeStep = 0.01 тоді stepCount буде 1 (100 за період 1 секунду)
         timeSecSinceStart = stepCount * config.physicsTimeStep;
       }
 
       stepCount++;
-
+      // тут ділимо на config.timeScale типу прискорюємо цикл while але фізику рахуємо як для timeScale = 1
       auto nextTimePoint = getNextTimePoint(startTime, (config.physicsTimeStep / config.timeScale), stepCount);
       std::this_thread::sleep_until(nextTimePoint);
     }
@@ -114,9 +114,6 @@ void Drone::physicsLoop()
 
   isReady = false;
 }
-
-#include <cmath>
-#include <algorithm>
 
 bool Drone::updateRotation(float turnThreshold)
 {

@@ -10,6 +10,7 @@
 #include "interfaces/IDroneState.h"
 #include "states/StateDecelerating.h"
 #include "functions.h"
+#include "RollingTargetStack.h"
 
 void MissionProcessor::init(DroneConfig& myDrone, const AmmoParams*& ammo)
 {
@@ -220,10 +221,11 @@ void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall
     DEBUG("--- counter = " << counter << " ---");
     DEBUG("--- curDroneX = " << std::fixed << std::setprecision(8) << telemetry.pos.x << " м ---");
     DEBUG("--- curDroneY = " << std::fixed << std::setprecision(8) << telemetry.pos.y << " м ---");
-    // DEBUG("--- curMyDrone.angularState = " << std::fixed << std::setprecision(2) << telemetry.angularState << " р. ---");
+    DEBUG("--- curMyDrone.angularState = " << std::fixed << std::setprecision(2) << telemetry.angularState << " р. ---");
     DEBUG("--- curDroneSpeed = " << telemetry.speed << " ---");
-    // DEBUG("--- curDroneStateName = " << telemetry.stateName << " ---");
+    DEBUG("--- curDroneStateName = " << telemetry.stateName << " ---");
     DEBUG("--- currentTarget = " << target << " ---");
+    DEBUG("--- timeSecSinceStart = " << telemetry.timeSecSinceStart << " ---");
 
     // ################## РОЗРАХУНОК ТОЧКИ СКИДУ #############################################
     // -----------  заповнення масивів для пошуку найближчих цілей ---------------------------
@@ -242,7 +244,9 @@ void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall
     DEBUG("--- targetPosition = " << targetPosition.pos.x << ", " << targetPosition.pos.y << " ---");
     DEBUG("--- targetVelocity = " << targetPosition.velocity.x << ", " << targetPosition.velocity.y << " ---");
 
-    predictedTarget = targetPosition.pos + targetPosition.velocity * t_pol;
+    targetStack.push(targetPosition);
+
+    predictedTarget = predictTargetPosition(targetStack, t_pol, curMyDrone.config.timeStep / curMyDrone.config.timeScale);
 
     DEBUG("--- predictedTarget: (" << predictedTarget.x << ", " << predictedTarget.y << ") ---");
 

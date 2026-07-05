@@ -5,8 +5,7 @@
 #include <cstdio>
 #include <vector>
 #include <chrono>
-
-
+#include "RollingTargetStack.h"
 
 int getIndexByMinValue(const std::vector<float>& targetTimes);
 
@@ -18,9 +17,11 @@ float calculateLength(const Coord& c);
 
 std::chrono::duration<float> getDurationTime(std::chrono::high_resolution_clock::time_point startTime, double dt);
 
-std::chrono::high_resolution_clock::time_point getNextTimePoint(std::chrono::high_resolution_clock::time_point startTime,
+std::chrono::high_resolution_clock::time_point getNextTimePoint(const std::chrono::high_resolution_clock::time_point startTime,
                                                                 double dt,
                                                                 int counter);
+
+Coord predictTargetPosition(const RollingTargetStack& targetStack, float t_pol, float stepTime);
 
 template <typename T>
 int countFilledElements(const T arr[], int size, T marker);
