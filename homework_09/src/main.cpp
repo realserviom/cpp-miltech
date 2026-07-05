@@ -1,20 +1,9 @@
-/******************************************************************************
-
-Welcome to GDB Online.
-GDB online is an online compiler and debugger tool for C, C++, Python, Java, PHP, Ruby, Perl,
-C#, OCaml, VB, Swift, Pascal, Fortran, Haskell, Objective-C, Assembly, HTML, CSS, JS, SQLite, Prolog.
-Code, Compile, Run and Debug online from anywhere in world.
-
-*******************************************************************************/
 #include <iostream>
 #include <memory>
 #include <stdlib.h>
 #include <cmath>
 #include "Types.h"
 #include "config/ComponentFactory.h"
-#include "interfaces/ITargetProvider.h"
-#include "interfaces/IBallisticSolver.h"
-#include "interfaces/IConfigLoader.h"
 #include "MissionProcessor.h"
 
 // Визначення константи Пі, якщо її немає в cmath
@@ -24,13 +13,15 @@ Code, Compile, Run and Debug online from anywhere in world.
 
 int main()
 {
-  std::unique_ptr<IConfigLoader> configLoader{createLoader(LoaderType::FILE, "../data/config.json", "../data/ammo.json")};
-  std::unique_ptr<ITargetProvider> targetProvider{createProvider(ProviderType::JSON, "../data/targets.json")};
-  std::unique_ptr<IBallisticSolver> analyticalSolver{createSolver(SolverType::ANALYTICAL)};
-
-  MissionProcessor processor(std::move(targetProvider), std::move(analyticalSolver), std::move(configLoader));
-
   try {
+    auto configLoader = createLoader(LoaderType::FILE, "../data/config.json", "../data/ammo.json");
+
+    auto targetProvider = createProvider(ProviderType::JSON, "../data/targets.json");
+
+    auto analyticalSolver = createSolver(SolverType::TABLE);
+
+    MissionProcessor processor(std::move(targetProvider), std::move(analyticalSolver), std::move(configLoader));
+
     processor.executeMission();
   }
   catch (const std::runtime_error& e) {

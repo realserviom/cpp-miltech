@@ -18,11 +18,6 @@ using json = nlohmann::ordered_json;
 // в нас 60 точок часу і 5 цілей це 300 комбінацій
 #define CACHE_SIZE 1024
 
-float calculateLength(double targetX, double targetY, double xd, double yd)
-{
-  return std::sqrt(std::pow((targetX - xd), 2) + std::pow((targetY - yd), 2));
-}
-
 Coord normalize(const Coord& c)
 {
   float L = std::hypot(c.x, c.y);
@@ -31,28 +26,9 @@ Coord normalize(const Coord& c)
   return c / L;
 }
 
-float length(const Coord& c)
+float calculateLength(const Coord& c)
 {
   return std::hypot(c.x, c.y);
-}
-
-void saveFireCoordinates(double fireX, double fireY, double xd_i = 0, double yd_i = 0)
-{
-  std::ofstream outFile("../data/output.txt");
-
-  if (outFile.is_open()) {
-    if (xd_i) {
-      outFile << xd_i << " " << yd_i << " ";
-    }
-
-    outFile << fireX << " " << fireY << std::endl;
-
-    outFile.close();
-    std::cout << "Дані успішно збережено у файл output.txt" << std::endl;
-  }
-  else {
-    std::cerr << "Помилка: не вдалося відкрити файл для запису!" << std::endl;
-  }
 }
 
 int getIndexByMinValue(const std::vector<float>& targetTimes)
@@ -74,12 +50,13 @@ int getIndexByMinValue(const std::vector<float>& targetTimes)
 void saveOutputFileByStep(int length, const std::vector<SimStep>& steps)
 {
   json out;
-  out["totalSteps"] = length + 1;
+  out["totalSteps"] = length;
 
-  printf("============== length = %d ===========\n", length + 1);
+  printf("============== length = %d ===========\n", length);
+
   out["steps"] = json::array();
 
-  auto endIt = (static_cast<size_t>(length + 1) <= steps.size()) ? steps.begin() + (length + 1) : steps.end();
+  auto endIt = (static_cast<size_t>(length) <= steps.size()) ? steps.begin() + length : steps.end();
 
   for (auto it = steps.begin(); it != endIt; ++it) {
     json stepEntry;

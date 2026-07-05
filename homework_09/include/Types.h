@@ -3,6 +3,9 @@
 #define TYPES_H
 #include <stdlib.h>
 #include <string>
+#include <vector>
+#include <algorithm>
+#include <cassert>
 
 // імя боєприпасу
 
@@ -13,25 +16,6 @@ struct AmmoParams {
   float drag;  // коефіцієнт опору
   float lift;  // коефіцієнт підйому
 };
-
-// Визначення фаз руху дрона
-typedef enum {
-    STOPPED = 0,      // Дрон не рухається
-    ACCELERATING = 1, // Розгін
-    DECELERATING = 2, // Гальмування
-    TURNING = 3,      // Поворот на ціль
-    MOVING = 4,      // Рівномірний рух
-    NO_VALUE = -1    // Для провірки
-} DroneState;
-
-// enum class DroneState {
-//   STOPPED = 0,       // Дрон не рухається
-//   ACCELERATING = 1,  // Розгін
-//   DECELERATING = 2,  // Гальмування
-//   TURNING = 3,       // Поворот на ціль
-//   MOVING = 4,        // Рівномірний рух
-//   NO_VALUE = -1      // Для провірки
-// };
 
 struct Coord {
     double x;
@@ -76,19 +60,6 @@ struct Coord {
         return (std::abs(x - other.x) < eps) && (std::abs(y - other.y) < eps);
     }
 
-};
-
-
-
-struct CurrentDroneParameters {
-    Coord pos;      // позиція (x, y)
-    float speed;    // поточна швидкість
-    float angularState; // поточне положення дрона відносно осі x
-    DroneState state; // поточний стан
-    int target;       // поточна ціль
-    Coord dropPoint;    	// точка скиду (куди летить дрон)
-    Coord aimPoint;     	// куди впаде бомба (якщо скинути зараз)
-    Coord predictedTarget;  // прогнозована позиція цілі
 };
 
 struct DroneConfig {
@@ -144,9 +115,6 @@ enum class LoaderType {
     FILE 
 };
 
-enum class SolverType {
-    ANALYTICAL
-};
-
+enum class SolverType { ANALYTICAL, TABLE };
 
 #endif

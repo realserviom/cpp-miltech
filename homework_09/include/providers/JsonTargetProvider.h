@@ -4,11 +4,28 @@
 
 class JsonTargetProvider : public AbstractTargetProvider {
 private:
-    std::string m_filePath;
-
 public:
-    JsonTargetProvider(const std::string& jsonFilePath);
+  JsonTargetProvider(const std::string& jsonFilePath);
 
-    void loadTargets() override;
-    ~JsonTargetProvider() override;
+  ~JsonTargetProvider() override = default;
+
+  void setArrayTimeStep(float time) override;
+
+  Coord getTargetPosition(const int target, const float time) override;
+
+  void loadTargets() override;
+
+  std::string m_filePath;
+
+  int getIterationByCounter(const int& counter);
+
+  Coord getTargetNextPos(int& targetId, const int& counter);
+
+  int getIterationByTime(float time, const float& arrayTimeStep);
+
+  Coord getTargetPositionInIteration(const int& index, int& timeIteration);
+
+  int getNextIteration(int& iteration);
+
+  Coord getTargetPositionInCounter(int& targetId, const int& counter);
 };

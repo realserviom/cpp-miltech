@@ -14,5 +14,8 @@
     // 3. Опціонально: вказуємо шлях до екзешника, якщо він не в PATH
     // "C_Cpp.codeAnalysis.clangTidy.path": "шлях/до/clang-tidy",
     // 4. Дозволяємо перевірку під час редагування
-    "C_Cpp.codeAnalysis.runAutomatically": true
+    "C_Cpp.codeAnalysis.runAutomatically": true,
+    "search.exclude": {
+        "**/homework_0[3-8]/**": true
+    }
 }
