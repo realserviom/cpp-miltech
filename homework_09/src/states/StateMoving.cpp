@@ -3,7 +3,7 @@
 std::unique_ptr<IDroneState> StateMoving::execute(Drone& curMyDrone)
 {
   // Рівномірний рух з мінімальним обертанням
-  curMyDrone.updateRotation();
+  curMyDrone.updateRotation(curMyDrone.config.turnThreshold);
   curMyDrone.updatePosition();
 
   return std::make_unique<StateMoving>();

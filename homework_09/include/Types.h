@@ -8,6 +8,7 @@
 #include "interfaces/DroneStateId.h"
 #include "interfaces/IDroneState.h"
 
+
 // імя боєприпасу
 
 using def_ammoName = std::string;
@@ -105,7 +106,8 @@ struct SimStep {
     Coord dropPoint;    	// точка скиду (куди летить дрон)
 	Coord aimPoint;     	// куди впаде бомба (якщо скинути зараз)
 	Coord predictedTarget;  // прогнозована позиція цілі
-        float timeSecSinceStart;  // останнє оновлення фізики
+    float timeSecSinceStart;  // останнє оновлення фізики
+    int counter;
 };
 
 enum class ProviderType { JSON, TIME };

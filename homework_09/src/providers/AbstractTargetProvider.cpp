@@ -9,7 +9,6 @@ void AbstractTargetProvider::init(int &numberCounterInTimeSpot)
   m_numberCounterInTimeSpot = numberCounterInTimeSpot;
   LOG("Preparing targets...");
   loadTargets();
-
   LOG("Targets ready");
 }
 
@@ -18,7 +17,7 @@ int AbstractTargetProvider::getTargetCount()
   return m_targetCount;
 }
 
-Coord **AbstractTargetProvider::getTargets()
+std::vector<std::vector<Coord>> AbstractTargetProvider::getTargets()
 {
   return this->m_targets;
 }

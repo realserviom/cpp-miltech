@@ -9,7 +9,7 @@ std::shared_ptr<ITargetProvider> createProvider(ProviderType type, const std::st
 {
   switch (type) {
       // case ProviderType::JSON:
-      //   return std::make_unique<JsonTargetProvider>(file_name);
+      //     return std::make_shared<JsonTargetProvider>(file_name);
 
     case ProviderType::TIME:
       return std::make_shared<ThreadSafeTargetProvider>(file_name);
@@ -26,6 +26,7 @@ std::shared_ptr<IConfigLoader> createLoader(LoaderType type,
   switch (type) {
     case LoaderType::FILE:
       return std::make_shared<FileConfigLoader>(file_drone_config_name, file_list_ammo_name);
+
     default:
       return nullptr;
   }

@@ -27,8 +27,6 @@ public:
 
   void loadTargets() override;
 
-  ~ThreadSafeTargetProvider();
-
   int getIterationByCounter(const int& counter);
 
   int getIterationByTime(float time, const float& arrayTimeStep);

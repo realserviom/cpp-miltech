@@ -1,5 +1,6 @@
 #include "Drone.h"
 #include <cmath>
+#include "Types.h"
 #include "interfaces/IDroneState.h"
 #include "states/StateStopped.h"
 #include "states/StateDecelerating.h"
@@ -9,6 +10,7 @@
 #include <cstddef>
 #include <iostream>
 #include <thread>
+
 #include "Debug.h"
 #include "functions.h"
 
@@ -113,40 +115,45 @@ void Drone::physicsLoop()
   isReady = false;
 }
 
+#include <cmath>
+#include <algorithm>
+
 bool Drone::updateRotation(float turnThreshold)
 {
-  float angleDiff = currentTargetAngle - angularState;
+  bool isStopped = (state->name() == "TURNING" || state->name() == "STOPPED");
 
+  // Обчислюємо різницю кутів та нормалізуємо її в межах [-PI, PI]
+  float angleDiff = currentTargetAngle - angularState;
   angleDiff = std::atan2(std::sin(angleDiff), std::cos(angleDiff));
 
-  if (std::abs(angleDiff) < config.angularSpeed * config.physicsTimeStep) {
+  // Визначаємо поріг для миттєвого вирівнювання залежно від стану
+  float maxStepPerTick = config.angularSpeed * config.physicsTimeStep;
+  float currentThreshold = isStopped ? maxStepPerTick : turnThreshold;
+
+  // Якщо кут менший за поріг — довертаємо точно на ціль і виходимо
+  if (std::abs(angleDiff) <= currentThreshold) {
     angularState = currentTargetAngle;
     return false;
   }
 
-  // Якщо різниця більша за поріг — крутимо туди, куди ближче
-  if (std::abs(angleDiff) > turnThreshold) {
-    if (angleDiff > 0) {
-      // angleDiff додатний -> крутимо проти годинникової
-      angularState += config.angularSpeed * config.physicsTimeStep;
-    }
-    else {
-      // angleDiff від'ємний -> крутимо за годинниковою
-      angularState -= config.angularSpeed * config.physicsTimeStep;
-    }
+  // Визначаємо крок повороту (для руху беремо мінімум)
+  float rotationStep = isStopped ? maxStepPerTick : std::min(maxStepPerTick, turnThreshold);
 
-    if (angularState > M_PI * 2) {
-      angularState -= M_PI * 2;
-    }
-
-    if (angularState < 0) {
-      angularState += M_PI * 2;
-    }
-
-    return true;
+  // Повертаємо в потрібну сторону
+  if (angleDiff > 0) {
+    angularState += rotationStep;
+  }
+  else {
+    angularState -= rotationStep;
   }
 
-  return false;
+  // Тримаємо кут в межах [0, 2*PI]
+  if (angularState > M_PI * 2)
+    angularState -= M_PI * 2;
+  if (angularState < 0)
+    angularState += M_PI * 2;
+
+  return true;
 }
 
 void Drone::updatePosition()
@@ -156,6 +163,7 @@ void Drone::updatePosition()
   Coord acceleration = direction * config.acceleration;
 
   float dt = config.physicsTimeStep;
+
   float stepSq = (dt * dt) / 2.0f;
 
   std::string currentStateName = state->name();
@@ -211,7 +219,6 @@ float Drone::calculateSmallArrivalTime(float distance) const
 void Drone::move()
 {
   auto nextState = state->execute(*this);
-
   if (nextState) {
     state = std::move(nextState);
   }

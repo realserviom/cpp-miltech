@@ -8,4 +8,5 @@ public:
   std::unique_ptr<IDroneState> execute(Drone& curMyDrone) override;
   const std::string name() const override;
   DroneStateId id() const override;
+
 };

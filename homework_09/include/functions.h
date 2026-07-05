@@ -4,10 +4,9 @@
 #include "Types.h"
 #include <cstdio>
 #include <vector>
-#include <thread>
+#include <chrono>
 
 
-void saveFireCoordinates(double fireX, double fireY, double xd_i, double yd_i);
 
 int getIndexByMinValue(const std::vector<float>& targetTimes);
 

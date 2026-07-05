@@ -1,11 +1,3 @@
-/******************************************************************************
-
-Welcome to GDB Online.
-GDB online is an online compiler and debugger tool for C, C++, Python, Java, PHP, Ruby, Perl,
-C#, OCaml, VB, Swift, Pascal, Fortran, Haskell, Objective-C, Assembly, HTML, CSS, JS, SQLite, Prolog.
-Code, Compile, Run and Debug online from anywhere in world.
-
-*******************************************************************************/
 #include <iostream>
 #include <memory>
 #include <stdlib.h>
@@ -51,7 +43,7 @@ int main()
     DEBUG("Знайдено боєприпас: " << myDroneConfig.ammoName);
     DEBUG("Параметри: mass: " << std::fixed << std::setprecision(3) << ammo->mass << ", drag: " << ammo->drag << ", lift: " << ammo->lift);
 
-    float t_pol;  // час польоту
+    float t_pol;               // час польоту
     float distDuringFall = 0;  // дистанція, яку проходить снаряд за час t_pol (горизонтальна відстань від точки скидання до цілі)
 
     try {

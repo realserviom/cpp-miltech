@@ -4,7 +4,7 @@
 
 std::unique_ptr<IDroneState> StateAccelerating::execute(Drone& curMyDrone)
 {
-  curMyDrone.updateRotation();
+  curMyDrone.updateRotation(curMyDrone.config.turnThreshold);
   curMyDrone.updatePosition();
   curMyDrone.accelerate();
 

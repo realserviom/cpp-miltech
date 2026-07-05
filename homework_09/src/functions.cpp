@@ -31,25 +31,6 @@ float calculateLength(const Coord& c)
   return std::hypot(c.x, c.y);
 }
 
-void saveFireCoordinates(double fireX, double fireY, double xd_i = 0, double yd_i = 0)
-{
-  std::ofstream outFile("../data/output.txt");
-
-  if (outFile.is_open()) {
-    if (xd_i) {
-      outFile << xd_i << " " << yd_i << " ";
-    }
-
-    outFile << fireX << " " << fireY << std::endl;
-
-    outFile.close();
-    std::cout << "Дані успішно збережено у файл output.txt" << std::endl;
-  }
-  else {
-    std::cerr << "Помилка: не вдалося відкрити файл для запису!" << std::endl;
-  }
-}
-
 int getIndexByMinValue(const std::vector<float>& targetTimes)
 {
   if (targetTimes.empty())
@@ -87,9 +68,10 @@ void saveOutputFileByStep(int length, const std::vector<SimStep>& steps)
     stepEntry["targetIndex"] = it->targetIdx;
     stepEntry["timeSecSinceStart"] = it->timeSecSinceStart;
 
-    // stepEntry["dropPoint"] = {{"x", it->dropPoint.x}, {"y", it->dropPoint.y}};
-    // stepEntry["aimPoint"] = {{"x", it->aimPoint.x}, {"y", it->aimPoint.y}};
-    // stepEntry["predictedTarget"] = {{"x", it->predictedTarget.x}, {"y", it->predictedTarget.y}};
+    stepEntry["dropPoint"] = {{"x", it->dropPoint.x}, {"y", it->dropPoint.y}};
+    stepEntry["aimPoint"] = {{"x", it->aimPoint.x}, {"y", it->aimPoint.y}};
+    stepEntry["predictedTarget"] = {{"x", it->predictedTarget.x}, {"y", it->predictedTarget.y}};
+    stepEntry["counter"] = it->counter;
 
     out["steps"].push_back(stepEntry);
   }

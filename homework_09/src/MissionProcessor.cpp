@@ -77,7 +77,8 @@ void MissionProcessor::addStep(const int counter, DroneTelemetry& telemetry)
                    {dropPoint.x, dropPoint.y},
                    {aimPoint.x, aimPoint.y},
                    {predictedTarget.x, predictedTarget.y},
-                   telemetry.timeSecSinceStart});
+                   telemetry.timeSecSinceStart,
+                   counter});
 }
 
 void MissionProcessor::fillArrays(

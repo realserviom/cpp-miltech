@@ -21,7 +21,7 @@ public:
   explicit Drone(const DroneConfig& config);
 
   std::unique_ptr<IDroneState> state;  // поточний стан
-  bool updateRotation(float turnThreshold = 0.0f);
+  bool updateRotation(float turnThreshold);
 
   void updatePosition();
 
@@ -60,4 +60,5 @@ private:
   mutable std::mutex stateMutex;               // Захищає фізичні параметри дрона
   ThreadSafeQueue<DroneCommand> commandQueue;  // Черга команд
   float currentTargetAngle{0.0f};              // Поточний кут, який виконує фізика
+
 };

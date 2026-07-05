@@ -1,5 +1,6 @@
 #pragma once
 #include "Types.h"
+#include <vector>
 
 class ITargetProvider {
 public:
@@ -7,7 +8,8 @@ public:
 
   virtual int getTargetCount() = 0;
 
-  virtual Coord **getTargets() = 0;
+  virtual std::vector<std::vector<Coord>> getTargets() = 0;
+
 
   virtual void setArrayTimeStep(float time) = 0;
   virtual float getArrayTimeStep() const = 0;
@@ -31,4 +33,5 @@ public:
 
 private:
   virtual void physicsLoop() = 0;  // Головний цикл фонового потоку
+
 };

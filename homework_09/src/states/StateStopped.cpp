@@ -12,7 +12,7 @@ std::unique_ptr<IDroneState> StateStopped::execute(Drone& curMyDrone)
     return std::make_unique<StateTurning>();
   }
   else {
-    curMyDrone.updateRotation();  // Легке підрулювання
+    curMyDrone.updateRotation(curMyDrone.config.turnThreshold);  // Легке підрулювання
     curMyDrone.updatePosition();
     DEBUG("--- Стояли. Повертатися не треба! Почали рух! ---");
     return std::make_unique<StateAccelerating>();
