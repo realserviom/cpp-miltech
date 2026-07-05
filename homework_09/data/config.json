@@ -1,13 +1,13 @@
 {
   "drone": {
     "position": {
-      "x": 50,
-      "y": 250
+      "x": 200,
+      "y": 200
     },
     "altitude": 100,
-    "initialDirection": 0,
-    "attackSpeed": 10,
-    "accelerationPath": 10,
+    "initialDirection": 0.5,
+    "attackSpeed": 12,
+    "accelerationPath": 15,
     "angularSpeed": 1,
     "turnThreshold": 0.1
   },
@@ -16,5 +16,5 @@
     "timeStep": 0.1,
     "hitRadius": 3
   },
-  "targetArrayTimeStep": 1
+  "targetArrayTimeStep": 10
 }
