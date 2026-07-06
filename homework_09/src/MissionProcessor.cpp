@@ -100,11 +100,6 @@ void MissionProcessor::fillArrays(bool& canChangeTarget,
 
     float angle_in_rad = atan2(deltaY, deltaX);
 
-    // Якщо кут від'ємний, додаємо 2 * PI (360 градусів)
-    if (angle_in_rad < 0) {
-      angle_in_rad += 2 * M_PI;  // M_PI з <cmath> або просто 6.28318530718f
-    }
-
     targetAngles[targetId] = angle_in_rad;
 
     float t = curMyDrone.calculateArrivalTime(targetAngles[targetId], length, distDuringFall, telemetry.angularState, telemetry.speed);
@@ -131,11 +126,6 @@ void MissionProcessor::fillArrays(bool& canChangeTarget,
 
       Coord targetEndPoint2 = targetPos + velocity * t;
       float targetAngle = atan2(targetEndPoint2.y - telemetry.pos.y, targetEndPoint2.x - telemetry.pos.x);
-
-      // Якщо кут від'ємний, додаємо 2 * PI (360 градусів)
-      if (targetAngle < 0) {
-        targetAngle += 2 * M_PI;  // M_PI з <cmath> або просто 6.28318530718f
-      }
 
       targetAngles[targetId] = targetAngle;
       DEBUG("Перерахували кут напрямку для цілі: " << targetId);
@@ -199,6 +189,8 @@ void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall
   // Беремо абсолютний час старту симуляції
   auto startTime = std::chrono::high_resolution_clock::now();
 
+  RollingTargetStack targetStack(curMyDrone.config.timeStep);
+
   while (running) {
     // розраховуємо всі дані для визначення поточної найближчої цілі
     DroneTelemetry telemetry = curMyDrone.getTelemetry();
@@ -230,15 +222,9 @@ void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall
     DEBUG("--- targetPosition = " << targetPosition.pos.x << ", " << targetPosition.pos.y << " ---");
     DEBUG("--- targetVelocity = " << targetPosition.velocity.x << ", " << targetPosition.velocity.y << " ---");
 
-    // зберігаємо останні 20 точки для прогнозування для перерахунку точки скиду
-    if (!canChangeTarget) {
-      targetStack.push(targetPosition);
-      predictedTarget = predictTargetPosition(targetStack, t_pol, curMyDrone.config.timeStep);
-    }
-    else {
-      targetStack.clear();
-      predictedTarget = targetPosition.pos + targetPosition.velocity * t_pol;
-    }
+    targetStack.push(target, targetPosition);
+
+    predictedTarget = predictTargetPosition(targetStack, t_pol, curMyDrone.config.timeStep, target);
 
     DEBUG("--- predictedTarget: (" << predictedTarget.x << ", " << predictedTarget.y << ") ---");
 
@@ -257,11 +243,6 @@ void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall
     // точний розрахунок коли наближаємся до вже запланованої цілі
     if (!canChangeTarget) {
       float targetAngle2 = atan2(predictedTarget.y - telemetry.pos.y, predictedTarget.x - telemetry.pos.x);
-
-      if (targetAngle2 < 0) {
-        targetAngle2 += 2 * M_PI;  // M_PI з <cmath> або просто 6.28318530718f
-      }
-
       targetAngles[target] = targetAngle2;
     }
 

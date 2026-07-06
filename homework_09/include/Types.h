@@ -138,4 +138,6 @@ struct DroneTelemetry {
   float timeSecSinceStart;
 };
 
+using TargetId = int;
+
 #endif

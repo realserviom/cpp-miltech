@@ -66,7 +66,15 @@ void saveOutputFileByStep(int length, const std::vector<SimStep>& steps)
     stepEntry["position"] = {{"x", it->pos.x}, {"y", it->pos.y}};
 
     // Округлення до 2 знаків після коми
-    stepEntry["direction"] = std::round(it->direction * 100.0) / 100.0;
+
+    float angle = std::round(it->direction * 100.0) / 100.0;
+
+    if (angle < 0) {
+      angle += 2.0 * M_PI;
+    }
+
+    stepEntry["direction"] = angle;
+
     stepEntry["state"] = it->state;
     stepEntry["targetIndex"] = it->targetIdx;
 
@@ -113,37 +121,35 @@ std::chrono::high_resolution_clock::time_point getNextTimePoint(std::chrono::hig
   return startTime + std::chrono::duration_cast<std::chrono::high_resolution_clock::duration>(durationOffset);
 }
 
-Coord predictTargetPosition(const RollingTargetStack& targetStack, float t_pol, float stepTime)
+Coord predictTargetPosition(const RollingTargetStack& targetStack, float t_pol, float stepTime, int target)
 {
-  if (targetStack.size() < 20) {
-    if (targetStack.empty()) {
-      return Coord{0.0, 0.0};
-    }
+  // const auto& lastPoint = targetStack.top(target);
+  // return lastPoint.pos + lastPoint.velocity * t_pol;
 
-    // Беремо останню відому точку
-    const auto& lastPoint = targetStack.top();
+  if (!targetStack.isFull(target)) {
+    const auto& lastPoint = targetStack.top(target);
     return lastPoint.pos + lastPoint.velocity * t_pol;
   }
 
-  // Рівномірно-прискорений прогноз по 3 точкам
-  const auto& t1 = targetStack[0];  // Найстаріша точка
-  const auto& t2 = targetStack[2 * (1 / stepTime) - (1 / stepTime)];  // Середня точка
-  const auto& t3 = targetStack[2 * (1 / stepTime)];                   // Найновіша точка
+  std::size_t stackSize = targetStack.size(target);
+  const auto& t1 = targetStack.at(target, 0);
+  const auto& t2 = targetStack.at(target, stackSize / 2);
+  const auto& t3 = targetStack.at(target, stackSize - 1);
 
   double x1 = t1.pos.x, y1 = t1.pos.y;
   double x2 = t2.pos.x, y2 = t2.pos.y;
   double x3 = t3.pos.x, y3 = t3.pos.y;
 
   // Обчислюємо швидкості на двох відрізках
-  double v1x = (x2 - x1) / (1 / stepTime);
-  double v1y = (y2 - y1) / (1 / stepTime);
+  double v1x = (x2 - x1);
+  double v1y = (y2 - y1);
 
-  double v2x = (x3 - x2) / (1 / stepTime);
-  double v2y = (y3 - y2) / (1 / stepTime);
+  double v2x = (x3 - x2);
+  double v2y = (y3 - y2);
 
   // Обчислюємо прискорення
-  double ax = (v2x - v1x) / (1 / (1 / stepTime));
-  double ay = (v2y - v1y) / (1 / (1 / stepTime));
+  double ax = (v2x - v1x);
+  double ay = (v2y - v1y);
 
   // Прогнозуємо позицію за формулою кінематики
   Coord predictedPos;
@@ -151,4 +157,14 @@ Coord predictTargetPosition(const RollingTargetStack& targetStack, float t_pol, 
   predictedPos.y = y3 + (v2y * t_pol) + (0.5 * ay * t_pol * t_pol);
 
   return predictedPos;
+}
+
+// Функція приведення кута до діапазону [-PI; PI]
+double normalizeAngle(float angle)
+{
+  while (angle > M_PI)
+    angle -= 2.0 * M_PI;
+  while (angle < -M_PI)
+    angle += 2.0 * M_PI;
+  return angle;
 }

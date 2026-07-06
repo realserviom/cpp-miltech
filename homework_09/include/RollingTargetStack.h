@@ -1,32 +1,46 @@
 #pragma once
 
+#include <ctime>
 #include <deque>
+#include <unordered_map>
 #include <cstddef>
+#include <stdexcept>
 #include "Types.h"
 
 class RollingTargetStack {
 private:
-    std::deque<Target> m_data;
-    const std::size_t m_maxSize = 20;
+  // Для кожного TargetId зберігається свій незалежний deque
+  std::unordered_map<TargetId, std::deque<Target>> m_data;
+  std::size_t m_maxSize;
 
-  public:
-    RollingTargetStack() = default;
-    explicit RollingTargetStack(std::size_t maxSize);
+public:
+  explicit RollingTargetStack(int timeStep);
 
-    void push(const Target& target);
-    void push(Target&& target);
+  // Додавання елементів (L-value та R-value для оптимізації)
+  void push(const TargetId& id, const Target& target);
+  void push(const TargetId& id, Target&& target);
 
-    void pop();
-    void clear() noexcept;
+  // Видалення елементів
+  void pop(const TargetId& id);          // Видалити найстаріший елемент конкретної цілі
+  void clearTarget(const TargetId& id);  // Очистити історію конкретної цілі
+  void clearAll() noexcept;              // Очистити взагалі всі цілі
 
-    [[nodiscard]] Target& top();
-    [[nodiscard]] const Target& top() const;
-    [[nodiscard]] Target& bottom();
-    [[nodiscard]] const Target& bottom() const;
+  // Доступ до елементів
+  [[nodiscard]] Target& top(const TargetId& id);  // Найновіший (в кінці деку)
+  [[nodiscard]] const Target& top(const TargetId& id) const;
 
-    [[nodiscard]] bool empty() const noexcept;
-    [[nodiscard]] std::size_t size() const noexcept;
+  [[nodiscard]] Target& bottom(const TargetId& id);  // Найстаріший (в початку деку)
+  [[nodiscard]] const Target& bottom(const TargetId& id) const;
 
-    [[nodiscard]] Target& operator[](std::size_t index);
-    [[nodiscard]] const Target& operator[](std::size_t index) const;
+  // Доступ за індексом всередині конкретної цілі
+  [[nodiscard]] Target& at(const TargetId& id, std::size_t index);
+  [[nodiscard]] const Target& at(const TargetId& id, std::size_t index) const;
+
+  // Стан контейнера
+  [[nodiscard]] bool empty(const TargetId& id) const noexcept;      // Чи пустий дек конкретної цілі
+  [[nodiscard]] bool hasTarget(const TargetId& id) const noexcept;  // Чи взагалі існує така ціль в мапі
+  [[nodiscard]] std::size_t size(const TargetId& id) const noexcept;
+  [[nodiscard]] std::size_t targetCount() const noexcept;  // Кількість унікальних цілей
+
+  [[nodiscard]] bool isFull(const TargetId& id) const noexcept;
 };

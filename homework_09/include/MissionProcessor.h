@@ -18,8 +18,6 @@ private:
 
   mutable std::mutex proccessMutex;
 
-  RollingTargetStack targetStack;
-
   int target;
 
   // масив який містить час підльоту до кожної цілі

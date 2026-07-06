@@ -15,13 +15,15 @@ Coord normalize(const Coord& c);
 
 float calculateLength(const Coord& c);
 
+double normalizeAngle(float angle);
+
 std::chrono::duration<float> getDurationTime(std::chrono::high_resolution_clock::time_point startTime, double dt);
 
 std::chrono::high_resolution_clock::time_point getNextTimePoint(const std::chrono::high_resolution_clock::time_point startTime,
                                                                 double dt,
                                                                 int counter);
 
-Coord predictTargetPosition(const RollingTargetStack& targetStack, float t_pol, float stepTime);
+Coord predictTargetPosition(const RollingTargetStack& targetStack, float t_pol, float stepTime, int target);
 
 template <typename T>
 int countFilledElements(const T arr[], int size, T marker);
