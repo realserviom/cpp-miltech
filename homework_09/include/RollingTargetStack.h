@@ -7,9 +7,9 @@
 class RollingTargetStack {
 private:
     std::deque<Target> m_data;
-    const std::size_t m_maxSize = 3;
+    const std::size_t m_maxSize = 20;
 
-public:
+  public:
     RollingTargetStack() = default;
     explicit RollingTargetStack(std::size_t maxSize);
 

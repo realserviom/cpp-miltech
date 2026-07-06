@@ -166,16 +166,16 @@ bool Drone::updateRotation(float turnThreshold)
     angularState -= rotationStep;
   }
 
-  // тут повертаємо false бо дрон ще не довернувся але кут менший порогового значення і не треба його зупиняти
-  if (std::abs(angleDiff) - rotationStep < currentThreshold) {
-    return false;
-  }
-
   // Тримаємо кут в межах [0, 2*PI]
   if (angularState > M_PI * 2)
     angularState -= M_PI * 2;
   if (angularState < 0)
     angularState += M_PI * 2;
+
+  // тут повертаємо false бо дрон ще не довернувся але кут менший порогового значення і не треба його зупиняти
+  if (std::abs(angleDiff) - rotationStep < currentThreshold) {
+    return false;
+  }
 
   return true;
 }

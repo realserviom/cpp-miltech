@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -64,10 +65,13 @@ void saveOutputFileByStep(int length, const std::vector<SimStep>& steps)
 
     stepEntry["position"] = {{"x", it->pos.x}, {"y", it->pos.y}};
 
-    stepEntry["direction"] = it->direction;
+    // Округлення до 2 знаків після коми
+    stepEntry["direction"] = std::round(it->direction * 100.0) / 100.0;
     stepEntry["state"] = it->state;
     stepEntry["targetIndex"] = it->targetIdx;
-    stepEntry["timeSecSinceStart"] = it->timeSecSinceStart;
+
+    // Округлення до 2 знаків після коми
+    stepEntry["timeSecSinceStart"] = std::round(it->timeSecSinceStart * 100.0) / 100.0;
 
     stepEntry["dropPoint"] = {{"x", it->dropPoint.x}, {"y", it->dropPoint.y}};
     stepEntry["aimPoint"] = {{"x", it->aimPoint.x}, {"y", it->aimPoint.y}};
@@ -111,17 +115,7 @@ std::chrono::high_resolution_clock::time_point getNextTimePoint(std::chrono::hig
 
 Coord predictTargetPosition(const RollingTargetStack& targetStack, float t_pol, float stepTime)
 {
-  if (targetStack.empty()) {
-    return Coord{0.0, 0.0};
-  }
-
-  // Беремо останню відому точку
-  const auto& lastPoint = targetStack.top();
-  return lastPoint.pos + lastPoint.velocity * t_pol;
-
-  return lastPoint.pos + lastPoint.velocity * t_pol;
-  // Обробка випадку, коли точок менше ніж 3 (лінійне прогнозування або дефолт)
-  if (targetStack.size() < 3) {
+  if (targetStack.size() < 20) {
     if (targetStack.empty()) {
       return Coord{0.0, 0.0};
     }
@@ -133,23 +127,23 @@ Coord predictTargetPosition(const RollingTargetStack& targetStack, float t_pol, 
 
   // Рівномірно-прискорений прогноз по 3 точкам
   const auto& t1 = targetStack[0];  // Найстаріша точка
-  const auto& t2 = targetStack[1];  // Середня точка
-  const auto& t3 = targetStack[2];  // Найновіша точка
+  const auto& t2 = targetStack[2 * (1 / stepTime) - (1 / stepTime)];  // Середня точка
+  const auto& t3 = targetStack[2 * (1 / stepTime)];                   // Найновіша точка
 
   double x1 = t1.pos.x, y1 = t1.pos.y;
   double x2 = t2.pos.x, y2 = t2.pos.y;
   double x3 = t3.pos.x, y3 = t3.pos.y;
 
   // Обчислюємо швидкості на двох відрізках
-  double v1x = (x2 - x1) / stepTime;
-  double v1y = (y2 - y1) / stepTime;
+  double v1x = (x2 - x1) / (1 / stepTime);
+  double v1y = (y2 - y1) / (1 / stepTime);
 
-  double v2x = (x3 - x2) / stepTime;
-  double v2y = (y3 - y2) / stepTime;
+  double v2x = (x3 - x2) / (1 / stepTime);
+  double v2y = (y3 - y2) / (1 / stepTime);
 
   // Обчислюємо прискорення
-  double ax = (v2x - v1x) / stepTime;
-  double ay = (v2y - v1y) / stepTime;
+  double ax = (v2x - v1x) / (1 / (1 / stepTime));
+  double ay = (v2y - v1y) / (1 / (1 / stepTime));
 
   // Прогнозуємо позицію за формулою кінематики
   Coord predictedPos;
