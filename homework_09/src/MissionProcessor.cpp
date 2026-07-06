@@ -103,12 +103,11 @@ void MissionProcessor::fillArrays(bool& canChangeTarget,
 
     float t = curMyDrone.calculateArrivalTime(targetAngles[targetId], length, distDuringFall, telemetry.angularState, telemetry.speed);
 
-    if (t < (t_pol + 1) && targetId == target) {
+    if (t < (t_pol + 0.1) && targetId == target) {
       canChangeTarget = false;
       Coord velocity = targetOptions.velocity;
       Coord targetEndPoint = targetPos + velocity * t;
 
-      // 🌟 Знову telemetry.pos замість curMyDrone.pos
       float length = calculateLength(targetEndPoint - telemetry.pos);
       targetDistances[targetId] = length;
 
@@ -168,6 +167,11 @@ void MissionProcessor::start(Drone& curMyDrone, const float distDuringFall, cons
   missionThread = std::thread(&MissionProcessor::missionLoop, this, std::ref(curMyDrone), distDuringFall, t_pol);
 }
 
+void MissionProcessor::setRunningTrue()
+{
+  running = true;
+}
+
 void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall, const float t_pol)
 {
   if (!m_targetProvider || !m_solver || !m_configLoader) {
@@ -184,12 +188,20 @@ void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall
   // Беремо абсолютний час старту симуляції
   auto startTime = std::chrono::high_resolution_clock::now();
 
-  while (true) {
+  while (running) {
     // розраховуємо всі дані для визначення поточної найближчої цілі
     DroneTelemetry telemetry = curMyDrone.getTelemetry();
 
+    Target targetPosition = m_targetProvider->getTargetPosition(target);
+    DEBUG("------------- Target----------------");
+    DEBUG("--- targetPosition = " << targetPosition.pos.x << ", " << targetPosition.pos.y << " ---");
+    DEBUG("--- targetVelocity = " << targetPosition.velocity.x << ", " << targetPosition.velocity.y << " ---");
+    predictedTarget = targetPosition.pos + targetPosition.velocity * t_pol;
+    DEBUG("--- predictedTarget: (" << predictedTarget.x << ", " << predictedTarget.y << ") ---");
+
     {
       std::lock_guard<std::mutex> lock(proccessMutex);
+      DEBUG("----------  Drone Point -----------");
       DEBUG("--- counter = " << counter << " ---");
       DEBUG("--- curDroneX = " << std::fixed << std::setprecision(8) << telemetry.pos.x << " м ---");
       DEBUG("--- curDroneY = " << std::fixed << std::setprecision(8) << telemetry.pos.y << " м ---");
@@ -209,19 +221,9 @@ void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall
     // в майбутньому перепишу
     Coord droneDir = {(float)cos(telemetry.angularState), (float)sin(telemetry.angularState)};
 
-    // мітка часу в таблиці targets для визначення майбутньої позиції цілі
-    // ми взяли весь час що пройшов + час коли боєприпас долетить до землі якщо буде випущений в даний момент
-
-    Target targetPosition = m_targetProvider->getTargetPosition(target);
-
-    DEBUG("--- targetPosition = " << targetPosition.pos.x << ", " << targetPosition.pos.y << " ---");
-    DEBUG("--- targetVelocity = " << targetPosition.velocity.x << ", " << targetPosition.velocity.y << " ---");
-
-    targetStack.push(targetPosition);
-
-    predictedTarget = predictTargetPosition(targetStack, t_pol, curMyDrone.config.timeStep / curMyDrone.config.timeScale);
-
-    DEBUG("--- predictedTarget: (" << predictedTarget.x << ", " << predictedTarget.y << ") ---");
+    // зберігаємо останні 3 точки для прогнозування для перерахунку точки скиду
+    // targetStack.push(targetPosition);
+    // predictedTarget = predictTargetPosition(targetStack, t_pol, curMyDrone.config.timeStep / curMyDrone.config.timeScale);
 
     // точка скиду (куди летить дрон)
     // TODO  тут ще можна підкоригувати напрямок дрону маючи dirToDrone
@@ -230,21 +232,23 @@ void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall
 
     // Знаходимо точку, куди прилетить боєприпас
     aimPoint = telemetry.pos + normalize(droneDir) * distDuringFall;
-    DEBUG("--- dropPoint: (" << telemetry.pos.x << ", " << telemetry.pos.y << ") ---");
-    DEBUG("--- aimPoint: (" << aimPoint.x << ", " << aimPoint.y << ") ---");
+    // DEBUG("--- dropPoint: (" << telemetry.pos.x << ", " << telemetry.pos.y << ") ---");
+    // DEBUG("--- aimPoint: (" << aimPoint.x << ", " << aimPoint.y << ") ---");
 
     addStep(counter, telemetry);
 
     // точний розрахунок коли наближаємся до вже запланованої цілі
     if (!canChangeTarget) {
+      DEBUG("--- old targetAngles[target]: " << targetAngles[target]);
       targetAngles[target] = atan2(predictedTarget.y - telemetry.pos.y, predictedTarget.x - telemetry.pos.x);
+      DEBUG("--- new targetAngles[target]: " << targetAngles[target]);
     }
 
     double finalDistance = calculateLength(aimPoint - predictedTarget);
 
     // умова при якій дрон попадає в ціль з точністю "curMyDrone.config.hitRadius / 20"
-    if (finalDistance <= curMyDrone.config.hitRadius / 2 ||
-        (prevFinalDistance < finalDistance && !canChangeTarget && prevFinalDistance <= curMyDrone.config.hitRadius / 4)) {
+    if (finalDistance <= curMyDrone.config.hitRadius / 6 ||
+        (prevFinalDistance < finalDistance && !canChangeTarget && prevFinalDistance <= curMyDrone.config.hitRadius / 10)) {
       LOG("--- БОЄПРИПАС СКИНУТИЙ! Ураження : " << std::fixed << std::setprecision(2) << finalDistance << " м від цілі номер " << target
                                                 << " ---");
       DEBUG("--- prevFinalDistance: " << std::setprecision(4) << prevFinalDistance << " м.  ---");
@@ -252,7 +256,7 @@ void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall
       DEBUG("--- dropPoint: (" << telemetry.pos.x << ", " << telemetry.pos.y << ") ---");
       DEBUG("--- aimPoint: (" << aimPoint.x << ", " << aimPoint.y << ") ---");
       DEBUG("--- predictedTarget: (" << predictedTarget.x << ", " << predictedTarget.y << ") ---");
-
+      running = false;
       break;
     }
 
@@ -269,8 +273,9 @@ void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall
     counter++;
 
     if (counter > MAX_STEPS) {
-      LOG("============== спрацював ліміт ітерацій  ==============");
+      running = false;
       break;
+      LOG("============== спрацював ліміт ітерацій  ==============");
     }
 
     // зміна цілі і прорахунок руху дрона

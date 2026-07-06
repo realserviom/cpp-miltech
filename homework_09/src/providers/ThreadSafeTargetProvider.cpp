@@ -17,12 +17,7 @@ ThreadSafeTargetProvider::ThreadSafeTargetProvider(const std::string& jsonFilePa
 
 void ThreadSafeTargetProvider::init(int& numberCounterInTimeSpot)
 {
-  // 1. Спочатку викликаємо оригінальний метод з базового класу!
-  // Він завантажить JSON і правильно встановить m_targetCount.
   AbstractTargetProvider::init(numberCounterInTimeSpot);
-
-  // 2. Тепер m_targetCount має реальне значення (наприклад, 5).
-  // Можемо безпечно виділяти пам'ять для векторів:
   currentPositions.resize(m_targetCount, Coord{0.0, 0.0});
   prevPositions.resize(m_targetCount, Coord{0.0, 0.0});
 
@@ -192,6 +187,11 @@ void ThreadSafeTargetProvider::physicsLoop()
 
   try {
     while (running) {
+      {
+        std::lock_guard<std::mutex> lock(targetMutex);
+        setTargetPosition();
+      }
+
       {
         std::lock_guard<std::mutex> lock(targetMutex);
         setTargetPosition();

@@ -51,3 +51,8 @@ void AbstractTargetProvider::setTimeScale(float time)
 {
   timeScale = time;
 }
+
+void AbstractTargetProvider::setRunningTrue()
+{
+  running = true;
+}

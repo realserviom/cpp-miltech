@@ -31,6 +31,8 @@ public:
 
   virtual ~ITargetProvider() = default;
 
+  virtual void setRunningTrue() = 0;
+
 private:
   virtual void physicsLoop() = 0;  // Головний цикл фонового потоку
 

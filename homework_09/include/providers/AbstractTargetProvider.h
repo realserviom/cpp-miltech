@@ -1,6 +1,7 @@
 #pragma once
 #include "Types.h"
 #include "interfaces/ITargetProvider.h"
+#include <atomic>
 
 class AbstractTargetProvider : public ITargetProvider {
 protected:
@@ -17,6 +18,9 @@ protected:
   float arrayTimeStep = 0.0f;
   float targetTimeStep = 0.0f;
   float timeScale = 1.0f;
+
+  std::atomic<bool> running{false};
+  std::atomic<bool> isReady{false};
 
 public:
   std::string m_filePath;
@@ -48,4 +52,5 @@ public:
 
   float getTimeScale() const override;
 
+  void setRunningTrue() override;
 };

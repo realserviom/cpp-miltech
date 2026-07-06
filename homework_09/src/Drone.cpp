@@ -29,6 +29,11 @@ void Drone::start()
   physicsThread = std::thread(&Drone::physicsLoop, this);
 }
 
+void Drone::setRunningTrue()
+{
+  running = true;
+}
+
 void Drone::stop()
 {
   running = false;
@@ -128,6 +133,10 @@ void Drone::physicsLoop()
   isReady = false;
 }
 
+// цей метод повертає дрон на ціль якщо кут повороту менший за поріг,
+// і повертає true якщо дрон ще не довернувся до цілі і треба його дальше довертати
+// і false якщо вже довернувся
+// також повертаємо false якщо дрон ще не довернувся до цілі а кут менший порогового значення і не треба його зупиняти
 bool Drone::updateRotation(float turnThreshold)
 {
   bool isStopped = (state->name() == "TURNING" || state->name() == "STOPPED");
@@ -140,14 +149,14 @@ bool Drone::updateRotation(float turnThreshold)
   float maxStepPerTick = config.angularSpeed * config.physicsTimeStep;
   float currentThreshold = isStopped ? maxStepPerTick : turnThreshold;
 
+  // Визначаємо крок повороту (для руху беремо мінімум)
+  float rotationStep = isStopped ? maxStepPerTick : std::min(maxStepPerTick, turnThreshold);
+
   // Якщо кут менший за поріг — довертаємо точно на ціль і виходимо
-  if (std::abs(angleDiff) <= currentThreshold) {
+  if (std::abs(angleDiff) <= rotationStep) {
     angularState = currentTargetAngle;
     return false;
   }
-
-  // Визначаємо крок повороту (для руху беремо мінімум)
-  float rotationStep = isStopped ? maxStepPerTick : std::min(maxStepPerTick, turnThreshold);
 
   // Повертаємо в потрібну сторону
   if (angleDiff > 0) {
@@ -155,6 +164,11 @@ bool Drone::updateRotation(float turnThreshold)
   }
   else {
     angularState -= rotationStep;
+  }
+
+  // тут повертаємо false бо дрон ще не довернувся але кут менший порогового значення і не треба його зупиняти
+  if (std::abs(angleDiff) - rotationStep < currentThreshold) {
+    return false;
   }
 
   // Тримаємо кут в межах [0, 2*PI]

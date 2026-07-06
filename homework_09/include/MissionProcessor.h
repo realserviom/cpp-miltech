@@ -78,4 +78,6 @@ public:
 
   void start(Drone& curMyDrone, const float distDuringFall, const float t_pol);
   bool isThreadReady() const;
+
+  void setRunningTrue();
 };

@@ -21,6 +21,8 @@ public:
   explicit Drone(const DroneConfig& config);
 
   std::unique_ptr<IDroneState> state;  // поточний стан
+  // зміна поточного кута за ітерацію фізики
+  // якщо повертає true - дрон треба зупинити бо він ще не довертівся до цілі і кут повороту більший за поріг
   bool updateRotation(float turnThreshold);
 
   void updatePosition();
@@ -41,6 +43,8 @@ public:
   std::mutex& getMutex() const;
 
   std::string getStateName() const;
+
+  void setRunningTrue();
 
   // =========================================================================
   // КЕРУВАННЯ ПОТОКОМ ФІЗИКИ
