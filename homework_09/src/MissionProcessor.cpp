@@ -93,7 +93,7 @@ void MissionProcessor::fillArrays(bool& canChangeTarget,
   for (int targetId = 0; targetId < numberOfTargets; targetId++) {
     Target targetOptions = m_targetProvider->getTargetPosition(targetId);
 
-    targetStack.push(target, targetOptions);
+    targetStack.push(targetId, targetOptions);
 
     Coord targetPos = targetOptions.pos;
 
@@ -106,36 +106,8 @@ void MissionProcessor::fillArrays(bool& canChangeTarget,
 
     targetAngles[targetId] = angle_in_rad;
 
-    float t = curMyDrone.calculateArrivalTime(targetAngles[targetId], length, distDuringFall, telemetry.angularState, telemetry.speed);
-
-    if (t < (t_pol + 0.1) && targetId == target) {
-      canChangeTarget = false;
-      Coord velocity = targetOptions.velocity;
-      Coord targetEndPoint = targetPos + velocity * t;
-
-      float length = calculateLength(targetEndPoint - telemetry.pos);
-      targetDistances[targetId] = length;
-
-      float t_new = curMyDrone.calculateSmallArrivalTime(telemetry.speed, length - distDuringFall > 0 ? length - distDuringFall : length);
-
-      if (std::abs(t_new - t) < curMyDrone.config.timeHitRadius) {
-        t = t_new;
-      }
-      else if (t_new < t) {
-        t = (t + t_new) / 2;
-      }
-      else {
-        t = t_new;
-      }
-
-      Coord targetEndPoint2 = targetPos + velocity * t;
-      float targetAngle = atan2(targetEndPoint2.y - telemetry.pos.y, targetEndPoint2.x - telemetry.pos.x);
-
-      targetAngles[targetId] = targetAngle;
-      DEBUG("Перерахували кут напрямку для цілі: " << targetId);
-    }
-
-    targetTimes[targetId] = t;
+    targetTimes[targetId] =
+      curMyDrone.calculateArrivalTime(targetAngles[targetId], length, distDuringFall, telemetry.angularState, telemetry.speed);
   }
 }
 
@@ -253,8 +225,7 @@ void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall
     double finalDistance = calculateLength(aimPoint - predictedTarget);
 
     // умова при якій дрон попадає в ціль з точністю "curMyDrone.config.hitRadius / 20"
-    if (finalDistance <= curMyDrone.config.hitRadius / 2 && calculateLength(targetPosition.pos - predictedTarget) < distDuringFall) {
-      // ||
+    if (curMyDrone.state->name() == "MOVING" && finalDistance <= curMyDrone.config.hitRadius / 2) {
       //  (prevFinalDistance < finalDistance && !canChangeTarget && prevFinalDistance <= curMyDrone.config.hitRadius / 2)) {
       {
         std::lock_guard<std::mutex> lock(curMyDrone.getMutex());
@@ -274,7 +245,7 @@ void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall
 
     // якщо в нас відстань між дроном і цілю почала збільшуватися
     // тоді запускаємо пошук цілі знову тому що дрон не вийшов на позицію
-    if (calculateLength(telemetry.pos - predictedTarget) < distDuringFall) {
+    if (calculateLength(telemetry.pos - targetPosition.pos) > distDuringFall + curMyDrone.config.hitRadius) {
       LOG("Поточна ціль: " << target);
       LOG("canChangeTarget: true");
       canChangeTarget = true;

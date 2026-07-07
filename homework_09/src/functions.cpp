@@ -125,11 +125,6 @@ Coord predictTargetPosition(const RollingTargetStack& targetStack, float t_pol, 
 {
   std::size_t stackSize = targetStack.size(target);
 
-  std::cout << "\n================ [DEBUG TARGETSTACK: " << target << "] ================\n";
-  std::cout << "Кількість точок у стеку (stackSize): " << stackSize << "\n\n";
-
-  std::cout << "Кількість m_maxSize у (stackSize): " << targetStack.m_maxSize << "\n\n";
-
   if (stackSize < targetStack.m_maxSize) {
     const auto& lastPoint = targetStack.top(target);
     return lastPoint.pos + lastPoint.velocity * t_pol;
@@ -138,27 +133,6 @@ Coord predictTargetPosition(const RollingTargetStack& targetStack, float t_pol, 
   const auto& t1 = targetStack.at(target, 0);
   const auto& t2 = targetStack.at(target, targetStack.m_maxSize / 2);
   const auto& t3 = targetStack.at(target, targetStack.m_maxSize - 1);
-
-  const auto& t11 = targetStack.at(target, 1);
-  const auto& t12 = targetStack.at(target, 2);
-  const auto& t13 = targetStack.at(target, 3);
-  const auto& t14 = targetStack.at(target, 4);
-  const auto& t15 = targetStack.at(target, 5);
-  const auto& t16 = targetStack.at(target, 6);
-  const auto& t17 = targetStack.at(target, 7);
-  const auto& t18 = targetStack.at(target, 8);
-  const auto& t19 = targetStack.at(target, 9);
-  const auto& t110 = targetStack.at(target, 10);
-  const auto& t111 = targetStack.at(target, 11);
-  const auto& t112 = targetStack.at(target, 12);
-  const auto& t113 = targetStack.at(target, 13);
-  const auto& t114 = targetStack.at(target, 14);
-  const auto& t115 = targetStack.at(target, 15);
-  const auto& t116 = targetStack.at(target, 16);
-  const auto& t117 = targetStack.at(target, 17);
-  const auto& t118 = targetStack.at(target, 18);
-  const auto& t119 = targetStack.at(target, 19);
-  const auto& t120 = targetStack.at(target, 20);
 
   double x1 = t1.pos.x, y1 = t1.pos.y;
   double x2 = t2.pos.x, y2 = t2.pos.y;
@@ -174,40 +148,6 @@ Coord predictTargetPosition(const RollingTargetStack& targetStack, float t_pol, 
   // Обчислюємо прискорення
   double ax = (v2x - v1x);
   double ay = (v2y - v1y);
-
-  std::cout << "=== TARGET LOGS ===" << std::endl;
-  std::cout << "Positions:\n"
-            << "  t1 (Oldest):  x = " << x1 << ",\ty = " << y1 << "\n"
-            << "  t2 (Mid):     x = " << x2 << ",\ty = " << y2 << "\n"
-            << "  t3 (Newest):  x = " << x3 << ",\ty = " << y3 << "\n"
-            << "  t1 (Oldest+1):  x = " << t11.pos.x << ",\ty = " << t11.pos.y << "\n"
-            << "  t1 (Oldest+2):  x = " << t12.pos.x << ",\ty = " << t12.pos.y << "\n"
-            << "  t1 (Oldest+3):  x = " << t13.pos.x << ",\ty = " << t13.pos.y << "\n"
-            << "  t1 (Oldest+4):  x = " << t14.pos.x << ",\ty = " << t14.pos.y << "\n"
-            << "  t1 (Oldest+5):  x = " << t15.pos.x << ",\ty = " << t15.pos.y << "\n"
-            << "  t1 (Oldest+6):  x = " << t16.pos.x << ",\ty = " << t16.pos.y << "\n"
-            << "  t1 (Oldest+7):  x = " << t17.pos.x << ",\ty = " << t17.pos.y << "\n"
-            << "  t1 (Oldest+8):  x = " << t18.pos.x << ",\ty = " << t18.pos.y << "\n"
-            << "  t1 (Oldest+9):  x = " << t19.pos.x << ",\ty = " << t19.pos.y << "\n"
-            << "  t1 (Oldest+10): x = " << t110.pos.x << ",\ty = " << t110.pos.y << "\n"
-            << "  t1 (Oldest+11): x = " << t111.pos.x << ",\ty = " << t111.pos.y << "\n"
-            << "  t1 (Oldest+12): x = " << t112.pos.x << ",\ty = " << t112.pos.y << "\n"
-            << "  t1 (Oldest+13): x = " << t113.pos.x << ",\ty = " << t113.pos.y << "\n"
-            << "  t1 (Oldest+14): x = " << t114.pos.x << ",\ty = " << t114.pos.y << "\n"
-            << "  t1 (Oldest+15): x = " << t115.pos.x << ",\ty = " << t115.pos.y << "\n"
-            << "  t1 (Oldest+16): x = " << t116.pos.x << ",\ty = " << t116.pos.y << "\n"
-            << "  t1 (Oldest+17): x = " << t117.pos.x << ",\ty = " << t117.pos.y << "\n"
-            << "  t1 (Oldest+18): x = " << t118.pos.x << ",\ty = " << t118.pos.y << "\n"
-            << "  t1 (Oldest+19): x = " << t119.pos.x << ",\ty = " << t119.pos.y << "\n"
-            << "  t1 (Oldest+20): x = " << t120.pos.x << ",\ty = " << t120.pos.y << "\n\n";
-
-  std::cout << "Velocities:\n"
-            << "  v1 (t1->t2):  x = " << v1x << ",\ty = " << v1y << "\n"
-            << "  v2 (t2->t3):  x = " << v2x << ",\ty = " << v2y << "\n\n";
-
-  std::cout << "Acceleration:\n"
-            << "  ax = " << ax << ",\tay = " << ay << "\n";
-  std::cout << "===================" << std::endl;
 
   // Прогнозуємо позицію за формулою кінематики
   Coord predictedPos;
