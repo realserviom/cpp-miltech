@@ -218,16 +218,14 @@ void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall
 
     // ################## РОЗРАХУНОК ТОЧКИ СКИДУ #############################################
     // -----------  заповнення масивів для пошуку найближчих цілей ---------------------------
+
     fillArrays(canChangeTarget, counter, telemetry, curMyDrone, distDuringFall, t_pol, targetStack);
 
-    // -----------  логіка розрахунку точки скиду ---------------------------
-    // на скільки я знаю треба працювати без cos і sin тоу що це для процесора важкі операції
-    // в майбутньому перепишу
     Coord droneDir = {(float)cos(telemetry.angularState), (float)sin(telemetry.angularState)};
 
-    // Target targetPosition = m_targetProvider->getTargetPosition(target);
+    Target targetPosition = m_targetProvider->getTargetPosition(target);
     // DEBUG("------------- Target----------------");
-    // DEBUG("--- targetPosition = " << targetPosition.pos.x << ", " << targetPosition.pos.y << " ---");
+    DEBUG("--- targetPosition = " << targetPosition.pos.x << ", " << targetPosition.pos.y << " ---");
     // DEBUG("--- targetVelocity = " << targetPosition.velocity.x << ", " << targetPosition.velocity.y << " ---");
 
     predictedTarget = predictTargetPosition(targetStack, t_pol, curMyDrone.config.timeStep, target);
@@ -255,8 +253,9 @@ void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall
     double finalDistance = calculateLength(aimPoint - predictedTarget);
 
     // умова при якій дрон попадає в ціль з точністю "curMyDrone.config.hitRadius / 20"
-    if (finalDistance <= curMyDrone.config.hitRadius / 2 ||
-        (prevFinalDistance < finalDistance && !canChangeTarget && prevFinalDistance <= curMyDrone.config.hitRadius / 2)) {
+    if (finalDistance <= curMyDrone.config.hitRadius / 2 && calculateLength(targetPosition.pos - predictedTarget) < distDuringFall) {
+      // ||
+      //  (prevFinalDistance < finalDistance && !canChangeTarget && prevFinalDistance <= curMyDrone.config.hitRadius / 2)) {
       {
         std::lock_guard<std::mutex> lock(curMyDrone.getMutex());
         LOG("--- БОЄПРИПАС СКИНУТИЙ! Ураження : " << std::fixed << std::setprecision(2) << finalDistance << " м від цілі номер " << target
@@ -271,7 +270,7 @@ void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall
       break;
     }
 
-    prevFinalDistance = finalDistance;
+    // prevFinalDistance = finalDistance;
 
     // якщо в нас відстань між дроном і цілю почала збільшуватися
     // тоді запускаємо пошук цілі знову тому що дрон не вийшов на позицію

@@ -95,17 +95,13 @@ void Drone::physicsLoop()
       {
         std::lock_guard<std::mutex> lock(stateMutex);
 
-        DEBUG("----------- Physic ----------------");
-        DEBUG("-- Physic.stepCount: " << stepCount << " --");
-        DEBUG("-- Physic.angularState: " << angularState << " --");
-        DEBUG("-- Physic.pox.x: " << pos.x << " --");
-        DEBUG("-- Physic.pox.y: " << pos.y << " --");
-        DEBUG("-- Physic.speed: " << speed << " --");
-        DEBUG("-- Physic.state.name: " << state->name() << " --");
-
-        // if (stepCount > 1980) {
-        //   throw std::runtime_error("[stepCount runtime_error]");
-        // }
+        // DEBUG("----------- Physic ----------------");
+        // DEBUG("-- Physic.stepCount: " << stepCount << " --");
+        // DEBUG("-- Physic.angularState: " << angularState << " --");
+        // DEBUG("-- Physic.pox.x: " << pos.x << " --");
+        // DEBUG("-- Physic.pox.y: " << pos.y << " --");
+        // DEBUG("-- Physic.speed: " << speed << " --");
+        // DEBUG("-- Physic.state.name: " << state->name() << " --");
 
         this->move();
         // timeSecSinceStart буде повертати одне і те саме число якщо ми:
