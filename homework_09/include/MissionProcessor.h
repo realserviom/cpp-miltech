@@ -64,7 +64,8 @@ public:
                   const DroneTelemetry& telemetry,
                   const Drone& curMyDrone,
                   const float distDuringFall,
-                  const float t_pol);
+                  const float t_pol,
+                  RollingTargetStack& targetStack);
 
   void setTargetProvider(std::shared_ptr<ITargetProvider> targetProvider);
   void setBallisticSolver(std::shared_ptr<IBallisticSolver> solver);

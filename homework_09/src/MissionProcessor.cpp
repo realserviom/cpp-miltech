@@ -87,10 +87,14 @@ void MissionProcessor::fillArrays(bool& canChangeTarget,
                                   const DroneTelemetry& telemetry,  // Передаємо безпечний знімок стану
                                   const Drone& curMyDrone,  // Потрібен лише для виклику константних методів конфігурації
                                   const float distDuringFall,
-                                  const float t_pol)
+                                  const float t_pol,
+                                  RollingTargetStack& targetStack)
 {
   for (int targetId = 0; targetId < numberOfTargets; targetId++) {
     Target targetOptions = m_targetProvider->getTargetPosition(targetId);
+
+    targetStack.push(target, targetOptions);
+
     Coord targetPos = targetOptions.pos;
 
     float length = calculateLength(targetPos - telemetry.pos);
@@ -191,6 +195,10 @@ void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall
 
   RollingTargetStack targetStack(curMyDrone.config.timeStep);
 
+  DEBUG("targetStack.maxSize" << targetStack.m_maxSize);
+
+  // throw std::runtime_error("[FileConfigLoader] КРИТИЧНА ПОМИЛКА: ");
+
   while (running) {
     // розраховуємо всі дані для визначення поточної найближчої цілі
     DroneTelemetry telemetry = curMyDrone.getTelemetry();
@@ -210,19 +218,17 @@ void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall
 
     // ################## РОЗРАХУНОК ТОЧКИ СКИДУ #############################################
     // -----------  заповнення масивів для пошуку найближчих цілей ---------------------------
-    fillArrays(canChangeTarget, counter, telemetry, curMyDrone, distDuringFall, t_pol);
+    fillArrays(canChangeTarget, counter, telemetry, curMyDrone, distDuringFall, t_pol, targetStack);
 
     // -----------  логіка розрахунку точки скиду ---------------------------
     // на скільки я знаю треба працювати без cos і sin тоу що це для процесора важкі операції
     // в майбутньому перепишу
     Coord droneDir = {(float)cos(telemetry.angularState), (float)sin(telemetry.angularState)};
 
-    Target targetPosition = m_targetProvider->getTargetPosition(target);
-    DEBUG("------------- Target----------------");
-    DEBUG("--- targetPosition = " << targetPosition.pos.x << ", " << targetPosition.pos.y << " ---");
-    DEBUG("--- targetVelocity = " << targetPosition.velocity.x << ", " << targetPosition.velocity.y << " ---");
-
-    targetStack.push(target, targetPosition);
+    // Target targetPosition = m_targetProvider->getTargetPosition(target);
+    // DEBUG("------------- Target----------------");
+    // DEBUG("--- targetPosition = " << targetPosition.pos.x << ", " << targetPosition.pos.y << " ---");
+    // DEBUG("--- targetVelocity = " << targetPosition.velocity.x << ", " << targetPosition.velocity.y << " ---");
 
     predictedTarget = predictTargetPosition(targetStack, t_pol, curMyDrone.config.timeStep, target);
 

@@ -11,9 +11,9 @@ class RollingTargetStack {
 private:
   // Для кожного TargetId зберігається свій незалежний deque
   std::unordered_map<TargetId, std::deque<Target>> m_data;
-  std::size_t m_maxSize;
 
 public:
+  std::size_t m_maxSize;
   explicit RollingTargetStack(int timeStep);
 
   // Додавання елементів (L-value та R-value для оптимізації)

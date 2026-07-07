@@ -1,9 +1,11 @@
 #include "RollingTargetStack.h"
 #include <string>
+#include "Debug.h"
 
 RollingTargetStack::RollingTargetStack(int timeStep)
-  : m_maxSize(2 * (1 / timeStep) + 1)
+  : m_maxSize((2 / timeStep) + 1)
 {
+  // throw std::runtime_error("targetStack.maxSize" + std::to_string(m_maxSize));
 }
 
 // Додавання копіюванням
