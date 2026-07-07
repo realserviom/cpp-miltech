@@ -10,6 +10,7 @@
 #include "Types.h"
 #include <stdbool.h>
 #include "json.hpp"
+#include "Debug.h"
 
 using json = nlohmann::ordered_json;
 
@@ -60,26 +61,39 @@ void saveOutputFileByStep(int length, const std::vector<SimStep>& steps)
 
   auto endIt = (static_cast<size_t>(length) <= steps.size()) ? steps.begin() + length : steps.end();
 
+  double last_time = 0.00;
+  double last_direction = 0.00;
+
   for (auto it = steps.begin(); it != endIt; ++it) {
     json stepEntry;
 
     stepEntry["position"] = {{"x", it->pos.x}, {"y", it->pos.y}};
 
     // Округлення до 2 знаків після коми
-
-    float angle = std::round(it->direction * 100.0) / 100.0;
+    float angle = it->direction;
 
     if (angle < 0) {
       angle += 2.0 * M_PI;
     }
 
-    stepEntry["direction"] = angle;
+    stepEntry["direction"] = std::round(angle * 100.0) / 100.0;
 
     stepEntry["state"] = it->state;
     stepEntry["targetIndex"] = it->targetIdx;
 
     // Округлення до 2 знаків після коми
-    stepEntry["timeSecSinceStart"] = std::round(it->timeSecSinceStart * 100.0) / 100.0;
+    stepEntry["timeSecSinceStart"] = std::round(it->timeSecSinceStart * 1000.0) / 1000.0;
+
+    double delta = it->timeSecSinceStart - last_time;
+
+    // if (delta > 0.15) {  // якщо стрибок більший за 0.1
+    //   DEBUG("Увага! Пропущено крок часу " << it->counter << " між " << last_time << " та " << it->timeSecSinceStart);
+    //   DEBUG("New direction: " << it->direction << ", old direction: " << last_direction);
+    // }
+
+    last_time = it->timeSecSinceStart;
+
+    last_direction = it->direction;
 
     stepEntry["dropPoint"] = {{"x", it->dropPoint.x}, {"y", it->dropPoint.y}};
     stepEntry["aimPoint"] = {{"x", it->aimPoint.x}, {"y", it->aimPoint.y}};
@@ -142,6 +156,8 @@ Coord predictTargetPosition(const RollingTargetStack& targetStack, float t_pol, 
   double v1x = (x2 - x1);
   double v1y = (y2 - y1);
 
+  // DEBUG("v1x: " << std::fixed << std::setprecision(15) << v1x << ", v1y: " << std::fixed << std::setprecision(15) << v1y);
+
   double v2x = (x3 - x2);
   double v2y = (y3 - y2);
 
@@ -149,10 +165,13 @@ Coord predictTargetPosition(const RollingTargetStack& targetStack, float t_pol, 
   double ax = (v2x - v1x);
   double ay = (v2y - v1y);
 
+  double scaleX = 0.7;  // Зменшуємо радіус/розмах по X (менше 1.0)
+  double scaleY = 1.5;  // Збільшуємо радіус/розмах по Y (більше 1.0)
+
   // Прогнозуємо позицію за формулою кінематики
   Coord predictedPos;
-  predictedPos.x = x3 + (v2x * t_pol) + (0.5 * ax * t_pol * t_pol);
-  predictedPos.y = y3 + (v2y * t_pol) + (0.5 * ay * t_pol * t_pol);
+  predictedPos.x = x3 + (v2x * t_pol) + (0.5 * ax * t_pol * t_pol) * scaleX;
+  predictedPos.y = y3 + (v2y * t_pol) + (0.5 * ay * t_pol * t_pol) * scaleY;
 
   return predictedPos;
 }
