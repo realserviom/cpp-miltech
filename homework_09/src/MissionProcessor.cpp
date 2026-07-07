@@ -161,15 +161,12 @@ void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall
 
   int counter = 0;              // лічильник часу
   bool canChangeTarget = true;  // мітка чи є дозвіл міняти ціль
-  float prevFinalDistance = 100000000;
   // Беремо абсолютний час старту симуляції
   auto startTime = std::chrono::high_resolution_clock::now();
 
-  RollingTargetStack targetStack(curMyDrone.config.timeStep);
+  int size = static_cast<int>(std::ceil(2.0 / curMyDrone.config.timeStep)) + 1;
 
-  DEBUG("targetStack.maxSize" << targetStack.m_maxSize);
-
-  // throw std::runtime_error("[FileConfigLoader] КРИТИЧНА ПОМИЛКА: ");
+  RollingTargetStack targetStack(size);
 
   while (running) {
     // розраховуємо всі дані для визначення поточної найближчої цілі
@@ -190,19 +187,13 @@ void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall
 
     // ################## РОЗРАХУНОК ТОЧКИ СКИДУ #############################################
     // -----------  заповнення масивів для пошуку найближчих цілей ---------------------------
-
     fillArrays(canChangeTarget, counter, telemetry, curMyDrone, distDuringFall, t_pol, targetStack);
 
     Coord droneDir = {(float)cos(telemetry.angularState), (float)sin(telemetry.angularState)};
-
     Target targetPosition = m_targetProvider->getTargetPosition(target);
-    // DEBUG("------------- Target----------------");
-    DEBUG("--- targetPosition = " << targetPosition.pos.x << ", " << targetPosition.pos.y << " ---");
-    // DEBUG("--- targetVelocity = " << targetPosition.velocity.x << ", " << targetPosition.velocity.y << " ---");
-
     predictedTarget = predictTargetPosition(targetStack, t_pol, curMyDrone.config.timeStep, target);
 
-    DEBUG("--- predictedTarget: (" << predictedTarget.x << ", " << predictedTarget.y << ") ---");
+    // DEBUG("--- predictedTarget: (" << predictedTarget.x << ", " << predictedTarget.y << ") ---");
 
     // точка скиду (куди летить дрон)
     // TODO  тут ще можна підкоригувати напрямок дрону маючи dirToDrone
@@ -224,14 +215,13 @@ void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall
 
     double finalDistance = calculateLength(aimPoint - predictedTarget);
 
-    // умова при якій дрон попадає в ціль з точністю "curMyDrone.config.hitRadius / 20"
-    if (curMyDrone.state->name() == "MOVING" && finalDistance <= curMyDrone.config.hitRadius / 2) {
-      //  (prevFinalDistance < finalDistance && !canChangeTarget && prevFinalDistance <= curMyDrone.config.hitRadius / 2)) {
+    // умова при якій дрон попадає в ціль з точністю "curMyDrone.config.hitRadius / 6"
+    // тут можна дописати якщо ми вже пройшли половину MAX_STEPS і точку скиду не найшло тоді ми зменшуємо точність
+    if (curMyDrone.state->name() == "MOVING" && finalDistance <= curMyDrone.config.hitRadius / 6) {
       {
         std::lock_guard<std::mutex> lock(curMyDrone.getMutex());
         LOG("--- БОЄПРИПАС СКИНУТИЙ! Ураження : " << std::fixed << std::setprecision(2) << finalDistance << " м від цілі номер " << target
                                                   << " ---");
-        DEBUG("--- prevFinalDistance: " << std::setprecision(4) << prevFinalDistance << " м.  ---");
         DEBUG("--- myDrone.arrayTimeStep: " << std::setprecision(4) << curMyDrone.config.arrayTimeStep << " ---");
         DEBUG("--- dropPoint: (" << telemetry.pos.x << ", " << telemetry.pos.y << ") ---");
         DEBUG("--- aimPoint: (" << aimPoint.x << ", " << aimPoint.y << ") ---");
@@ -240,8 +230,6 @@ void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall
       running = false;
       break;
     }
-
-    // prevFinalDistance = finalDistance;
 
     // якщо в нас відстань між дроном і цілю почала збільшуватися
     // тоді запускаємо пошук цілі знову тому що дрон не вийшов на позицію

@@ -14,7 +14,7 @@ private:
 
 public:
   std::size_t m_maxSize;
-  explicit RollingTargetStack(int timeStep);
+  explicit RollingTargetStack(int size);
 
   // Додавання елементів (L-value та R-value для оптимізації)
   void push(const TargetId& id, const Target& target);

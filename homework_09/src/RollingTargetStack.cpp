@@ -2,9 +2,10 @@
 #include <string>
 #include "Debug.h"
 
-RollingTargetStack::RollingTargetStack(int timeStep)
-  : m_maxSize(21)
+RollingTargetStack::RollingTargetStack(int size)
 {
+  DEBUG("size: " + std::to_string(size));
+  m_maxSize = size;  // Встановлюємо максимальний розмір деку для кожної цілі
 }
 
 // Додавання копіюванням
