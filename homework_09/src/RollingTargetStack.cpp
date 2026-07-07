@@ -3,9 +3,8 @@
 #include "Debug.h"
 
 RollingTargetStack::RollingTargetStack(int timeStep)
-  : m_maxSize((2 / timeStep) + 1)
+  : m_maxSize(21)
 {
-  // throw std::runtime_error("targetStack.maxSize" + std::to_string(m_maxSize));
 }
 
 // Додавання копіюванням

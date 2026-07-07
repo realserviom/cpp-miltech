@@ -123,10 +123,13 @@ std::chrono::high_resolution_clock::time_point getNextTimePoint(std::chrono::hig
 
 Coord predictTargetPosition(const RollingTargetStack& targetStack, float t_pol, float stepTime, int target)
 {
-  // const auto& lastPoint = targetStack.top(target);
-  // return lastPoint.pos + lastPoint.velocity * t_pol;
-
   std::size_t stackSize = targetStack.size(target);
+
+  // --- [DEBUG] РОЗРАХУНОК ТРАЄКТОРІЇ ЦІЛІ № ======
+  std::cout << "\n================ [DEBUG TARGETSTACK: " << target << "] ================\n";
+  std::cout << "Кількість точок у стеку (stackSize): " << stackSize << "\n\n";
+
+  std::cout << "Кількість m_maxSize у (stackSize): " << targetStack.m_maxSize << "\n\n";
 
   if (stackSize < targetStack.m_maxSize) {
     const auto& lastPoint = targetStack.top(target);
@@ -151,28 +154,6 @@ Coord predictTargetPosition(const RollingTargetStack& targetStack, float t_pol, 
   // Обчислюємо прискорення
   double ax = (v2x - v1x);
   double ay = (v2y - v1y);
-
-  // --- [DEBUG] РОЗРАХУНОК ТРАЄКТОРІЇ ЦІЛІ № ======
-  std::cout << "\n================ [DEBUG TARGETSTACK: " << target << "] ================\n";
-  std::cout << "Кількість точок у стеку (stackSize): " << stackSize << "\n\n";
-
-  std::cout << "Кількість m_maxSize у (stackSize): " << targetStack.m_maxSize << "\n\n";
-
-  // Вивід координат трьох точок
-  std::cout << "--- КООРДИНАТИ ТРЬОХ ТОЧОК ---\n";
-  std::cout << "t1 (Найстаріша): X = " << x1 << ", Y = " << y1 << "\n";
-  std::cout << "t2 (Середня)   : X = " << x2 << ", Y = " << y2 << "\n";
-  std::cout << "t3 (Найновіша) : X = " << x3 << ", Y = " << y3 << "\n\n";
-
-  // Вивід швидкостей на відрізках
-  std::cout << "--- ОБЧИСЛЕНІ ШВИДКОСТІ (Дельти) ---\n";
-  std::cout << "v1 (між t1->t2): v1x = " << v1x << ", v1y = " << v1y << "\n";
-  std::cout << "v2 (між t2->t3): v2x = " << v2x << ", v2y = " << v2y << "\n\n";
-
-  // Вивід прискорення
-  std::cout << "--- ОБЧИСЛЕНЕ ПРИСКОРЕННЯ ---\n";
-  std::cout << "Прискорення: ax = " << ax << ", ay = " << ay << "\n";
-  std::cout << "=========================================================\n" << std::endl;
 
   // Прогнозуємо позицію за формулою кінематики
   Coord predictedPos;
