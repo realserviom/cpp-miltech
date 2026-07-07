@@ -193,7 +193,7 @@ void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall
     Target targetPosition = m_targetProvider->getTargetPosition(target);
     predictedTarget = predictTargetPosition(targetStack, t_pol, curMyDrone.config.timeStep, target);
 
-    // DEBUG("--- predictedTarget: (" << predictedTarget.x << ", " << predictedTarget.y << ") ---");
+    DEBUG("--- predictedTarget: (" << predictedTarget.x << ", " << predictedTarget.y << ") ---");
 
     // точка скиду (куди летить дрон)
     // TODO  тут ще можна підкоригувати напрямок дрону маючи dirToDrone
@@ -202,8 +202,8 @@ void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall
 
     // Знаходимо точку, куди прилетить боєприпас
     aimPoint = telemetry.pos + normalize(droneDir) * distDuringFall;
-    // DEBUG("--- dropPoint: (" << telemetry.pos.x << ", " << telemetry.pos.y << ") ---");
-    // DEBUG("--- aimPoint: (" << aimPoint.x << ", " << aimPoint.y << ") ---");
+    DEBUG("--- dropPoint: (" << telemetry.pos.x << ", " << telemetry.pos.y << ") ---");
+    DEBUG("--- aimPoint: (" << aimPoint.x << ", " << aimPoint.y << ") ---");
 
     addStep(counter, telemetry);
 

@@ -61,9 +61,6 @@ void saveOutputFileByStep(int length, const std::vector<SimStep>& steps)
 
   auto endIt = (static_cast<size_t>(length) <= steps.size()) ? steps.begin() + length : steps.end();
 
-  double last_time = 0.00;
-  double last_direction = 0.00;
-
   for (auto it = steps.begin(); it != endIt; ++it) {
     json stepEntry;
 
@@ -81,19 +78,8 @@ void saveOutputFileByStep(int length, const std::vector<SimStep>& steps)
     stepEntry["state"] = it->state;
     stepEntry["targetIndex"] = it->targetIdx;
 
-    // Округлення до 2 знаків після коми
+    // Округлення до 3 знаків після коми
     stepEntry["timeSecSinceStart"] = std::round(it->timeSecSinceStart * 1000.0) / 1000.0;
-
-    double delta = it->timeSecSinceStart - last_time;
-
-    // if (delta > 0.15) {  // якщо стрибок більший за 0.1
-    //   DEBUG("Увага! Пропущено крок часу " << it->counter << " між " << last_time << " та " << it->timeSecSinceStart);
-    //   DEBUG("New direction: " << it->direction << ", old direction: " << last_direction);
-    // }
-
-    last_time = it->timeSecSinceStart;
-
-    last_direction = it->direction;
 
     stepEntry["dropPoint"] = {{"x", it->dropPoint.x}, {"y", it->dropPoint.y}};
     stepEntry["aimPoint"] = {{"x", it->aimPoint.x}, {"y", it->aimPoint.y}};
