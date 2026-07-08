@@ -215,9 +215,10 @@ void MissionProcessor::missionLoop(Drone& curMyDrone, const float distDuringFall
 
     double finalDistance = calculateLength(aimPoint - predictedTarget);
 
-    // умова при якій дрон попадає в ціль з точністю "curMyDrone.config.hitRadius / 6"
-    // тут можна дописати якщо ми вже пройшли половину MAX_STEPS і точку скиду не найшло тоді ми зменшуємо точність
-    if (curMyDrone.state->name() == "MOVING" && finalDistance <= curMyDrone.config.hitRadius / 1.3) {
+    // умова при якій дрон попадає в ціль з точністю "curMyDrone.config.hitRadius / 1.3"
+    // і якщо ми вже пройшли половину MAX_STEPS і точку скиду не найшло тоді ми зменшуємо точність на 1.3
+    if (curMyDrone.state->name() == "MOVING" && (finalDistance <= curMyDrone.config.hitRadius / 1.3 ||
+                                                 (counter > MAX_STEPS / 2 && finalDistance <= curMyDrone.config.hitRadius * 1.3))) {
       {
         std::lock_guard<std::mutex> lock(curMyDrone.getMutex());
         LOG("--- БОЄПРИПАС СКИНУТИЙ! Ураження : " << std::fixed << std::setprecision(2) << finalDistance << " м від цілі номер " << target
