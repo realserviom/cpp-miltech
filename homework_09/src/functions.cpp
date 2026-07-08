@@ -61,6 +61,9 @@ void saveOutputFileByStep(int length, const std::vector<SimStep>& steps)
 
   auto endIt = (static_cast<size_t>(length) <= steps.size()) ? steps.begin() + length : steps.end();
 
+  double last_time = 0.0;
+  float last_direction = 0.0f;
+
   for (auto it = steps.begin(); it != endIt; ++it) {
     json stepEntry;
 
@@ -77,6 +80,16 @@ void saveOutputFileByStep(int length, const std::vector<SimStep>& steps)
 
     stepEntry["state"] = it->state;
     stepEntry["targetIndex"] = it->targetIdx;
+
+    double delta = it->timeSecSinceStart - last_time;
+
+    if (delta > 0.15) {  // якщо стрибок більший за 0.15
+      DEBUG("Увага! Пропущено крок часу " << it->counter << " між " << last_time << " та " << it->timeSecSinceStart);
+      DEBUG("New direction: " << it->direction << ", old direction: " << last_direction);
+    }
+
+    last_time = it->timeSecSinceStart;
+    last_direction = it->direction;
 
     // Округлення до 3 знаків після коми
     stepEntry["timeSecSinceStart"] = std::round(it->timeSecSinceStart * 1000.0) / 1000.0;
@@ -151,8 +164,15 @@ Coord predictTargetPosition(const RollingTargetStack& targetStack, float t_pol, 
   double ax = (v2x - v1x);
   double ay = (v2y - v1y);
 
-  double scaleX = 0.7;  // Зменшуємо радіус/розмах по X (менше 1.0)
-  double scaleY = 1.5;  // Збільшуємо радіус/розмах по Y (більше 1.0)
+  double v_mod = std::sqrt(v2x * v2x + v2y * v2y);
+  double scaleX = 1.0;
+  double scaleY = 1.0;
+
+  if (v_mod > 0.0001) {  // Захист від ділення на нуль
+    // Чим більша частка швидкості припадає на вісь, тим більший scaleX
+    scaleX = 0.5 + (std::abs(v2x) / v_mod) * 1.0;
+    scaleY = 0.5 + (std::abs(v2y) / v_mod) * 1.0;
+  }
 
   // Прогнозуємо позицію за формулою кінематики
   Coord predictedPos;
