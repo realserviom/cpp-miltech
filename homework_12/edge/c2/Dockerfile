@@ -47,6 +47,6 @@ WORKDIR /app
 COPY --from=builder /src/build/c2_service .
 
 HEALTHCHECK --interval=5s --timeout=2s --retries=3 \
-  CMD test -f /tmp/c2_healthy || exit 1
+  CMD find /tmp/c2_healthy -mmin -0.1 | grep -q . || exit 1
 
 CMD ["./c2_service"]

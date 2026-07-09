@@ -1,5 +1,5 @@
 #include "c2_controller.hpp"
-#include <nlohmann/json.hpp>
+#include <json.hpp>
 #include <chrono>
 #include <fstream>
 #include <iostream>
