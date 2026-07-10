@@ -168,12 +168,11 @@ Coord predictTargetPosition(const RollingTargetStack& targetStack, float t_pol, 
   double scaleX = 1.0;
   double scaleY = 1.0;
 
-  if (v_mod > 0.0001) {  // Захист від ділення на нуль
-    // Чим більша частка швидкості припадає на вісь, тим більший scaleX
-    scaleX = 0.5 + (std::abs(v2x) / v_mod) * 1.0;
-    scaleY = 0.5 + (std::abs(v2y) / v_mod) * 1.0;
+  if (v_mod > 0.0001) {
+    // При максимальній швидкості за віссю (дріб = 1) масштаб стане: 0.5 / (1 + 1) = 0.25
+    scaleX = 0.5 / (1.0 + std::abs(v2x) / v_mod);
+    scaleY = 0.5 / (1.0 + std::abs(v2y) / v_mod);
   }
-
   // Прогнозуємо позицію за формулою кінематики
   Coord predictedPos;
   predictedPos.x = x3 + (v2x * t_pol) + (0.5 * ax * t_pol * t_pol) * scaleX;
