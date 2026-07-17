@@ -1,6 +1,7 @@
 #pragma once
 #include "Types.h"
 #include "interfaces/ITargetProvider.h"
+#include <atomic>
 
 class AbstractTargetProvider : public ITargetProvider {
 protected:
@@ -8,23 +9,48 @@ protected:
   int m_targetCount = 0;
   // кількість часових кроків для кожної цілі
   int m_timeSteps = 0;
+
   // кількість ітерацій в одному часовому кроці
   int m_numberCounterInTimeSpot;
 
   std::vector<std::vector<Coord>> m_targets;
 
   float arrayTimeStep = 0.0f;
+  float targetTimeStep = 0.0f;
+  float timeScale = 1.0f;
+
+  std::atomic<bool> running{false};
+  std::atomic<bool> isReady{false};
 
 public:
-    ~AbstractTargetProvider() override = default;
+  std::string m_filePath;
 
-    virtual void loadTargets() = 0;
+  explicit AbstractTargetProvider(const std::string &jsonFilePath)
+    : m_filePath(jsonFilePath)
+  {
+  }
 
-    int getTargetCount() override;
+  ~AbstractTargetProvider() override = default;
 
-    virtual void init(int &numberCounterInTimeSpot) override;
+  virtual void loadTargets() = 0;
 
-    std::vector<std::vector<Coord>> getTargets() override;
+  int getTargetCount() override;
 
-    float getArrayTimeStep() const override;
+  virtual void init(int &numberCounterInTimeSpot) override;
+
+  void setArrayTimeStep(float time) override;
+
+  float getArrayTimeStep() const override;
+
+  void setTargetTimeStep(float time) override;
+
+  float getTargetTimeStep() const override;
+
+  void setTimeScale(float time) override;
+
+  float getTimeScale() const override;
+
+  std::vector<std::vector<Coord>> getTargets() override;
+
+  void setRunningTrue() override;
 };

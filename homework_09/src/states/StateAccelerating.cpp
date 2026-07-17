@@ -1,13 +1,14 @@
 #include "states/StateMoving.h"
 #include "states/StateAccelerating.h"
+#include <memory>
 
-std::unique_ptr<IDroneState> StateAccelerating::execute(Drone& curMyDrone, const float& targetAngle)
+std::unique_ptr<IDroneState> StateAccelerating::execute(Drone& curMyDrone)
 {
-  curMyDrone.updateRotation(targetAngle);  // Легке підрулювання
+  curMyDrone.updateRotation(curMyDrone.config.turnThreshold);
   curMyDrone.updatePosition();
-  curMyDrone.speed += (curMyDrone.config.acceleration * curMyDrone.config.simTimeStep);
-  if (curMyDrone.speed >= curMyDrone.config.attackSpeed) {
-    curMyDrone.speed = curMyDrone.config.attackSpeed;
+  curMyDrone.accelerate();
+
+  if (curMyDrone.getSpeed() >= curMyDrone.config.attackSpeed) {
     return std::make_unique<StateMoving>();
   }
 
@@ -19,7 +20,7 @@ const std::string StateAccelerating::name() const
   return "ACCELERATING";
 }
 
-int StateAccelerating::id() const
+DroneStateId StateAccelerating::id() const
 {
-  return 1;
+  return DroneStateId::ACCELERATING;
 }
