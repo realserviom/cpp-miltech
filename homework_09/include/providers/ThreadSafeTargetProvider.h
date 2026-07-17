@@ -25,7 +25,7 @@ public:
 
   void loadTargets() override;
 
-  ~ThreadSafeTargetProvider();
+  ~ThreadSafeTargetProvider() override = default;
 
   int getIterationByCounter(const int& counter);
 

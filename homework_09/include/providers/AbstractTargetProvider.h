@@ -1,6 +1,7 @@
 #pragma once
 #include "Types.h"
 #include "interfaces/ITargetProvider.h"
+#include <vector>
 
 class AbstractTargetProvider : public ITargetProvider {
 protected:
@@ -12,7 +13,7 @@ protected:
   // кількість ітерацій в одному часовому кроці
   int m_numberCounterInTimeSpot;
 
-  Coord **m_targets = nullptr;
+  std::vector<std::vector<Coord>> m_targets;
 
   float arrayTimeStep = 0.0f;
   float targetTimeStep = 0.0f;
@@ -32,9 +33,9 @@ public:
 
   int getTargetCount() override;
 
-  virtual void init(int &numberCounterInTimeSpot) override;
+  std::vector<std::vector<Coord>> getTargets() override;
 
-  Coord **getTargets() override;
+  virtual void init(int &numberCounterInTimeSpot) override;
 
   void setArrayTimeStep(float time) override;
 
