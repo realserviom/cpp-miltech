@@ -17,7 +17,7 @@ int AbstractTargetProvider::getTargetCount()
   return m_targetCount;
 }
 
-Coord **AbstractTargetProvider::getTargets()
+std::vector<std::vector<Coord>> AbstractTargetProvider::getTargets()
 {
   return this->m_targets;
 }

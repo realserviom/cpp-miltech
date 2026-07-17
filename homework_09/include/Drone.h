@@ -30,7 +30,7 @@ public:
 
     float calculateSmallArrivalTime(float distance) const;
 
-    void move(const std::vector<float> targetTimes, const bool canChangeTarget, const std::vector<float> targetAngles);
+    void move(const std::vector<float>& targetTimes, const bool& canChangeTarget, const std::vector<float>& targetAngles);
 
-    float changeTarget(const std::vector<float> targetTimes, const bool& canChangeTarget, const std::vector<float> targetAngles);
+    float changeTarget(const std::vector<float>& targetTimes, const bool& canChangeTarget, const std::vector<float>& targetAngles);
 };

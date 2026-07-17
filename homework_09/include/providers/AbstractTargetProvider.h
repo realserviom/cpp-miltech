@@ -10,7 +10,8 @@ protected:
   int m_timeSteps = 0;
   // кількість ітерацій в одному часовому кроці
   int m_numberCounterInTimeSpot;
-  Coord **m_targets = nullptr;
+
+  std::vector<std::vector<Coord>> m_targets;
 
   float arrayTimeStep = 0.0f;
 
@@ -23,7 +24,7 @@ public:
 
     virtual void init(int &numberCounterInTimeSpot) override;
 
-    Coord **getTargets() override;
+    std::vector<std::vector<Coord>> getTargets() override;
 
     float getArrayTimeStep() const override;
 };

@@ -116,7 +116,7 @@ float Drone::calculateSmallArrivalTime(float distance) const
   return (-speed + std::sqrt(D)) / config.acceleration;
 }
 
-float Drone::changeTarget(const std::vector<float> targetTimes, const bool& canChangeTarget, const std::vector<float> targetAngles)
+float Drone::changeTarget(const std::vector<float>& targetTimes, const bool& canChangeTarget, const std::vector<float>& targetAngles)
 {
   std::string currentStateName = state->name();
 
@@ -143,7 +143,7 @@ float Drone::changeTarget(const std::vector<float> targetTimes, const bool& canC
 }
 
 // Реалізація методу move
-void Drone::move(const std::vector<float> targetTimes, const bool canChangeTarget, const std::vector<float> targetAngles)
+void Drone::move(const std::vector<float>& targetTimes, const bool& canChangeTarget, const std::vector<float>& targetAngles)
 {
   // тут змінюємо ціль за певних умов
   const float targetAngle = changeTarget(targetTimes, canChangeTarget, targetAngles);
