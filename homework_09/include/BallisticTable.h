@@ -151,7 +151,7 @@ struct BallisticTable {
     // Завантаження таблиці з текстового файлу
     bool load(const char* path) {
         std::ifstream f(path);
-
+      
         if (!f.is_open()) {
           throw std::runtime_error("[BalliscticTable] Critical Error: Failed to load table from " + std::string(path));
         }

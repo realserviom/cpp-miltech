@@ -51,6 +51,7 @@ public:
   void setTimeScale(float time) override;
 
   float getTimeScale() const override;
+  std::vector<std::vector<Coord>> getTargets() override;
 
   void setRunningTrue() override;
 };

@@ -234,6 +234,7 @@ float Drone::calculateSmallArrivalTime(float s, float distance) const
 }
 
 void Drone::move()
+
 {
   auto nextState = state->execute(*this);
   if (nextState) {
