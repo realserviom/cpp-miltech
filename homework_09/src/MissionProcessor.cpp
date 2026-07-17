@@ -314,8 +314,8 @@ void MissionProcessor::missionLoop()
         curMyDrone->sendCommand(std::move(cmd));
       }
     }
-
-    if (drop == true) {
+    gi if (drop == true)
+    {
       dlink::Result outResult;
       if (m_uartProcessor->getResult(outResult)) {
         LOG("--- Результат --- ");
