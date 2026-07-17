@@ -9,7 +9,6 @@ void AbstractTargetProvider::init(int &numberCounterInTimeSpot)
   m_numberCounterInTimeSpot = numberCounterInTimeSpot;
   LOG("Preparing targets...");
   loadTargets();
-
   LOG("Targets ready");
 }
 
@@ -51,4 +50,9 @@ float AbstractTargetProvider::getTimeScale() const
 void AbstractTargetProvider::setTimeScale(float time)
 {
   timeScale = time;
+}
+
+void AbstractTargetProvider::setRunningTrue()
+{
+  running = true;
 }

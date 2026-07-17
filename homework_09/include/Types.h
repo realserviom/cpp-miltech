@@ -7,6 +7,7 @@
 #include <memory>
 #include "interfaces/IDroneState.h"
 
+
 // імя боєприпасу
 
 using def_ammoName = std::string;
@@ -123,5 +124,8 @@ struct DroneTelemetry {
   int t_ms;
   uint8_t stateId;
 };
+
+// TODO можливо і не треба
+using TargetId = int;
 
 #endif

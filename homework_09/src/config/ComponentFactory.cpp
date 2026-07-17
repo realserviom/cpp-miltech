@@ -1,5 +1,4 @@
 #include <memory>
-#include "providers/JsonTargetProvider.h"
 #include "providers/ThreadSafeTargetProvider.h"
 #include "config/FileConfigLoader.h"
 #include "solvers/AnalyticalSolver.h"
@@ -9,7 +8,7 @@ std::shared_ptr<ITargetProvider> createProvider(ProviderType type, const std::st
 {
   switch (type) {
       // case ProviderType::JSON:
-      //   return std::make_unique<JsonTargetProvider>(file_name);
+      //     return std::make_shared<JsonTargetProvider>(file_name);
 
     case ProviderType::TIME:
       return std::make_shared<ThreadSafeTargetProvider>(file_name);

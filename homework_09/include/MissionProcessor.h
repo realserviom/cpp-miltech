@@ -7,6 +7,7 @@
 #include "Drone.h"
 #include "interfaces/IDroneState.h"
 #include "UARTProcessor.h"
+#include "RollingTargetStack.h"
 
 class MissionProcessor {
 private:
@@ -17,6 +18,7 @@ private:
   int m_fd;
 
   uint8_t target;
+  mutable std::mutex proccessMutex;
 
   // масив який містить час підльоту до кожної цілі
   std::vector<float> targetTimes;
@@ -50,12 +52,20 @@ public:
 
   void init(DroneConfig& myDrone);
 
-  void fillArrays(bool& canChangeTarget, const Drone& curMyDrone, const float distDuringFall, const float t_pol);
+  void fillArrays(bool& canChangeTarget,
+                  const int& counter,
+                  const DroneTelemetry& telemetry,
+                  const Drone& curMyDrone,
+                  const float distDuringFall,
+                  const float t_pol,
+                  RollingTargetStack& targetStack);
 
-  std::unique_ptr<IDroneState> changeTarget(float& targetAngle, const bool& canChangeTarget, Drone& curMyDrone);
+  std::unique_ptr<IDroneState> changeTarget(float& targetAngle, const bool& canChangeTarget, 
+    const std::string& currentStateName, float dir, Drone& curMyDrone);
 
   void start();
   bool isThreadReady() const;
   void setNumberOfTarget(uint8_t number);
   void setHitRadius(float number);
+
 };

@@ -4,11 +4,8 @@
 void StateAccelerating::execute(Drone& curMyDrone)
 {
   float accel, turnRate;
-
   curMyDrone.updateRotation(accel, turnRate);
-
   accel = MAX_ACCEL;  // Газуємо на повну
-
   curMyDrone.sendMovementCommand(accel, turnRate);
 }
 

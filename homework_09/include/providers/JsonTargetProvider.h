@@ -17,7 +17,6 @@ public:
 
   std::string m_filePath;
 
-
   int getIterationByCounter(const int& counter);
 
   int getIterationByTime(float time, const float& arrayTimeStep);

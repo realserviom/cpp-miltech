@@ -4,11 +4,11 @@
 #include "Types.h"
 #include <cstdio>
 #include <vector>
-#include <stack>
 #include <unistd.h>
-#include <thread>
 
 void saveFireCoordinates(double fireX, double fireY, double xd_i, double yd_i);
+#include <chrono>
+#include "RollingTargetStack.h"
 
 int getIndexByMinValue(const std::vector<float>& targetTimes);
 
@@ -16,15 +16,17 @@ Coord normalize(const Coord& c);
 
 float calculateLength(const Coord& c);
 
+double normalizeAngle(float angle);
+
 std::chrono::duration<float> getDurationTime(std::chrono::high_resolution_clock::time_point startTime, double dt);
 
-std::chrono::high_resolution_clock::time_point getNextTimePoint(std::chrono::high_resolution_clock::time_point startTime,
+std::chrono::high_resolution_clock::time_point getNextTimePoint(const std::chrono::high_resolution_clock::time_point startTime,
                                                                 double dt,
                                                                 int counter);
 
 double normalizeAngle(double angle);
 
-Coord predictTargetPosition(std::stack<Target>& targetStack, float t_pol, float stepTime);
+Coord predictTargetPosition(const RollingTargetStack& targetStack, float t_pol, float stepTime, int target);
 
 int openUart(const char* dev);
 

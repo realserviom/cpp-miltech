@@ -24,19 +24,26 @@ public:
 
   explicit Drone(const DroneConfig& config, std::shared_ptr<UARTProcessor> uart);
 
-  std::unique_ptr<IDroneState> state;
+  // зміна поточного кута за ітерацію фізики
+  // якщо повертає true - дрон треба зупинити бо він ще не довертівся до цілі і кут повороту більший за поріг
   void updateRotation(float& accel, float& turnRate, float turnThreshold = 0.0f);
+
+  std::unique_ptr<IDroneState> state;
+
+  void updatePosition();
 
   float getSpeed();
 
   void accelerate();
   void decelerate();
 
-  bool needRotation(float targetAngle, float turnThreshold = 0.0f) const;
+  bool needRotation(float targetAngle, float dir) const;
 
-  float calculateArrivalTime(float targetAngle, float distance, float distFall) const;
+  float calculateArrivalTime(float targetAngle, float distance, float distFall, float dir, float speed) const;
 
-  float calculateSmallArrivalTime(float distance) const;
+  float calculateSmallArrivalTime(float speed, float distance) const;
+
+  std::mutex& getMutex() const;
 
   // =========================================================================
   // КЕРУВАННЯ ПОТОКОМ ФІЗИКИ
@@ -66,4 +73,5 @@ private:
   mutable std::mutex stateMutex;               // Захищає фізичні параметри дрона
   ThreadSafeQueue<DroneCommand> commandQueue;  // Черга команд
   float currentTargetAngle{0.0f};              // Поточний кут, який виконує фізика
+
 };

@@ -48,8 +48,6 @@ private:
   void physicsLoop() override;  // Головний цикл фонового потоку
 
   // Засоби синхронізації
-  std::atomic<bool> running{false};
-  std::atomic<bool> isReady{false};
   std::thread targetsThread;
 
   mutable std::mutex targetMutex;  // Захищає положення цілі

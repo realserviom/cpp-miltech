@@ -1,4 +1,5 @@
 #include "providers/ThreadSafeTargetProvider.h"
+#include "Types.h"
 #include "json.hpp"
 #include <cstddef>
 #include <fstream>
@@ -17,14 +18,10 @@ ThreadSafeTargetProvider::ThreadSafeTargetProvider(const std::string& jsonFilePa
 
 void ThreadSafeTargetProvider::init(int& numberCounterInTimeSpot)
 {
-  // 1. Спочатку викликаємо оригінальний метод з базового класу!
-  // Він завантажить JSON і правильно встановить m_targetCount.
   AbstractTargetProvider::init(numberCounterInTimeSpot);
-
-  // 2. Тепер m_targetCount має реальне значення (наприклад, 5).
-  // Можемо безпечно виділяти пам'ять для векторів:
   currentPositions.resize(m_targetCount, Coord{0.0, 0.0});
-  prevPositions.resize(m_targetCount, Coord{0.0, 0.0});
+  const double UNDEFINED_COORD = std::numeric_limits<double>::quiet_NaN();
+  prevPositions.resize(m_targetCount, Coord{UNDEFINED_COORD, UNDEFINED_COORD});
 
   DEBUG("Вектори цілей успішно ініціалізовано. Кількість: " << m_targetCount);
 }
@@ -72,14 +69,14 @@ Target ThreadSafeTargetProvider::getTargetPosition(const int targetId)
 {
   std::lock_guard<std::mutex> lock(targetMutex);
   Target targetPos;
-  targetPos.pos = currentPositions[targetId];
-  targetPos.velocity = (prevPositions[targetId].x != 0.00 && prevPositions[targetId].y != 0.00)
-                         ? (currentPositions[targetId] - prevPositions[targetId]) / getTargetTimeStep()
-                         : Coord{0.0, 0.0};
 
-  // DEBUG("Target " << targetId << " pos: (" << targetPos.pos.x << ", " << targetPos.pos.y << "), velocity: (" << targetPos.velocity.x <<
-  // ", "
-  //                 << targetPos.velocity.y << ")");
+  targetPos.pos = currentPositions[targetId];
+  Coord prev = prevPositions[targetId];
+
+  Coord velocity =
+    !std::isnan(prevPositions[targetId].x) ? (currentPositions[targetId] - prevPositions[targetId]) / getTargetTimeStep() : Coord{0.0, 0.0};
+
+  targetPos.velocity = velocity;
   return targetPos;
 }
 
@@ -152,14 +149,6 @@ Coord ThreadSafeTargetProvider::getTargetPositionInIteration(const int& index, i
 
   return Coord{0.0, 0.0};
 }
-
-// Coord ThreadSafeTargetProvider::getTargetNextPos(int& targetId, const int& counter)
-// {
-//   int timeIteration = getIterationByCounter(counter);
-//   int nextIteration = getNextIteration(timeIteration);
-
-//   return getTargetPositionInIteration(targetId, nextIteration);
-// }
 
 int ThreadSafeTargetProvider::getIterationByCounter(const int& counter)
 {
