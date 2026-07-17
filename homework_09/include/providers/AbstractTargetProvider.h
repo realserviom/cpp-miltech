@@ -38,8 +38,6 @@ public:
 
   virtual void init(int &numberCounterInTimeSpot) override;
 
-   std::vector<std::vector<Coord>> getTargets() override;
-
   void setArrayTimeStep(float time) override;
 
   float getArrayTimeStep() const override;
@@ -51,6 +49,7 @@ public:
   void setTimeScale(float time) override;
 
   float getTimeScale() const override;
+
   std::vector<std::vector<Coord>> getTargets() override;
 
   void setRunningTrue() override;
