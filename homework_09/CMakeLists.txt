@@ -23,11 +23,13 @@ target_compile_options(targets3 PRIVATE
     -Wall 
     -Wextra 
     -pedantic
+    -fsanitize=address -fno-omit-frame-pointer -g
 )
 
 # Поєднуємо їх (лінкуємо)
 # Тепер targets знає про функції з targets_lib
-target_link_libraries(targets3 PRIVATE targets_lib3)
+target_link_libraries(targets3 PRIVATE targets_lib3 PRIVATE -fsanitize=address -fno-omit-frame-pointer -g)
+target_link_options(targets3 PRIVATE -fsanitize=address)
 
 # Встановлюємо назву бінарника
 set_target_properties(targets3 PROPERTIES OUTPUT_NAME "targets3")

@@ -19,8 +19,6 @@ public:
 
   int getIterationByCounter(const int& counter);
 
-  Coord getTargetNextPos(int& targetId, const int& counter);
-
   int getIterationByTime(float time, const float& arrayTimeStep);
 
   Coord getTargetPositionInIteration(const int& index, int& timeIteration);
