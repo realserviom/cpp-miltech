@@ -58,6 +58,4 @@ private:
     bool isThreadReady() const;
 
     void sendControl(float accel, float turnRate);
-
-    bool getTargetPosition2(dlink::TargetPos& target);
 };

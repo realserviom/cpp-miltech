@@ -41,6 +41,13 @@ void UARTProcessor::stop()
 {
   if (running) {
     running = false;
+
+    // Закриваємо порт, щоб перервати блокуючий read() в іншому потоці
+    if (uartFd >= 0) {
+      ::close(uartFd);
+      uartFd = -1;  // Хороша звичка — занулити або виставити в -1
+    }
+
     if (workerThread.joinable()) {
       workerThread.join();
     }
@@ -133,15 +140,6 @@ bool UARTProcessor::getTelemetry(DroneTelemetry& tel)
   tel.stateId = currentTelemetry.state;
   tel.z = currentTelemetry.z;
   tel.t_ms = currentTelemetry.t_ms;
-  return true;
-}
-
-bool UARTProcessor::getTargetPosition2(dlink::TargetPos& target)
-{
-  std::lock_guard<std::mutex> lock(dataMutex);
-  if (!hasResult)
-    return false;
-  target = currentTarget;
   return true;
 }
 

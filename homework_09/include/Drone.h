@@ -24,11 +24,14 @@ public:
 
   explicit Drone(const DroneConfig& config, std::shared_ptr<UARTProcessor> uart);
 
+  void calculateMoveParams(float& accel, float& turnRate, float turnThreshold = 0.0f);
+
   // зміна поточного кута за ітерацію фізики
   // якщо повертає true - дрон треба зупинити бо він ще не довертівся до цілі і кут повороту більший за поріг
-  void updateRotation(float& accel, float& turnRate, float turnThreshold = 0.0f);
+  bool updateRotation_old(float& accel, float& turnRate, float turnThreshold = 0.0f);
 
   std::unique_ptr<IDroneState> state;
+  std::unique_ptr<IDroneState> lastState;
 
   void updatePosition();
 
@@ -37,11 +40,11 @@ public:
   void accelerate();
   void decelerate();
 
-  bool needRotation(float targetAngle, float dir) const;
+  bool needRotation(float targetAngle) const;
 
-  float calculateArrivalTime(float targetAngle, float distance, float distFall, float dir, float speed) const;
+  float calculateArrivalTime(float targetAngle, float distance, float distFall) const;
 
-  float calculateSmallArrivalTime(float speed, float distance) const;
+  float calculateSmallArrivalTime(float distance) const;
 
   std::mutex& getMutex() const;
 

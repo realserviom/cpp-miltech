@@ -26,6 +26,7 @@ Drone::Drone(const DroneConfig& config, std::shared_ptr<UARTProcessor> uart)
   speed = 0.0f;
   angularState = config.initialDir;
   state = std::make_unique<StateStopped>();
+  lastState = std::make_unique<StateStopped>();
   currentTargetAngle = config.initialDir;
 }
 
@@ -45,9 +46,13 @@ void Drone::sendMovementCommand(float accel, float turnRate)
 
 void Drone::stop()
 {
+  std::cout << "[DRONE] Викликано stop()..." << std::endl;
   running = false;
+
   if (physicsThread.joinable()) {
+    std::cout << "[DRONE] Чекаємо physicsThread.join()..." << std::endl;
     physicsThread.join();
+    std::cout << "[DRONE] physicsThread успішно завершено!" << std::endl;
   }
 }
 
@@ -121,6 +126,7 @@ void Drone::physicsLoop()
         std::lock_guard<std::mutex> lock(stateMutex);
         if (state != nullptr) {
           state->execute(*this);
+          lastState = std::move(state);
           state = nullptr;
         }
       }
@@ -141,7 +147,7 @@ void Drone::physicsLoop()
   isReady = false;
 }
 
-void Drone::updateRotation_new(float& accel, float& turnRate, float turnThreshold)
+void Drone::calculateMoveParams(float& accel, float& turnRate, float turnThreshold)
 {
   float angleDiff = currentTargetAngle - angularState;
 
@@ -151,13 +157,9 @@ void Drone::updateRotation_new(float& accel, float& turnRate, float turnThreshol
     accel = MAX_ACCEL;  // Газуємо на повну
     turnRate = 0;       // Не крутимося
   }
-  else if (std::abs(angleDiff) < turnThreshold) {
-    accel = MAX_ACCEL;                                            // Газуємо на повну
-    turnRate = (angleDiff > 0) ? MAX_TURN_RATE : -MAX_TURN_RATE;  // Крутимо в напрямку цілі +1 це вліво
-  }
-  else if (std::abs(angleDiff) > turnThreshold) {
-    accel = 0.0f;                               // Не газуємо
-    turnRate = (angleDiff > 0) ? MAX_TURN_RATE : -MAX_TURN_RATE;  // Крутимо в напрямку цілі +1 це вліво
+  else {
+    accel = std::abs(angleDiff) < turnThreshold ? MAX_ACCEL : 0.0f;
+    turnRate = (angleDiff > 0) ? MAX_TURN_RATE : -MAX_TURN_RATE;  // Крутимо в напрямку цілі + це вліво
   }
 }
 
@@ -165,7 +167,7 @@ void Drone::updateRotation_new(float& accel, float& turnRate, float turnThreshol
 // і повертає true якщо дрон ще не довернувся до цілі і треба його дальше довертати
 // і false якщо вже довернувся
 // також повертаємо false якщо дрон ще не довернувся до цілі а кут менший порогового значення і не треба його зупиняти
-bool Drone::updateRotation(float& accel, float& turnRate, float turnThreshold)
+bool Drone::updateRotation_old(float& accel, float& turnRate, float turnThreshold)
 {
   bool isStopped = (state->name() == "TURNING" || state->name() == "STOPPED");
 
@@ -205,14 +207,14 @@ bool Drone::updateRotation(float& accel, float& turnRate, float turnThreshold)
   return true;
 }
 
-bool Drone::needRotation(float targetAngle, float dir) const
+bool Drone::needRotation(float targetAngle) const
 {
-  return std::abs(targetAngle - dir) > config.turnThreshold;
+  return std::abs(targetAngle - angularState) > config.turnThreshold;
 }
 
-float Drone::calculateArrivalTime(float targetAngle, float distance, float distFall, float dir, float speed) const
+float Drone::calculateArrivalTime(float targetAngle, float distance, float distFall) const
 {
-  float angleDiff = targetAngle - dir;
+  float angleDiff = targetAngle - angularState;
   angleDiff = std::atan2(std::sin(angleDiff), std::cos(angleDiff));
 
   float actualAngleToTurn = std::abs(angleDiff);
@@ -226,20 +228,21 @@ float Drone::calculateArrivalTime(float targetAngle, float distance, float distF
   }
   else {
     float smallDistance = (distance - distFall > 0) ? (distance - distFall) : distance;
-    return timeTurned + calculateSmallArrivalTime(speed, smallDistance);
+    return timeTurned + calculateSmallArrivalTime(smallDistance);
   }
 }
 
-float Drone::calculateSmallArrivalTime(float s, float distance) const
+float Drone::calculateSmallArrivalTime(float distance) const
 {
-  if (s == config.attackSpeed) {
+  if (speed == config.attackSpeed) {
     return distance / config.attackSpeed;
   }
-  float D = s * s + 2.0f * config.acceleration * distance;
+
+  float D = speed * speed + 2.0f * config.acceleration * distance;
   if (D < 0)
     return distance / config.attackSpeed;
 
-  return (-s + std::sqrt(D)) / config.acceleration;
+  return (-speed + std::sqrt(D)) / config.acceleration;
 }
 
 void Drone::accelerate()

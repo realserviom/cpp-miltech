@@ -6,7 +6,7 @@
 void StateTurning::execute(Drone& curMyDrone)
 {
   float accel, turnRate;
-  curMyDrone.updateRotation(accel, turnRate, curMyDrone.config.turnThreshold);
+  curMyDrone.calculateMoveParams(accel, turnRate, curMyDrone.config.turnThreshold);
   curMyDrone.sendMovementCommand(accel, turnRate);
 }
 

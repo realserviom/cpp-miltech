@@ -33,6 +33,7 @@ private:
 
   std::atomic<bool> running{false};
   std::atomic<bool> isReady{false};
+  std::unique_ptr<RollingTargetStack> targetStack;
 
 public:
   Coord dropPoint;        // точка скиду
@@ -52,16 +53,9 @@ public:
 
   void init(DroneConfig& myDrone);
 
-  void fillArrays(bool& canChangeTarget,
-                  const int& counter,
-                  const DroneTelemetry& telemetry,
-                  const Drone& curMyDrone,
-                  const float distDuringFall,
-                  const float t_pol,
-                  RollingTargetStack& targetStack);
+  std::optional<Target> fillArrays(bool& canChangeTarget, const Drone& curMyDrone, const float distDuringFall, const float t_pol);
 
-  std::unique_ptr<IDroneState> changeTarget(float& targetAngle, const bool& canChangeTarget, 
-    const std::string& currentStateName, float dir, Drone& curMyDrone);
+  std::unique_ptr<IDroneState> changeTarget(float& targetAngle, const bool& canChangeTarget, Drone& curMyDrone);
 
   void start();
   bool isThreadReady() const;

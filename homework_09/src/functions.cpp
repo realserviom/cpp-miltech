@@ -1,10 +1,5 @@
-#include <cstdint>
-#include <iostream>
-#include <stdio.h>
 #include <stdlib.h>
 #include <cmath>
-#include <string.h>
-#include <fstream>
 #include "functions.h"
 #include "RollingTargetStack.h"
 #include "Types.h"
@@ -53,66 +48,6 @@ int getIndexByMinValue(const std::vector<float>& targetTimes)
   return std::distance(targetTimes.begin(), minIt);
 }
 
-<<<<<<< HEAD
-=======
-void saveOutputFileByStep(int length, const std::vector<SimStep>& steps)
-{
-  json out;
-  out["totalSteps"] = length;
-
-  printf("============== length = %d ===========\n", length);
-
-  out["steps"] = json::array();
-
-  auto endIt = (static_cast<size_t>(length) <= steps.size()) ? steps.begin() + length : steps.end();
-
-  double last_time = 0.0;
-  float last_direction = 0.0f;
-
-  for (auto it = steps.begin(); it != endIt; ++it) {
-    json stepEntry;
-
-    stepEntry["position"] = {{"x", it->pos.x}, {"y", it->pos.y}};
-
-    // Округлення до 2 знаків після коми
-    float angle = it->direction;
-
-    if (angle < 0) {
-      angle += 2.0 * M_PI;
-    }
-
-    stepEntry["direction"] = std::round(angle * 100.0) / 100.0;
-
-    stepEntry["state"] = it->state;
-    stepEntry["targetIndex"] = it->targetIdx;
-
-    double delta = it->timeSecSinceStart - last_time;
-
-    if (delta > 0.15) {  // якщо стрибок більший за 0.15
-      DEBUG("Увага! Пропущено крок часу " << it->counter << " між " << last_time << " та " << it->timeSecSinceStart);
-      DEBUG("New direction: " << it->direction << ", old direction: " << last_direction);
-    }
-
-    last_time = it->timeSecSinceStart;
-    last_direction = it->direction;
-
-    // Округлення до 3 знаків після коми
-    stepEntry["timeSecSinceStart"] = std::round(it->timeSecSinceStart * 1000.0) / 1000.0;
-
-    stepEntry["dropPoint"] = {{"x", it->dropPoint.x}, {"y", it->dropPoint.y}};
-    stepEntry["aimPoint"] = {{"x", it->aimPoint.x}, {"y", it->aimPoint.y}};
-    stepEntry["predictedTarget"] = {{"x", it->predictedTarget.x}, {"y", it->predictedTarget.y}};
-    stepEntry["counter"] = it->counter;
-
-    out["steps"].push_back(stepEntry);
-  }
-
-  std::ofstream fout("../data/output.json");
-  fout << out.dump(2);
-  fout.close();
-}
-
->>>>>>> main
 std::chrono::duration<float> getDurationTime(std::chrono::high_resolution_clock::time_point startTime, double dt)
 {
   auto endTime = std::chrono::high_resolution_clock::now();
@@ -140,7 +75,6 @@ std::chrono::high_resolution_clock::time_point getNextTimePoint(std::chrono::hig
   return startTime + std::chrono::duration_cast<std::chrono::high_resolution_clock::duration>(durationOffset);
 }
 
-<<<<<<< HEAD
 // Функція налаштування UART
 int openUart(const char* dev)
 {
@@ -159,7 +93,8 @@ int openUart(const char* dev)
   tcsetattr(fd, TCSANOW, &tio);
 
   return fd;
-=======
+}
+
 Coord predictTargetPosition(const RollingTargetStack& targetStack, float t_pol, float stepTime, int target)
 {
   std::size_t stackSize = targetStack.size(target);
@@ -195,10 +130,10 @@ Coord predictTargetPosition(const RollingTargetStack& targetStack, float t_pol, 
   double scaleY = 1.0;
 
   if (v_mod > 0.0001) {
-    // При максимальній швидкості за віссю (дріб = 1) масштаб стане: 0.5 / (1 + 1) = 0.25
     scaleX = 0.5 / (1.0 + std::abs(v2x) / v_mod);
     scaleY = 0.5 / (1.0 + std::abs(v2y) / v_mod);
   }
+
   // Прогнозуємо позицію за формулою кінематики
   Coord predictedPos;
   predictedPos.x = x3 + (v2x * t_pol) + (0.5 * ax * t_pol * t_pol) * scaleX;
@@ -214,6 +149,6 @@ double normalizeAngle(float angle)
     angle -= 2.0 * M_PI;
   while (angle < -M_PI)
     angle += 2.0 * M_PI;
+
   return angle;
->>>>>>> main
 }

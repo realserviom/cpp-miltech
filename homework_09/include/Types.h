@@ -71,8 +71,8 @@ struct DroneConfig {
     float accelPath;        // шлях розгону (м)
     def_ammoName ammoName;  // обрані боєприпаси
     float arrayTimeStep;    // крок часу масиву цілей
-    float timeStep;         // крок симуляції
     float timeScale;        // крок маштабування кроку
+    float timeStep;         // крок симуляції
     float hitRadius;        // радіус влучення
     float angularSpeed;     // кутова швидкість (рад/с)
     float turnThreshold;    // поріг повороту (рад)

@@ -65,41 +65,49 @@ void MissionProcessor::init(DroneConfig& myDrone)
   DEBUG("===========================");
 }
 
-void MissionProcessor::fillArrays(bool& canChangeTarget,
-                                  const int& counter,
-                                  const DroneTelemetry& telemetry,  // Передаємо безпечний знімок стану
-                                  const Drone& curMyDrone,  // Потрібен лише для виклику константних методів конфігурації
-                                  const float distDuringFall,
-                                  const float t_pol,
-                                  RollingTargetStack& targetStack)
+std::optional<Target> MissionProcessor::fillArrays(bool& canChangeTarget,
+                                                   const Drone& curMyDrone,  // Потрібен лише для виклику константних методів конфігурації
+                                                   const float distDuringFall,
+                                                   const float t_pol)
 {
+  std::optional<Target> currentTargetOption;
   for (int targetId = 0; targetId < numberOfTargets; targetId++) {
 
     auto targetOptions = m_uartProcessor->getTargetPosition(targetId);
 
-    targetStack.push(targetId, targetOptions);
+    if (!targetOptions.has_value()) {
+      continue;
+    }
 
-    Coord targetPos = targetOptions.pos;
+    if (target == targetId) {
+      currentTargetOption = targetOptions.value();
+    }
 
-    float length = calculateLength(targetPos - telemetry.pos);
+    targetStack->push(targetId, targetOptions.value());
 
-    float deltaX = targetPos.x - telemetry.pos.x;
-    float deltaY = targetPos.y - telemetry.pos.y;
+    Coord targetPos = targetOptions->pos;
+
+    float length = calculateLength(targetPos - curMyDrone.pos);
+
+    float deltaX = targetPos.x - curMyDrone.pos.x;
+    float deltaY = targetPos.y - curMyDrone.pos.y;
 
     float angle_in_rad = atan2(deltaY, deltaX);
 
     targetAngles[targetId] = angle_in_rad;
 
-    targetTimes[targetId] =
-      curMyDrone.calculateArrivalTime(targetAngles[targetId], length, distDuringFall, telemetry.angularState, telemetry.speed);
+    targetTimes[targetId] = curMyDrone.calculateArrivalTime(targetAngles[targetId], length, distDuringFall);
   }
+
+  return currentTargetOption;
 }
 
-std::unique_ptr<IDroneState> MissionProcessor::changeTarget(
-  float& targetAngle, const bool& canChangeTarget, const std::string& currentStateName, float dir, Drone& curMyDrone)
+std::unique_ptr<IDroneState> MissionProcessor::changeTarget(float& targetAngle, const bool& canChangeTarget, Drone& curMyDrone)
 {
   const float newTarget = getIndexByMinValue(targetTimes);
   targetAngle = targetAngles[target];
+
+  const std::string currentStateName = curMyDrone.state->name();
 
   // canChangeTarget - мітка чи є дозвіл міняти ціль (якщо дрон вже летить на ціль і вона не далеко, то міняти ціль не можна)
   // newTarget != target - перевірка чи дійсно нова ціль? Щоб лишній раз не гальмувати і обертати
@@ -111,7 +119,7 @@ std::unique_ptr<IDroneState> MissionProcessor::changeTarget(
     target = newTarget;
     targetAngle = targetAngles[newTarget];
 
-    if (curMyDrone.needRotation(targetAngle, dir)) {
+    if (curMyDrone.needRotation(targetAngle)) {
       if (currentStateName == "MOVING" || currentStateName == "ACCELERATING") {
         DEBUG("--- Сповільнюємося!!!! Треба повертатися! ---");
         return std::make_unique<StateDecelerating>();
@@ -161,8 +169,11 @@ void MissionProcessor::missionLoop()
 
   bool drop = false;
 
+  // // Беремо абсолютний час старту симуляції
+  // auto startTime = std::chrono::high_resolution_clock::now();
+
   // Головний цикл цього потоку (Балістичний калькулятор + Скид)
-  while (true) {
+  while (running) {
     // Перевіряємо, чи отримали конфіг боєприпасу
     if (ammo == nullptr) {
       ammo = m_uartProcessor->getAmmoConfigPtr();
@@ -188,6 +199,11 @@ void MissionProcessor::missionLoop()
           // Поточний стан дрона
           curMyDrone = std::make_unique<Drone>(myDroneConfig, m_uartProcessor);
 
+          int size = static_cast<int>(std::ceil(2.0 / curMyDrone->config.timeStep)) + 1;
+
+          // Ініціалізуємо/перестворюємо об'єкт із потрібним size!
+          targetStack = std::make_unique<RollingTargetStack>(size);
+
           distDuringFall = m_solver->getDistDuringFall(t_pol, myDroneConfig, &ammoParams);
 
           curMyDrone->start();  // Запускаємо потік фізики дрона
@@ -205,11 +221,12 @@ void MissionProcessor::missionLoop()
       }
     }
 
-    DroneTelemetry telemetry;
-
-    // якщо ми ще не скинули боєприпас і дрон існує (отримали конфіг дрона) тоді розраховуємо точку скиду
+    // якщо ми ще не скинули боєприпас і дрон ініціалізований ( тобто ми отримали конфіг дрона)
+    // тоді розраховуємо точку скиду
     if (drop == false && curMyDrone != nullptr) {
+      DroneTelemetry telemetry;
       if (m_uartProcessor->getTelemetry(telemetry)) {
+        std::lock_guard<std::mutex> lock(proccessMutex);
         curMyDrone->setDroneParams(telemetry);
         DEBUG("--- curDrone X, Y = " << std::fixed << std::setprecision(8) << telemetry.pos.x << ", " << std::fixed << std::setprecision(8)
                                      << telemetry.pos.y << " м ---");
@@ -223,34 +240,22 @@ void MissionProcessor::missionLoop()
 
       // ################## РОЗРАХУНОК ТОЧКИ СКИДУ #############################################
       // -----------  заповнення масивів для пошуку найближчих цілей ---------------------------
-      fillArrays(canChangeTarget, *curMyDrone, distDuringFall, t_pol);
-
-      // -----------  логіка розрахунку точки скиду ---------------------------
-      // на скільки я знаю треба працювати без cos і sin тоу що це для процесора важкі операції
-      // в майбутньому перепишу
-      Coord droneDir = {(float)cos(curMyDrone->angularState), (float)sin(curMyDrone->angularState)};
-
-      // мітка часу в таблиці targets для визначення майбутньої позиції цілі
-      // ми взяли весь час що пройшов + час коли боєприпас долетить до землі якщо буде випущений в даний момент
-
-      dlink::TargetPos targetPacket;
-      m_uartProcessor->getTargetPosition2(targetPacket);  // отримуємо поточну ціль з UART
-
-      DEBUG("targetPacket.id " << std::to_string(targetPacket.id) << " pos: (" << std::to_string(targetPacket.x) << ", "
-                               << std::to_string(targetPacket.y) << ")");
-
-      auto targetPosition = m_uartProcessor->getTargetPosition(target);
+      std::optional<Target> targetPosition = fillArrays(canChangeTarget, *curMyDrone, distDuringFall, t_pol);
 
       if (!targetPosition.has_value()) {
         continue;
       }
+
+      Coord droneDir = {(float)cos(curMyDrone->angularState), (float)sin(curMyDrone->angularState)};
+
+      predictedTarget = predictTargetPosition(*targetStack, t_pol, curMyDrone->config.timeStep, target);
 
       DEBUG("--- targetPosition = " << targetPosition->pos.x << ", " << targetPosition->pos.y << " ---");
       DEBUG("--- targetVelocity = " << targetPosition->velocity.x << ", " << targetPosition->velocity.y << " ---");
 
       predictedTarget = targetPosition->pos + targetPosition->velocity * t_pol;
 
-      // DEBUG("--- predictedTarget: (" << predictedTarget.x << ", " << predictedTarget.y << ") ---");
+      DEBUG("--- predictedTarget: (" << predictedTarget.x << ", " << predictedTarget.y << ") ---");
 
       // точка скиду (куди летить дрон)
       // TODO  тут ще можна підкоригувати напрямок дрону маючи dirToDrone
@@ -269,23 +274,23 @@ void MissionProcessor::missionLoop()
 
       double finalDistance = calculateLength(aimPoint - predictedTarget);
 
-      // умова при якій дрон попадає в ціль з точністю "hitRadius / 2"
-      if (finalDistance <= hitRadius / 2 || (prevFinalDistance < finalDistance && !canChangeTarget && prevFinalDistance <= hitRadius / 4)) {
-        LOG("--- БОЄПРИПАС СКИНУТИЙ! Ураження : " << std::fixed << std::setprecision(2) << finalDistance << " м від цілі номер " << target
-                                                  << " ---");
-        DEBUG("--- prevFinalDistance: " << std::setprecision(4) << prevFinalDistance << " м.  ---");
-        DEBUG("--- dropPoint: (" << curMyDrone->pos.x << ", " << curMyDrone->pos.y << ") ---");
-        DEBUG("--- aimPoint: (" << aimPoint.x << ", " << aimPoint.y << ") ---");
-        DEBUG("--- predictedTarget: (" << predictedTarget.x << ", " << predictedTarget.y << ") ---");
+      // умова при якій дрон попадає в ціль з точністю "curMyDrone.config.hitRadius / 1.3"
+      if (curMyDrone->lastState->name() == "MOVING" && finalDistance <= curMyDrone->config.hitRadius / 1.3) {
+        {
+          std::lock_guard<std::mutex> lock(curMyDrone->getMutex());
+          LOG("--- БОЄПРИПАС СКИНУТИЙ! Ураження : " << std::fixed << std::setprecision(2) << finalDistance << " м від цілі номер " << target
+                                                    << " ---");
+          DEBUG("--- myDrone.arrayTimeStep: " << std::setprecision(4) << curMyDrone->config.arrayTimeStep << " ---");
+          DEBUG("--- dropPoint: (" << dropPoint.x << ", " << dropPoint.y << ") ---");
+          DEBUG("--- aimPoint: (" << aimPoint.x << ", " << aimPoint.y << ") ---");
+          DEBUG("--- predictedTarget: (" << predictedTarget.x << ", " << predictedTarget.y << ") ---");
+        }
 
-        // Викликаємо GPIO з цього потоку! Потік UART при цьому не блокується на 80 мс
         gpio.pulse_drop();
         drop = true;
         std::cout << "[Ballistics] Команду DROP виконано!" << std::endl;
         continue;
       }
-
-      prevFinalDistance = finalDistance;
 
       // якщо в нас відстань між дроном і цілю почала збільшуватися
       // тоді запускаємо пошук цілі знову тому що дрон не вийшов на позицію
@@ -314,8 +319,8 @@ void MissionProcessor::missionLoop()
         curMyDrone->sendCommand(std::move(cmd));
       }
     }
-    gi if (drop == true)
-    {
+
+    if (drop == true) {
       dlink::Result outResult;
       if (m_uartProcessor->getResult(outResult)) {
         LOG("--- Результат --- ");
@@ -324,12 +329,12 @@ void MissionProcessor::missionLoop()
         LOG("miss_m: " << std::fixed << std::setprecision(2) << outResult.miss_m);
         LOG("drop_t_ms: " << std::fixed << std::setprecision(2) << outResult.drop_t_ms);
         LOG("----------------- ");
+        running = false;
         break;
       }
     }
 
     std::this_thread::sleep_for(std::chrono::nanoseconds(100000000));
-
   }
 
   curMyDrone->stop();  // Зупиняємо потік фізики дрона
