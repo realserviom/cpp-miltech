@@ -52,7 +52,9 @@ int main()
     }
 
     processor.missionThread.join();
+    std::cout << "[MAIN] Місію завершено. Зупиняємо UARTProcessor..." << std::endl;
     uartProcessor->stop();
+    std::cout << "[MAIN] UARTProcessor зупинено. Вихід з програми!" << std::endl;
   }
   catch (const std::runtime_error& e) {
     std::cout << e.what() << std::endl;
