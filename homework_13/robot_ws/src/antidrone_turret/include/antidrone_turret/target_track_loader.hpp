@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-#include "antidrone_turret/target_sequence.hpp"
+#include "target_sequence.hpp"
 
 namespace antidrone_turret {
 
