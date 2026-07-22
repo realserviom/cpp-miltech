@@ -1,0 +1,804 @@
+[0.000000] (-) TimerEvent: {}
+[0.000319] (antidrone_turret) JobQueued: {'identifier': 'antidrone_turret', 'dependencies': OrderedDict()}
+[0.000569] (antidrone_turret) JobStarted: {'identifier': 'antidrone_turret'}
+[0.013872] (antidrone_turret) JobProgress: {'identifier': 'antidrone_turret', 'progress': 'cmake'}
+[0.016970] (antidrone_turret) Command: {'cmd': ['/usr/bin/cmake', '/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret', '-DCMAKE_INSTALL_PREFIX=/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret'], 'cwd': '/home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret', 'env': OrderedDict({'LANGUAGE': 'en_US:en', 'HOSTNAME': 'devcontainer', 'GIT_ASKPASS': '/vscode/vscode-server/bin/linux-x64/fc3def6774c76082adf699d366f31a557ce5573f/extensions/git/dist/askpass.sh', 'SHLVL': '2', 'LD_LIBRARY_PATH': '/opt/ros/jazzy/opt/rviz_ogre_vendor/lib:/opt/ros/jazzy/lib/x86_64-linux-gnu:/opt/ros/jazzy/opt/gz_math_vendor/lib:/opt/ros/jazzy/opt/gz_utils_vendor/lib:/opt/ros/jazzy/opt/gz_cmake_vendor/lib:/opt/ros/jazzy/lib', 'BROWSER': '/vscode/vscode-server/bin/linux-x64/fc3def6774c76082adf699d366f31a557ce5573f/bin/helpers/browser.sh', 'HOME': '/home/serviom', 'CYCLONEDDS_URI': 'file:///etc/cyclonedds.xml', 'OLDPWD': '/home/serviom/cpp-miltech/homework_13/robot_ws/src', 'TERM_PROGRAM_VERSION': '1.128.0', 'VSCODE_IPC_HOOK_CLI': '/tmp/vscode-ipc-33743f0f-041f-47c4-b510-e915d1be0f54.sock', 'ROS_PYTHON_VERSION': '3', 'VSCODE_GIT_ASKPASS_MAIN': '/vscode/vscode-server/bin/linux-x64/fc3def6774c76082adf699d366f31a557ce5573f/extensions/git/dist/askpass-main.js', 'VSCODE_GIT_ASKPASS_NODE': '/vscode/vscode-server/bin/linux-x64/fc3def6774c76082adf699d366f31a557ce5573f/node', 'VSCODE_PYTHON_AUTOACTIVATE_GUARD': '1', 'COLORTERM': 'truecolor', 'REMOTE_CONTAINERS': 'true', 'DEBUGINFOD_URLS': 'https://debuginfod.ubuntu.com', 'WAYLAND_DISPLAY': 'vscode-wayland-3464e33c-2a02-4036-9a1f-907a089a6e0d.sock', 'ROS_DISTRO': 'jazzy', 'REMOTE_CONTAINERS_IPC': '/tmp/vscode-remote-containers-ipc-b2f0a724-730e-4849-88c9-f2613f68159d.sock', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'PATH': '/home/serviom/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand:/home/serviom/.vscode-server/data/User/globalStorage/github.copilot-chat/copilotCli:/vscode/vscode-server/bin/linux-x64/fc3def6774c76082adf699d366f31a557ce5573f/bin/remote-cli:/opt/ros/jazzy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'XDG_RUNTIME_DIR': '/tmp/user/1000', 'REMOTE_CONTAINERS_SOCKETS': '["/tmp/.X11-unix/X0","/home/serviom/.gnupg/S.gpg-agent"]', 'DISPLAY': ':0', 'LANG': 'en_US.UTF-8', 'RMW_IMPLEMENTATION': 'rmw_cyclonedds_cpp', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'VSCODE_GIT_IPC_HANDLE': '/tmp/user/1000/vscode-git-d2076da055.sock', 'TERM_PROGRAM': 'vscode', 'ROS_DOMAIN_ID': '0', 'AMENT_PREFIX_PATH': '/opt/ros/jazzy', 'REMOTE_CONTAINERS_DISPLAY_SOCK': '/tmp/.X11-unix/X0', 'SHELL': '/bin/bash', 'PROMPT_COMMAND': '__vsc_prompt_cmd_original', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'SUBNET', 'VSCODE_GIT_ASKPASS_EXTRA_ARGS': '', 'PWD': '/home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret', 'LC_ALL': 'en_US.UTF-8', 'COPILOT_DEBUG_NONCE': '89e567fff39ed1578c178871686d3a99', 'PYTHONPATH': '/opt/ros/jazzy/lib/python3.12/site-packages', 'TZ': 'Etc/UTC', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy'}), 'shell': False}
+[0.098163] (-) TimerEvent: {}
+[0.108084] (antidrone_turret) StdoutLine: {'line': b'-- The C compiler identification is GNU 13.3.0\n'}
+[0.191249] (antidrone_turret) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 13.3.0\n'}
+[0.198333] (-) TimerEvent: {}
+[0.217695] (antidrone_turret) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[0.298499] (-) TimerEvent: {}
+[0.355358] (antidrone_turret) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[0.373465] (antidrone_turret) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[0.374508] (antidrone_turret) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[0.376477] (antidrone_turret) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[0.392877] (antidrone_turret) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[0.398895] (-) TimerEvent: {}
+[0.499333] (-) TimerEvent: {}
+[0.580862] (antidrone_turret) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[0.592955] (antidrone_turret) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[0.593492] (antidrone_turret) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[0.594253] (antidrone_turret) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[0.599209] (antidrone_turret) StdoutLine: {'line': b'-- Found ament_cmake_auto: 2.5.6 (/opt/ros/jazzy/share/ament_cmake_auto/cmake)\n'}
+[0.599425] (-) TimerEvent: {}
+[0.699837] (-) TimerEvent: {}
+[0.800265] (-) TimerEvent: {}
+[0.811832] (antidrone_turret) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter \n'}
+[0.900404] (-) TimerEvent: {}
+[1.000817] (-) TimerEvent: {}
+[1.101130] (-) TimerEvent: {}
+[1.101901] (antidrone_turret) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[1.183959] (antidrone_turret) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[1.201286] (-) TimerEvent: {}
+[1.261838] (antidrone_turret) StdoutLine: {'line': b'-- Found rosidl_adapter: 4.6.9 (/opt/ros/jazzy/share/rosidl_adapter/cmake)\n'}
+[1.301410] (-) TimerEvent: {}
+[1.394748] (antidrone_turret) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 7.3.3 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)\n'}
+[1.401395] (antidrone_turret) StdoutLine: {'line': b'-- Found rmw_cyclonedds_cpp: 2.2.3 (/opt/ros/jazzy/share/rmw_cyclonedds_cpp/cmake)\n'}
+[1.401665] (-) TimerEvent: {}
+[1.449506] (antidrone_turret) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_cyclonedds_cpp' as default\n"}
+[1.501803] (-) TimerEvent: {}
+[1.602275] (-) TimerEvent: {}
+[1.703347] (-) TimerEvent: {}
+[1.804016] (-) TimerEvent: {}
+[1.904565] (-) TimerEvent: {}
+[2.005053] (-) TimerEvent: {}
+[2.105508] (-) TimerEvent: {}
+[2.205843] (-) TimerEvent: {}
+[2.281807] (antidrone_turret) StdoutLine: {'line': b'-- Found ament_cmake_ros: 0.12.1 (/opt/ros/jazzy/share/ament_cmake_ros/cmake)\n'}
+[2.305966] (-) TimerEvent: {}
+[2.406284] (-) TimerEvent: {}
+[2.506920] (-) TimerEvent: {}
+[2.608197] (-) TimerEvent: {}
+[2.708486] (-) TimerEvent: {}
+[2.808752] (-) TimerEvent: {}
+[2.862520] (antidrone_turret) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[2.908896] (-) TimerEvent: {}
+[3.009191] (-) TimerEvent: {}
+[3.109553] (-) TimerEvent: {}
+[3.210001] (-) TimerEvent: {}
+[3.310281] (-) TimerEvent: {}
+[3.410676] (-) TimerEvent: {}
+[3.511121] (-) TimerEvent: {}
+[3.610802] (antidrone_turret) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[3.611122] (-) TimerEvent: {}
+[3.617428] (antidrone_turret) StdoutLine: {'line': b'-- Found python_cmake_module: 0.11.1 (/opt/ros/jazzy/share/python_cmake_module/cmake)\n'}
+[3.711314] (-) TimerEvent: {}
+[3.801839] (antidrone_turret) StdoutLine: {'line': b'-- Found PythonExtra: /usr/bin/python3  \n'}
+[3.811467] (-) TimerEvent: {}
+[3.911813] (-) TimerEvent: {}
+[4.012434] (-) TimerEvent: {}
+[4.112793] (-) TimerEvent: {}
+[4.213146] (-) TimerEvent: {}
+[4.313568] (-) TimerEvent: {}
+[4.414875] (-) TimerEvent: {}
+[4.516494] (antidrone_turret) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter Development NumPy Development.Module Development.Embed \n'}
+[4.516805] (-) TimerEvent: {}
+[4.619977] (-) TimerEvent: {}
+[4.656648] (antidrone_turret) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter \n'}
+[4.669694] (antidrone_turret) StdoutLine: {'line': b"-- Found gtest sources under '/opt/ros/jazzy/src/gtest_vendor': C++ tests using 'Google Test' will be built\n"}
+[4.674515] (antidrone_turret) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD\n'}
+[4.720152] (-) TimerEvent: {}
+[4.816583] (antidrone_turret) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success\n'}
+[4.817994] (antidrone_turret) StdoutLine: {'line': b'-- Found Threads: TRUE  \n'}
+[4.820304] (-) TimerEvent: {}
+[4.836194] (antidrone_turret) StdoutLine: {'line': b'-- Configuring done (4.8s)\n'}
+[4.920463] (-) TimerEvent: {}
+[5.018408] (antidrone_turret) StdoutLine: {'line': b'-- Generating done (0.2s)\n'}
+[5.020540] (-) TimerEvent: {}
+[5.060973] (antidrone_turret) StdoutLine: {'line': b'-- Build files have been written to: /home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret\n'}
+[5.073688] (antidrone_turret) CommandEnded: {'returncode': 0}
+[5.075280] (antidrone_turret) JobProgress: {'identifier': 'antidrone_turret', 'progress': 'build'}
+[5.075306] (antidrone_turret) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret', '--', '-j2', '-l2'], 'cwd': '/home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret', 'env': OrderedDict({'LANGUAGE': 'en_US:en', 'HOSTNAME': 'devcontainer', 'GIT_ASKPASS': '/vscode/vscode-server/bin/linux-x64/fc3def6774c76082adf699d366f31a557ce5573f/extensions/git/dist/askpass.sh', 'SHLVL': '2', 'LD_LIBRARY_PATH': '/opt/ros/jazzy/opt/rviz_ogre_vendor/lib:/opt/ros/jazzy/lib/x86_64-linux-gnu:/opt/ros/jazzy/opt/gz_math_vendor/lib:/opt/ros/jazzy/opt/gz_utils_vendor/lib:/opt/ros/jazzy/opt/gz_cmake_vendor/lib:/opt/ros/jazzy/lib', 'BROWSER': '/vscode/vscode-server/bin/linux-x64/fc3def6774c76082adf699d366f31a557ce5573f/bin/helpers/browser.sh', 'HOME': '/home/serviom', 'CYCLONEDDS_URI': 'file:///etc/cyclonedds.xml', 'OLDPWD': '/home/serviom/cpp-miltech/homework_13/robot_ws/src', 'TERM_PROGRAM_VERSION': '1.128.0', 'VSCODE_IPC_HOOK_CLI': '/tmp/vscode-ipc-33743f0f-041f-47c4-b510-e915d1be0f54.sock', 'ROS_PYTHON_VERSION': '3', 'VSCODE_GIT_ASKPASS_MAIN': '/vscode/vscode-server/bin/linux-x64/fc3def6774c76082adf699d366f31a557ce5573f/extensions/git/dist/askpass-main.js', 'VSCODE_GIT_ASKPASS_NODE': '/vscode/vscode-server/bin/linux-x64/fc3def6774c76082adf699d366f31a557ce5573f/node', 'VSCODE_PYTHON_AUTOACTIVATE_GUARD': '1', 'COLORTERM': 'truecolor', 'REMOTE_CONTAINERS': 'true', 'DEBUGINFOD_URLS': 'https://debuginfod.ubuntu.com', 'WAYLAND_DISPLAY': 'vscode-wayland-3464e33c-2a02-4036-9a1f-907a089a6e0d.sock', 'ROS_DISTRO': 'jazzy', 'REMOTE_CONTAINERS_IPC': '/tmp/vscode-remote-containers-ipc-b2f0a724-730e-4849-88c9-f2613f68159d.sock', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'PATH': '/home/serviom/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand:/home/serviom/.vscode-server/data/User/globalStorage/github.copilot-chat/copilotCli:/vscode/vscode-server/bin/linux-x64/fc3def6774c76082adf699d366f31a557ce5573f/bin/remote-cli:/opt/ros/jazzy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'XDG_RUNTIME_DIR': '/tmp/user/1000', 'REMOTE_CONTAINERS_SOCKETS': '["/tmp/.X11-unix/X0","/home/serviom/.gnupg/S.gpg-agent"]', 'DISPLAY': ':0', 'LANG': 'en_US.UTF-8', 'RMW_IMPLEMENTATION': 'rmw_cyclonedds_cpp', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'VSCODE_GIT_IPC_HANDLE': '/tmp/user/1000/vscode-git-d2076da055.sock', 'TERM_PROGRAM': 'vscode', 'ROS_DOMAIN_ID': '0', 'AMENT_PREFIX_PATH': '/opt/ros/jazzy', 'REMOTE_CONTAINERS_DISPLAY_SOCK': '/tmp/.X11-unix/X0', 'SHELL': '/bin/bash', 'PROMPT_COMMAND': '__vsc_prompt_cmd_original', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'SUBNET', 'VSCODE_GIT_ASKPASS_EXTRA_ARGS': '', 'PWD': '/home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret', 'LC_ALL': 'en_US.UTF-8', 'COPILOT_DEBUG_NONCE': '89e567fff39ed1578c178871686d3a99', 'PYTHONPATH': '/opt/ros/jazzy/lib/python3.12/site-packages', 'TZ': 'Etc/UTC', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy'}), 'shell': False}
+[5.120725] (-) TimerEvent: {}
+[5.173200] (antidrone_turret) StdoutLine: {'line': b'[  1%] \x1b[34m\x1b[1mGenerating Rust code for ROS interfaces\x1b[0m\n'}
+[5.183234] (antidrone_turret) StdoutLine: {'line': b'[  2%] \x1b[34m\x1b[1mGenerating type hashes for ROS interfaces\x1b[0m\n'}
+[5.220789] (-) TimerEvent: {}
+[5.321150] (-) TimerEvent: {}
+[5.421660] (-) TimerEvent: {}
+[5.522307] (-) TimerEvent: {}
+[5.622533] (-) TimerEvent: {}
+[5.712035] (antidrone_turret) StdoutLine: {'line': b'[  2%] Built target antidrone_turret__rosidl_generator_type_description\n'}
+[5.724144] (-) TimerEvent: {}
+[5.778770] (antidrone_turret) StdoutLine: {'line': b'[  2%] Built target ament_cmake_python_copy_antidrone_turret\n'}
+[5.815096] (antidrone_turret) StdoutLine: {'line': b'[  2%] Built target antidrone_turret__rs\n'}
+[5.819658] (antidrone_turret) StdoutLine: {'line': b'[  3%] \x1b[32mBuilding CXX object gtest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o\x1b[0m\n'}
+[5.824212] (-) TimerEvent: {}
+[5.849645] (antidrone_turret) StdoutLine: {'line': b'[  4%] \x1b[32mBuilding CXX object gtest/CMakeFiles/gtest.dir/src/gtest-all.cc.o\x1b[0m\n'}
+[5.924509] (-) TimerEvent: {}
+[6.025857] (-) TimerEvent: {}
+[6.126358] (-) TimerEvent: {}
+[6.227016] (-) TimerEvent: {}
+[6.332266] (-) TimerEvent: {}
+[6.432932] (-) TimerEvent: {}
+[6.533362] (-) TimerEvent: {}
+[6.633960] (-) TimerEvent: {}
+[6.734606] (-) TimerEvent: {}
+[6.857322] (-) TimerEvent: {}
+[6.957829] (-) TimerEvent: {}
+[7.058316] (-) TimerEvent: {}
+[7.158730] (-) TimerEvent: {}
+[7.259438] (-) TimerEvent: {}
+[7.359875] (-) TimerEvent: {}
+[7.467475] (-) TimerEvent: {}
+[7.568432] (-) TimerEvent: {}
+[7.668748] (-) TimerEvent: {}
+[7.769411] (-) TimerEvent: {}
+[7.810335] (antidrone_turret) StdoutLine: {'line': b'[  5%] \x1b[32m\x1b[1mLinking CXX static library libgtest_main.a\x1b[0m\n'}
+[7.869487] (-) TimerEvent: {}
+[7.958985] (antidrone_turret) StdoutLine: {'line': b'[  5%] Built target gtest_main\n'}
+[7.969677] (-) TimerEvent: {}
+[8.006118] (antidrone_turret) StdoutLine: {'line': b'[  6%] \x1b[34m\x1b[1mGenerating C code for ROS interfaces\x1b[0m\n'}
+[8.069801] (-) TimerEvent: {}
+[8.170103] (-) TimerEvent: {}
+[8.270751] (-) TimerEvent: {}
+[8.375959] (-) TimerEvent: {}
+[8.476338] (-) TimerEvent: {}
+[8.576752] (-) TimerEvent: {}
+[8.677009] (-) TimerEvent: {}
+[8.777266] (-) TimerEvent: {}
+[8.877550] (-) TimerEvent: {}
+[8.978089] (-) TimerEvent: {}
+[9.078671] (-) TimerEvent: {}
+[9.180065] (-) TimerEvent: {}
+[9.280349] (-) TimerEvent: {}
+[9.380826] (-) TimerEvent: {}
+[9.484205] (-) TimerEvent: {}
+[9.584599] (-) TimerEvent: {}
+[9.679626] (antidrone_turret) StdoutLine: {'line': b'[  7%] \x1b[32mBuilding C object CMakeFiles/antidrone_turret__rosidl_generator_c.dir/rosidl_generator_c/antidrone_turret/msg/detail/target__description.c.o\x1b[0m\n'}
+[9.684683] (-) TimerEvent: {}
+[9.750422] (antidrone_turret) StdoutLine: {'line': b'[  8%] \x1b[32mBuilding C object CMakeFiles/antidrone_turret__rosidl_generator_c.dir/rosidl_generator_c/antidrone_turret/msg/detail/target__functions.c.o\x1b[0m\n'}
+[9.784767] (-) TimerEvent: {}
+[9.830197] (antidrone_turret) StdoutLine: {'line': b'[  9%] \x1b[32mBuilding C object CMakeFiles/antidrone_turret__rosidl_generator_c.dir/rosidl_generator_c/antidrone_turret/msg/detail/target__type_support.c.o\x1b[0m\n'}
+[9.881688] (antidrone_turret) StdoutLine: {'line': b'[ 10%] \x1b[32mBuilding C object CMakeFiles/antidrone_turret__rosidl_generator_c.dir/rosidl_generator_c/antidrone_turret/msg/detail/actuator_status__description.c.o\x1b[0m\n'}
+[9.884876] (-) TimerEvent: {}
+[9.971871] (antidrone_turret) StdoutLine: {'line': b'[ 11%] \x1b[32mBuilding C object CMakeFiles/antidrone_turret__rosidl_generator_c.dir/rosidl_generator_c/antidrone_turret/msg/detail/actuator_status__functions.c.o\x1b[0m\n'}
+[9.985007] (-) TimerEvent: {}
+[10.085752] (-) TimerEvent: {}
+[10.111107] (antidrone_turret) StdoutLine: {'line': b'[ 12%] \x1b[32mBuilding C object CMakeFiles/antidrone_turret__rosidl_generator_c.dir/rosidl_generator_c/antidrone_turret/msg/detail/actuator_status__type_support.c.o\x1b[0m\n'}
+[10.177820] (antidrone_turret) StdoutLine: {'line': b'[ 13%] \x1b[32mBuilding C object CMakeFiles/antidrone_turret__rosidl_generator_c.dir/rosidl_generator_c/antidrone_turret/msg/detail/gimbal_command__description.c.o\x1b[0m\n'}
+[10.185797] (-) TimerEvent: {}
+[10.246409] (antidrone_turret) StdoutLine: {'line': b'[ 14%] \x1b[32mBuilding C object CMakeFiles/antidrone_turret__rosidl_generator_c.dir/rosidl_generator_c/antidrone_turret/msg/detail/gimbal_command__functions.c.o\x1b[0m\n'}
+[10.285859] (-) TimerEvent: {}
+[10.350877] (antidrone_turret) StdoutLine: {'line': b'[ 15%] \x1b[32mBuilding C object CMakeFiles/antidrone_turret__rosidl_generator_c.dir/rosidl_generator_c/antidrone_turret/msg/detail/gimbal_command__type_support.c.o\x1b[0m\n'}
+[10.385962] (-) TimerEvent: {}
+[10.411193] (antidrone_turret) StdoutLine: {'line': b'[ 16%] \x1b[32mBuilding C object CMakeFiles/antidrone_turret__rosidl_generator_c.dir/rosidl_generator_c/antidrone_turret/msg/detail/servo_command__description.c.o\x1b[0m\n'}
+[10.473612] (antidrone_turret) StdoutLine: {'line': b'[ 17%] \x1b[32mBuilding C object CMakeFiles/antidrone_turret__rosidl_generator_c.dir/rosidl_generator_c/antidrone_turret/msg/detail/servo_command__functions.c.o\x1b[0m\n'}
+[10.486082] (-) TimerEvent: {}
+[10.553707] (antidrone_turret) StdoutLine: {'line': b'[ 18%] \x1b[32mBuilding C object CMakeFiles/antidrone_turret__rosidl_generator_c.dir/rosidl_generator_c/antidrone_turret/msg/detail/servo_command__type_support.c.o\x1b[0m\n'}
+[10.586194] (-) TimerEvent: {}
+[10.610793] (antidrone_turret) StdoutLine: {'line': b'[ 19%] \x1b[32mBuilding C object CMakeFiles/antidrone_turret__rosidl_generator_c.dir/rosidl_generator_c/antidrone_turret/msg/detail/turret_status__description.c.o\x1b[0m\n'}
+[10.673157] (antidrone_turret) StdoutLine: {'line': b'[ 20%] \x1b[32mBuilding C object CMakeFiles/antidrone_turret__rosidl_generator_c.dir/rosidl_generator_c/antidrone_turret/msg/detail/turret_status__functions.c.o\x1b[0m\n'}
+[10.686313] (-) TimerEvent: {}
+[10.773156] (antidrone_turret) StdoutLine: {'line': b'[ 21%] \x1b[32mBuilding C object CMakeFiles/antidrone_turret__rosidl_generator_c.dir/rosidl_generator_c/antidrone_turret/msg/detail/turret_status__type_support.c.o\x1b[0m\n'}
+[10.786395] (-) TimerEvent: {}
+[10.853272] (antidrone_turret) StdoutLine: {'line': b'[ 22%] \x1b[32mBuilding C object CMakeFiles/antidrone_turret__rosidl_generator_c.dir/rosidl_generator_c/antidrone_turret/srv/detail/trigger_actuator__description.c.o\x1b[0m\n'}
+[10.886511] (-) TimerEvent: {}
+[10.965654] (antidrone_turret) StdoutLine: {'line': b'[ 23%] \x1b[32mBuilding C object CMakeFiles/antidrone_turret__rosidl_generator_c.dir/rosidl_generator_c/antidrone_turret/srv/detail/trigger_actuator__functions.c.o\x1b[0m\n'}
+[10.986777] (-) TimerEvent: {}
+[11.087248] (-) TimerEvent: {}
+[11.187772] (-) TimerEvent: {}
+[11.239947] (antidrone_turret) StdoutLine: {'line': b'[ 24%] \x1b[32mBuilding C object CMakeFiles/antidrone_turret__rosidl_generator_c.dir/rosidl_generator_c/antidrone_turret/srv/detail/trigger_actuator__type_support.c.o\x1b[0m\n'}
+[11.292307] (-) TimerEvent: {}
+[11.343097] (antidrone_turret) StdoutLine: {'line': b'[ 25%] \x1b[32m\x1b[1mLinking C shared library libantidrone_turret__rosidl_generator_c.so\x1b[0m\n'}
+[11.392425] (-) TimerEvent: {}
+[11.436725] (antidrone_turret) StdoutLine: {'line': b'[ 25%] Built target antidrone_turret__rosidl_generator_c\n'}
+[11.479940] (antidrone_turret) StdoutLine: {'line': b'[ 26%] \x1b[34m\x1b[1mGenerating C++ code for ROS interfaces\x1b[0m\n'}
+[11.492517] (-) TimerEvent: {}
+[11.593257] (-) TimerEvent: {}
+[11.694885] (-) TimerEvent: {}
+[11.800185] (-) TimerEvent: {}
+[11.900867] (-) TimerEvent: {}
+[12.001281] (-) TimerEvent: {}
+[12.101684] (-) TimerEvent: {}
+[12.202192] (-) TimerEvent: {}
+[12.302904] (-) TimerEvent: {}
+[12.404511] (-) TimerEvent: {}
+[12.506005] (-) TimerEvent: {}
+[12.607389] (-) TimerEvent: {}
+[12.707684] (-) TimerEvent: {}
+[12.764047] (antidrone_turret) StdoutLine: {'line': b'[ 26%] Built target antidrone_turret__cpp\n'}
+[12.807798] (-) TimerEvent: {}
+[12.908394] (-) TimerEvent: {}
+[13.008859] (-) TimerEvent: {}
+[13.103907] (antidrone_turret) StdoutLine: {'line': b'running egg_info\n'}
+[13.105305] (antidrone_turret) StdoutLine: {'line': b'creating antidrone_turret.egg-info\n'}
+[13.108934] (-) TimerEvent: {}
+[13.136139] (antidrone_turret) StdoutLine: {'line': b'writing antidrone_turret.egg-info/PKG-INFO\n'}
+[13.137695] (antidrone_turret) StdoutLine: {'line': b'writing dependency_links to antidrone_turret.egg-info/dependency_links.txt\n'}
+[13.138573] (antidrone_turret) StdoutLine: {'line': b'writing top-level names to antidrone_turret.egg-info/top_level.txt\n'}
+[13.140425] (antidrone_turret) StdoutLine: {'line': b"writing manifest file 'antidrone_turret.egg-info/SOURCES.txt'\n"}
+[13.211979] (-) TimerEvent: {}
+[13.213648] (antidrone_turret) StdoutLine: {'line': b"reading manifest file 'antidrone_turret.egg-info/SOURCES.txt'\n"}
+[13.214807] (antidrone_turret) StdoutLine: {'line': b"writing manifest file 'antidrone_turret.egg-info/SOURCES.txt'\n"}
+[13.260822] (antidrone_turret) StdoutLine: {'line': b'[ 26%] Built target ament_cmake_python_build_antidrone_turret_egg\n'}
+[13.279736] (antidrone_turret) StdoutLine: {'line': b'[ 27%] \x1b[34m\x1b[1mGenerating C type support for eProsima Fast-RTPS\x1b[0m\n'}
+[13.313034] (-) TimerEvent: {}
+[13.413428] (-) TimerEvent: {}
+[13.514090] (-) TimerEvent: {}
+[13.616184] (-) TimerEvent: {}
+[13.720418] (-) TimerEvent: {}
+[13.820663] (-) TimerEvent: {}
+[13.920964] (-) TimerEvent: {}
+[14.021230] (-) TimerEvent: {}
+[14.134548] (-) TimerEvent: {}
+[14.235027] (-) TimerEvent: {}
+[14.335461] (-) TimerEvent: {}
+[14.435757] (-) TimerEvent: {}
+[14.482105] (antidrone_turret) StdoutLine: {'line': b'[ 28%] \x1b[32m\x1b[1mLinking CXX static library libgtest.a\x1b[0m\n'}
+[14.486477] (antidrone_turret) StdoutLine: {'line': b'[ 29%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/antidrone_turret/msg/detail/target__type_support_c.cpp.o\x1b[0m\n'}
+[14.535815] (-) TimerEvent: {}
+[14.615674] (antidrone_turret) StdoutLine: {'line': b'[ 29%] Built target gtest\n'}
+[14.631472] (antidrone_turret) StdoutLine: {'line': b'[ 30%] \x1b[34m\x1b[1mGenerating C introspection for ROS interfaces\x1b[0m\n'}
+[14.635930] (-) TimerEvent: {}
+[14.736310] (-) TimerEvent: {}
+[14.840310] (-) TimerEvent: {}
+[14.940611] (-) TimerEvent: {}
+[15.041198] (-) TimerEvent: {}
+[15.141443] (-) TimerEvent: {}
+[15.222122] (antidrone_turret) StdoutLine: {'line': b'[ 31%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/antidrone_turret/msg/detail/actuator_status__type_support_c.cpp.o\x1b[0m\n'}
+[15.241499] (-) TimerEvent: {}
+[15.341769] (-) TimerEvent: {}
+[15.442103] (-) TimerEvent: {}
+[15.477810] (antidrone_turret) StdoutLine: {'line': b'[ 32%] \x1b[32mBuilding C object CMakeFiles/antidrone_turret__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/antidrone_turret/msg/detail/target__type_support.c.o\x1b[0m\n'}
+[15.538846] (antidrone_turret) StdoutLine: {'line': b'[ 33%] \x1b[32mBuilding C object CMakeFiles/antidrone_turret__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/antidrone_turret/msg/detail/actuator_status__type_support.c.o\x1b[0m\n'}
+[15.543455] (-) TimerEvent: {}
+[15.622286] (antidrone_turret) StdoutLine: {'line': b'[ 34%] \x1b[32mBuilding C object CMakeFiles/antidrone_turret__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/antidrone_turret/msg/detail/gimbal_command__type_support.c.o\x1b[0m\n'}
+[15.643547] (-) TimerEvent: {}
+[15.729298] (antidrone_turret) StdoutLine: {'line': b'[ 35%] \x1b[32mBuilding C object CMakeFiles/antidrone_turret__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/antidrone_turret/msg/detail/servo_command__type_support.c.o\x1b[0m\n'}
+[15.743655] (-) TimerEvent: {}
+[15.795439] (antidrone_turret) StdoutLine: {'line': b'[ 36%] \x1b[32mBuilding C object CMakeFiles/antidrone_turret__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/antidrone_turret/msg/detail/turret_status__type_support.c.o\x1b[0m\n'}
+[15.843753] (-) TimerEvent: {}
+[15.862701] (antidrone_turret) StdoutLine: {'line': b'[ 37%] \x1b[32mBuilding C object CMakeFiles/antidrone_turret__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/antidrone_turret/srv/detail/trigger_actuator__type_support.c.o\x1b[0m\n'}
+[15.936118] (antidrone_turret) StdoutLine: {'line': b'[ 38%] \x1b[32m\x1b[1mLinking C shared library libantidrone_turret__rosidl_typesupport_introspection_c.so\x1b[0m\n'}
+[15.943859] (-) TimerEvent: {}
+[15.945487] (antidrone_turret) StdoutLine: {'line': b'[ 39%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/antidrone_turret/msg/detail/gimbal_command__type_support_c.cpp.o\x1b[0m\n'}
+[15.990725] (antidrone_turret) StdoutLine: {'line': b'[ 39%] Built target antidrone_turret__rosidl_typesupport_introspection_c\n'}
+[16.013000] (antidrone_turret) StdoutLine: {'line': b'[ 40%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/antidrone_turret/msg/detail/servo_command__type_support_c.cpp.o\x1b[0m\n'}
+[16.043951] (-) TimerEvent: {}
+[16.145944] (-) TimerEvent: {}
+[16.246280] (-) TimerEvent: {}
+[16.346594] (-) TimerEvent: {}
+[16.447218] (-) TimerEvent: {}
+[16.549469] (-) TimerEvent: {}
+[16.623230] (antidrone_turret) StdoutLine: {'line': b'[ 41%] \x1b[34m\x1b[1mGenerating C type support dispatch for ROS interfaces\x1b[0m\n'}
+[16.649532] (-) TimerEvent: {}
+[16.720759] (antidrone_turret) StdoutLine: {'line': b'[ 42%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/antidrone_turret/msg/detail/turret_status__type_support_c.cpp.o\x1b[0m\n'}
+[16.749588] (-) TimerEvent: {}
+[16.851378] (-) TimerEvent: {}
+[16.951727] (-) TimerEvent: {}
+[17.052843] (-) TimerEvent: {}
+[17.153106] (-) TimerEvent: {}
+[17.253963] (-) TimerEvent: {}
+[17.264604] (antidrone_turret) StdoutLine: {'line': b'[ 43%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_c.dir/rosidl_typesupport_c/antidrone_turret/msg/target__type_support.cpp.o\x1b[0m\n'}
+[17.335154] (antidrone_turret) StdoutLine: {'line': b'[ 44%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_c.dir/rosidl_typesupport_c/antidrone_turret/msg/actuator_status__type_support.cpp.o\x1b[0m\n'}
+[17.354065] (-) TimerEvent: {}
+[17.412003] (antidrone_turret) StdoutLine: {'line': b'[ 45%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_c.dir/rosidl_typesupport_c/antidrone_turret/msg/gimbal_command__type_support.cpp.o\x1b[0m\n'}
+[17.414482] (antidrone_turret) StdoutLine: {'line': b'[ 46%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/antidrone_turret/srv/detail/trigger_actuator__type_support_c.cpp.o\x1b[0m\n'}
+[17.454233] (-) TimerEvent: {}
+[17.484054] (antidrone_turret) StdoutLine: {'line': b'[ 47%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_c.dir/rosidl_typesupport_c/antidrone_turret/msg/servo_command__type_support.cpp.o\x1b[0m\n'}
+[17.545965] (antidrone_turret) StdoutLine: {'line': b'[ 48%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_c.dir/rosidl_typesupport_c/antidrone_turret/msg/turret_status__type_support.cpp.o\x1b[0m\n'}
+[17.554325] (-) TimerEvent: {}
+[17.612885] (antidrone_turret) StdoutLine: {'line': b'[ 49%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_c.dir/rosidl_typesupport_c/antidrone_turret/srv/trigger_actuator__type_support.cpp.o\x1b[0m\n'}
+[17.654430] (-) TimerEvent: {}
+[17.709198] (antidrone_turret) StdoutLine: {'line': b'[ 50%] \x1b[32m\x1b[1mLinking CXX shared library libantidrone_turret__rosidl_typesupport_c.so\x1b[0m\n'}
+[17.754539] (-) TimerEvent: {}
+[17.784979] (antidrone_turret) StdoutLine: {'line': b'[ 50%] Built target antidrone_turret__rosidl_typesupport_c\n'}
+[17.802375] (antidrone_turret) StdoutLine: {'line': b'[ 51%] \x1b[34m\x1b[1mGenerating C++ type support for eProsima Fast-RTPS\x1b[0m\n'}
+[17.854689] (-) TimerEvent: {}
+[17.955034] (-) TimerEvent: {}
+[18.055369] (-) TimerEvent: {}
+[18.155637] (-) TimerEvent: {}
+[18.256109] (-) TimerEvent: {}
+[18.314386] (antidrone_turret) StdoutLine: {'line': b'[ 52%] \x1b[32m\x1b[1mLinking CXX shared library libantidrone_turret__rosidl_typesupport_fastrtps_c.so\x1b[0m\n'}
+[18.356201] (-) TimerEvent: {}
+[18.399997] (antidrone_turret) StdoutLine: {'line': b'[ 52%] Built target antidrone_turret__rosidl_typesupport_fastrtps_c\n'}
+[18.415919] (antidrone_turret) StdoutLine: {'line': b'[ 53%] \x1b[34m\x1b[1mGenerating C++ introspection for ROS interfaces\x1b[0m\n'}
+[18.456292] (-) TimerEvent: {}
+[18.556543] (-) TimerEvent: {}
+[18.656910] (-) TimerEvent: {}
+[18.757284] (-) TimerEvent: {}
+[18.815976] (antidrone_turret) StdoutLine: {'line': b'[ 54%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/antidrone_turret/msg/detail/dds_fastrtps/target__type_support.cpp.o\x1b[0m\n'}
+[18.857508] (-) TimerEvent: {}
+[18.958395] (-) TimerEvent: {}
+[19.058821] (-) TimerEvent: {}
+[19.159295] (-) TimerEvent: {}
+[19.182731] (antidrone_turret) StdoutLine: {'line': b'[ 55%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/antidrone_turret/msg/detail/target__type_support.cpp.o\x1b[0m\n'}
+[19.259378] (-) TimerEvent: {}
+[19.359948] (-) TimerEvent: {}
+[19.460561] (-) TimerEvent: {}
+[19.467001] (antidrone_turret) StdoutLine: {'line': b'[ 56%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/antidrone_turret/msg/detail/dds_fastrtps/actuator_status__type_support.cpp.o\x1b[0m\n'}
+[19.560645] (-) TimerEvent: {}
+[19.652312] (antidrone_turret) StdoutLine: {'line': b'[ 57%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/antidrone_turret/msg/detail/actuator_status__type_support.cpp.o\x1b[0m\n'}
+[19.660738] (-) TimerEvent: {}
+[19.761155] (-) TimerEvent: {}
+[19.861660] (-) TimerEvent: {}
+[19.963653] (-) TimerEvent: {}
+[20.063990] (-) TimerEvent: {}
+[20.164590] (-) TimerEvent: {}
+[20.165633] (antidrone_turret) StdoutLine: {'line': b'[ 58%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/antidrone_turret/msg/detail/dds_fastrtps/gimbal_command__type_support.cpp.o\x1b[0m\n'}
+[20.184175] (antidrone_turret) StdoutLine: {'line': b'[ 59%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/antidrone_turret/msg/detail/gimbal_command__type_support.cpp.o\x1b[0m\n'}
+[20.266441] (-) TimerEvent: {}
+[20.366852] (-) TimerEvent: {}
+[20.467333] (-) TimerEvent: {}
+[20.567867] (-) TimerEvent: {}
+[20.648589] (antidrone_turret) StdoutLine: {'line': b'[ 60%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/antidrone_turret/msg/detail/servo_command__type_support.cpp.o\x1b[0m\n'}
+[20.667967] (-) TimerEvent: {}
+[20.769789] (-) TimerEvent: {}
+[20.870137] (-) TimerEvent: {}
+[20.875046] (antidrone_turret) StdoutLine: {'line': b'[ 61%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/antidrone_turret/msg/detail/dds_fastrtps/servo_command__type_support.cpp.o\x1b[0m\n'}
+[20.970246] (-) TimerEvent: {}
+[21.071890] (-) TimerEvent: {}
+[21.119433] (antidrone_turret) StdoutLine: {'line': b'[ 62%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/antidrone_turret/msg/detail/turret_status__type_support.cpp.o\x1b[0m\n'}
+[21.171963] (-) TimerEvent: {}
+[21.272254] (-) TimerEvent: {}
+[21.372588] (-) TimerEvent: {}
+[21.472864] (-) TimerEvent: {}
+[21.573156] (-) TimerEvent: {}
+[21.577468] (antidrone_turret) StdoutLine: {'line': b'[ 63%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/antidrone_turret/msg/detail/dds_fastrtps/turret_status__type_support.cpp.o\x1b[0m\n'}
+[21.619682] (antidrone_turret) StdoutLine: {'line': b'[ 64%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/antidrone_turret/srv/detail/trigger_actuator__type_support.cpp.o\x1b[0m\n'}
+[21.673221] (-) TimerEvent: {}
+[21.773646] (-) TimerEvent: {}
+[21.876395] (-) TimerEvent: {}
+[21.976957] (-) TimerEvent: {}
+[22.077911] (-) TimerEvent: {}
+[22.178417] (-) TimerEvent: {}
+[22.279344] (-) TimerEvent: {}
+[22.339997] (antidrone_turret) StdoutLine: {'line': b'[ 65%] \x1b[32m\x1b[1mLinking CXX shared library libantidrone_turret__rosidl_typesupport_introspection_cpp.so\x1b[0m\n'}
+[22.366699] (antidrone_turret) StdoutLine: {'line': b'[ 66%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/antidrone_turret/srv/detail/dds_fastrtps/trigger_actuator__type_support.cpp.o\x1b[0m\n'}
+[22.379533] (-) TimerEvent: {}
+[22.454887] (antidrone_turret) StdoutLine: {'line': b'[ 66%] Built target antidrone_turret__rosidl_typesupport_introspection_cpp\n'}
+[22.471903] (antidrone_turret) StdoutLine: {'line': b'[ 67%] \x1b[34m\x1b[1mGenerating C++ type support dispatch for ROS interfaces\x1b[0m\n'}
+[22.479626] (-) TimerEvent: {}
+[22.579940] (-) TimerEvent: {}
+[22.683460] (-) TimerEvent: {}
+[22.783954] (-) TimerEvent: {}
+[22.884600] (-) TimerEvent: {}
+[22.985368] (-) TimerEvent: {}
+[23.085727] (-) TimerEvent: {}
+[23.146688] (antidrone_turret) StdoutLine: {'line': b'[ 68%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/antidrone_turret/msg/target__type_support.cpp.o\x1b[0m\n'}
+[23.185808] (-) TimerEvent: {}
+[23.286149] (-) TimerEvent: {}
+[23.353968] (antidrone_turret) StdoutLine: {'line': b'[ 69%] \x1b[32m\x1b[1mLinking CXX shared library libantidrone_turret__rosidl_typesupport_fastrtps_cpp.so\x1b[0m\n'}
+[23.386211] (-) TimerEvent: {}
+[23.475521] (antidrone_turret) StdoutLine: {'line': b'[ 69%] Built target antidrone_turret__rosidl_typesupport_fastrtps_cpp\n'}
+[23.486289] (-) TimerEvent: {}
+[23.488384] (antidrone_turret) StdoutLine: {'line': b'[ 70%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/antidrone_turret/msg/actuator_status__type_support.cpp.o\x1b[0m\n'}
+[23.586412] (-) TimerEvent: {}
+[23.687146] (-) TimerEvent: {}
+[23.735647] (antidrone_turret) StdoutLine: {'line': b'[ 71%] \x1b[32mBuilding CXX object CMakeFiles/provided_logic_test.dir/test/provided_logic_test.cpp.o\x1b[0m\n'}
+[23.787413] (-) TimerEvent: {}
+[23.888898] (-) TimerEvent: {}
+[23.989841] (-) TimerEvent: {}
+[24.090269] (-) TimerEvent: {}
+[24.188047] (antidrone_turret) StdoutLine: {'line': b'[ 72%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/antidrone_turret/msg/gimbal_command__type_support.cpp.o\x1b[0m\n'}
+[24.190306] (-) TimerEvent: {}
+[24.290639] (-) TimerEvent: {}
+[24.392104] (-) TimerEvent: {}
+[24.492378] (-) TimerEvent: {}
+[24.596119] (-) TimerEvent: {}
+[24.696299] (antidrone_turret) StdoutLine: {'line': b'[ 73%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/antidrone_turret/msg/servo_command__type_support.cpp.o\x1b[0m\n'}
+[24.696539] (-) TimerEvent: {}
+[24.796759] (-) TimerEvent: {}
+[24.897347] (-) TimerEvent: {}
+[24.997733] (-) TimerEvent: {}
+[25.097992] (-) TimerEvent: {}
+[25.196896] (antidrone_turret) StdoutLine: {'line': b'[ 74%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/antidrone_turret/msg/turret_status__type_support.cpp.o\x1b[0m\n'}
+[25.198049] (-) TimerEvent: {}
+[25.298622] (-) TimerEvent: {}
+[25.398897] (-) TimerEvent: {}
+[25.500056] (-) TimerEvent: {}
+[25.600358] (-) TimerEvent: {}
+[25.660262] (antidrone_turret) StdoutLine: {'line': b'[ 75%] \x1b[32mBuilding CXX object CMakeFiles/antidrone_turret__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/antidrone_turret/srv/trigger_actuator__type_support.cpp.o\x1b[0m\n'}
+[25.700460] (-) TimerEvent: {}
+[25.801387] (-) TimerEvent: {}
+[25.904044] (-) TimerEvent: {}
+[26.004397] (-) TimerEvent: {}
+[26.104823] (-) TimerEvent: {}
+[26.208260] (-) TimerEvent: {}
+[26.294098] (antidrone_turret) StdoutLine: {'line': b'[ 76%] \x1b[32m\x1b[1mLinking CXX shared library libantidrone_turret__rosidl_typesupport_cpp.so\x1b[0m\n'}
+[26.308350] (-) TimerEvent: {}
+[26.408841] (-) TimerEvent: {}
+[26.414657] (antidrone_turret) StdoutLine: {'line': b'[ 76%] Built target antidrone_turret__rosidl_typesupport_cpp\n'}
+[26.451428] (antidrone_turret) StdoutLine: {'line': b'[ 76%] Built target antidrone_turret\n'}
+[26.509020] (-) TimerEvent: {}
+[26.512753] (antidrone_turret) StdoutLine: {'line': b'[ 77%] \x1b[32mBuilding CXX object CMakeFiles/target_track_publisher_node.dir/src/target_track_publisher_node.cpp.o\x1b[0m\n'}
+[26.609092] (-) TimerEvent: {}
+[26.709637] (-) TimerEvent: {}
+[26.720626] (antidrone_turret) StdoutLine: {'line': b'[ 78%] \x1b[32m\x1b[1mLinking CXX executable provided_logic_test\x1b[0m\n'}
+[26.809804] (-) TimerEvent: {}
+[26.910215] (-) TimerEvent: {}
+[26.956410] (antidrone_turret) StdoutLine: {'line': b'[ 78%] Built target provided_logic_test\n'}
+[26.990203] (antidrone_turret) StdoutLine: {'line': b'[ 78%] \x1b[32mBuilding CXX object CMakeFiles/actuator_node.dir/src/actuator_node.cpp.o\x1b[0m\n'}
+[27.010409] (-) TimerEvent: {}
+[27.110949] (-) TimerEvent: {}
+[27.211407] (-) TimerEvent: {}
+[27.311952] (-) TimerEvent: {}
+[27.416099] (-) TimerEvent: {}
+[27.516386] (-) TimerEvent: {}
+[27.616841] (-) TimerEvent: {}
+[27.717458] (-) TimerEvent: {}
+[27.817797] (-) TimerEvent: {}
+[27.918509] (-) TimerEvent: {}
+[28.024305] (-) TimerEvent: {}
+[28.124611] (-) TimerEvent: {}
+[28.224917] (-) TimerEvent: {}
+[28.325280] (-) TimerEvent: {}
+[28.425749] (-) TimerEvent: {}
+[28.526232] (-) TimerEvent: {}
+[28.626691] (-) TimerEvent: {}
+[28.728418] (-) TimerEvent: {}
+[28.828694] (-) TimerEvent: {}
+[28.929114] (-) TimerEvent: {}
+[29.032153] (-) TimerEvent: {}
+[29.132600] (-) TimerEvent: {}
+[29.232956] (-) TimerEvent: {}
+[29.333666] (-) TimerEvent: {}
+[29.436213] (-) TimerEvent: {}
+[29.536646] (-) TimerEvent: {}
+[29.636945] (-) TimerEvent: {}
+[29.737360] (-) TimerEvent: {}
+[29.840139] (-) TimerEvent: {}
+[29.940426] (-) TimerEvent: {}
+[30.040722] (-) TimerEvent: {}
+[30.143921] (-) TimerEvent: {}
+[30.244339] (-) TimerEvent: {}
+[30.344762] (-) TimerEvent: {}
+[30.445163] (-) TimerEvent: {}
+[30.545670] (-) TimerEvent: {}
+[30.646912] (-) TimerEvent: {}
+[30.747418] (-) TimerEvent: {}
+[30.847871] (-) TimerEvent: {}
+[30.949473] (-) TimerEvent: {}
+[31.050232] (-) TimerEvent: {}
+[31.152098] (-) TimerEvent: {}
+[31.252536] (-) TimerEvent: {}
+[31.352994] (-) TimerEvent: {}
+[31.456218] (-) TimerEvent: {}
+[31.556704] (-) TimerEvent: {}
+[31.656988] (-) TimerEvent: {}
+[31.757328] (-) TimerEvent: {}
+[31.860158] (-) TimerEvent: {}
+[31.960509] (-) TimerEvent: {}
+[32.060896] (-) TimerEvent: {}
+[32.163979] (-) TimerEvent: {}
+[32.264279] (-) TimerEvent: {}
+[32.364597] (-) TimerEvent: {}
+[32.465057] (-) TimerEvent: {}
+[32.565425] (-) TimerEvent: {}
+[32.670324] (-) TimerEvent: {}
+[32.770597] (-) TimerEvent: {}
+[32.870900] (-) TimerEvent: {}
+[32.971473] (-) TimerEvent: {}
+[33.071851] (-) TimerEvent: {}
+[33.172781] (-) TimerEvent: {}
+[33.273080] (-) TimerEvent: {}
+[33.375925] (-) TimerEvent: {}
+[33.478119] (-) TimerEvent: {}
+[33.583177] (-) TimerEvent: {}
+[33.695008] (-) TimerEvent: {}
+[33.795613] (-) TimerEvent: {}
+[33.896240] (-) TimerEvent: {}
+[33.996594] (-) TimerEvent: {}
+[34.096895] (-) TimerEvent: {}
+[34.199958] (-) TimerEvent: {}
+[34.300302] (-) TimerEvent: {}
+[34.400577] (-) TimerEvent: {}
+[34.500936] (-) TimerEvent: {}
+[34.601384] (-) TimerEvent: {}
+[34.701646] (-) TimerEvent: {}
+[34.801953] (-) TimerEvent: {}
+[34.902209] (-) TimerEvent: {}
+[35.003960] (-) TimerEvent: {}
+[35.104260] (-) TimerEvent: {}
+[35.205445] (-) TimerEvent: {}
+[35.305743] (-) TimerEvent: {}
+[35.406134] (-) TimerEvent: {}
+[35.506458] (-) TimerEvent: {}
+[35.608172] (-) TimerEvent: {}
+[35.708490] (-) TimerEvent: {}
+[35.808756] (-) TimerEvent: {}
+[35.909298] (-) TimerEvent: {}
+[36.012188] (-) TimerEvent: {}
+[36.112525] (-) TimerEvent: {}
+[36.212800] (-) TimerEvent: {}
+[36.313093] (-) TimerEvent: {}
+[36.413760] (-) TimerEvent: {}
+[36.514367] (-) TimerEvent: {}
+[36.618196] (-) TimerEvent: {}
+[36.718548] (-) TimerEvent: {}
+[36.818844] (-) TimerEvent: {}
+[36.919272] (-) TimerEvent: {}
+[37.021748] (-) TimerEvent: {}
+[37.122018] (-) TimerEvent: {}
+[37.222192] (antidrone_turret) StdoutLine: {'line': b'[ 79%] \x1b[32m\x1b[1mLinking CXX executable actuator_node\x1b[0m\n'}
+[37.222703] (-) TimerEvent: {}
+[37.323414] (-) TimerEvent: {}
+[37.423849] (-) TimerEvent: {}
+[37.524347] (-) TimerEvent: {}
+[37.608688] (antidrone_turret) StdoutLine: {'line': b'[ 79%] Built target actuator_node\n'}
+[37.627964] (-) TimerEvent: {}
+[37.639510] (antidrone_turret) StdoutLine: {'line': b'[ 80%] \x1b[32mBuilding CXX object CMakeFiles/turret_controller_node.dir/src/turret_controller_node.cpp.o\x1b[0m\n'}
+[37.728141] (-) TimerEvent: {}
+[37.828667] (-) TimerEvent: {}
+[37.929524] (-) TimerEvent: {}
+[38.029756] (-) TimerEvent: {}
+[38.132219] (-) TimerEvent: {}
+[38.232639] (-) TimerEvent: {}
+[38.333085] (-) TimerEvent: {}
+[38.433605] (-) TimerEvent: {}
+[38.536264] (-) TimerEvent: {}
+[38.636820] (-) TimerEvent: {}
+[38.739959] (-) TimerEvent: {}
+[38.840247] (-) TimerEvent: {}
+[38.940828] (-) TimerEvent: {}
+[39.041369] (-) TimerEvent: {}
+[39.141716] (-) TimerEvent: {}
+[39.244341] (-) TimerEvent: {}
+[39.344893] (-) TimerEvent: {}
+[39.445561] (-) TimerEvent: {}
+[39.545896] (-) TimerEvent: {}
+[39.647948] (-) TimerEvent: {}
+[39.751945] (-) TimerEvent: {}
+[39.852248] (-) TimerEvent: {}
+[39.952886] (-) TimerEvent: {}
+[40.053218] (-) TimerEvent: {}
+[40.153719] (-) TimerEvent: {}
+[40.254305] (-) TimerEvent: {}
+[40.354666] (-) TimerEvent: {}
+[40.455293] (-) TimerEvent: {}
+[40.558331] (-) TimerEvent: {}
+[40.662949] (-) TimerEvent: {}
+[40.765223] (-) TimerEvent: {}
+[40.867457] (-) TimerEvent: {}
+[40.968501] (-) TimerEvent: {}
+[41.072249] (-) TimerEvent: {}
+[41.172572] (-) TimerEvent: {}
+[41.272843] (-) TimerEvent: {}
+[41.376117] (-) TimerEvent: {}
+[41.476693] (-) TimerEvent: {}
+[41.577250] (-) TimerEvent: {}
+[41.680496] (-) TimerEvent: {}
+[41.780829] (-) TimerEvent: {}
+[41.881351] (-) TimerEvent: {}
+[41.982001] (-) TimerEvent: {}
+[42.083986] (-) TimerEvent: {}
+[42.184383] (-) TimerEvent: {}
+[42.287956] (-) TimerEvent: {}
+[42.388244] (-) TimerEvent: {}
+[42.488657] (-) TimerEvent: {}
+[42.542993] (antidrone_turret) StdoutLine: {'line': b'[ 81%] \x1b[32m\x1b[1mLinking CXX executable target_track_publisher_node\x1b[0m\n'}
+[42.588695] (-) TimerEvent: {}
+[42.692455] (-) TimerEvent: {}
+[42.786009] (antidrone_turret) StderrLine: {'line': b'\x1b[01m\x1b[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:118:44:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[KTurretStatus\x1b[m\x1b[K\xe2\x80\x99 is not a member of \xe2\x80\x98\x1b[01m\x1b[Kantidrone_turret::msg\x1b[m\x1b[K\xe2\x80\x99; did you mean \xe2\x80\x98\x1b[01m\x1b[Kturret_logic::TurretStatus\x1b[m\x1b[K\xe2\x80\x99?\n'}
+[42.786447] (antidrone_turret) StderrLine: {'line': b'  118 |   rclcpp::Publisher<antidrone_turret::msg::\x1b[01;31m\x1b[KTurretStatus\x1b[m\x1b[K>::SharedPtr turret_status_pub_;\n'}
+[42.786593] (antidrone_turret) StderrLine: {'line': b'      |                                            \x1b[01;31m\x1b[K^~~~~~~~~~~~\x1b[m\x1b[K\n'}
+[42.786678] (antidrone_turret) StderrLine: {'line': b'In file included from \x1b[01m\x1b[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:2\x1b[m\x1b[K:\n'}
+[42.786755] (antidrone_turret) StderrLine: {'line': b'\x1b[01m\x1b[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/include/antidrone_turret/turret_logic.hpp:70:8:\x1b[m\x1b[K \x1b[01;36m\x1b[Knote: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kturret_logic::TurretStatus\x1b[m\x1b[K\xe2\x80\x99 declared here\n'}
+[42.786839] (antidrone_turret) StderrLine: {'line': b'   70 | struct \x1b[01;36m\x1b[KTurretStatus\x1b[m\x1b[K {\n'}
+[42.786915] (antidrone_turret) StderrLine: {'line': b'      |        \x1b[01;36m\x1b[K^~~~~~~~~~~~\x1b[m\x1b[K\n'}
+[42.787470] (antidrone_turret) StderrLine: {'line': b'\x1b[01m\x1b[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:118:56:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Ktemplate argument 1 is invalid\n'}
+[42.787650] (antidrone_turret) StderrLine: {'line': b'  118 |   rclcpp::Publisher<antidrone_turret::msg::TurretStatus\x1b[01;31m\x1b[K>\x1b[m\x1b[K::SharedPtr turret_status_pub_;\n'}
+[42.787734] (antidrone_turret) StderrLine: {'line': b'      |                                                        \x1b[01;31m\x1b[K^\x1b[m\x1b[K\n'}
+[42.787808] (antidrone_turret) StderrLine: {'line': b'\x1b[01m\x1b[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:118:59:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kexpected \xe2\x80\x98\x1b[01m\x1b[K;\x1b[m\x1b[K\xe2\x80\x99 at end of member declaration\n'}
+[42.787914] (antidrone_turret) StderrLine: {'line': b'  118 |   rclcpp::Publisher<antidrone_turret::msg::TurretStatus>::\x1b[01;31m\x1b[KSharedPtr\x1b[m\x1b[K turret_status_pub_;\n'}
+[42.787989] (antidrone_turret) StderrLine: {'line': b'      |                                                           \x1b[01;31m\x1b[K^~~~~~~~~\x1b[m\x1b[K\n'}
+[42.788094] (antidrone_turret) StderrLine: {'line': b'      |                                                                    \x1b[32m\x1b[K;\x1b[m\x1b[K\n'}
+[42.792535] (-) TimerEvent: {}
+[42.794403] (antidrone_turret) StderrLine: {'line': b'\x1b[01m\x1b[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:118:69:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kturret_status_pub_\x1b[m\x1b[K\xe2\x80\x99 does not name a type\n'}
+[42.794591] (antidrone_turret) StderrLine: {'line': b'  118 |   rclcpp::Publisher<antidrone_turret::msg::TurretStatus>::SharedPtr \x1b[01;31m\x1b[Kturret_status_pub_\x1b[m\x1b[K;\n'}
+[42.794673] (antidrone_turret) StderrLine: {'line': b'      |                                                                     \x1b[01;31m\x1b[K^~~~~~~~~~~~~~~~~~\x1b[m\x1b[K\n'}
+[42.892625] (-) TimerEvent: {}
+[42.927329] (antidrone_turret) StderrLine: {'line': b'\x1b[01m\x1b[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:\x1b[m\x1b[K In constructor \xe2\x80\x98\x1b[01m\x1b[KTurretControllerNode::\x1b[01;32m\x1b[KTurretControllerNode\x1b[m\x1b[K()\x1b[m\x1b[K\xe2\x80\x99:\n'}
+[42.927551] (antidrone_turret) StderrLine: {'line': b'\x1b[01m\x1b[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:32:5:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kturret_status_pub_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[42.927635] (antidrone_turret) StderrLine: {'line': b'   32 |     \x1b[01;31m\x1b[Kturret_status_pub_\x1b[m\x1b[K = this->create_publisher<antidrone_turret::msg::TurretStatus>("/turret/status", 10);\n'}
+[42.927711] (antidrone_turret) StderrLine: {'line': b'      |     \x1b[01;31m\x1b[K^~~~~~~~~~~~~~~~~~\x1b[m\x1b[K\n'}
+[42.929860] (antidrone_turret) StderrLine: {'line': b'\x1b[01m\x1b[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:32:72:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[KTurretStatus\x1b[m\x1b[K\xe2\x80\x99 is not a member of \xe2\x80\x98\x1b[01m\x1b[Kantidrone_turret::msg\x1b[m\x1b[K\xe2\x80\x99; did you mean \xe2\x80\x98\x1b[01m\x1b[Kturret_logic::TurretStatus\x1b[m\x1b[K\xe2\x80\x99?\n'}
+[42.930145] (antidrone_turret) StderrLine: {'line': b'   32 |     turret_status_pub_ = this->create_publisher<antidrone_turret::msg::\x1b[01;31m\x1b[KTurretStatus\x1b[m\x1b[K>("/turret/status", 10);\n'}
+[42.930323] (antidrone_turret) StderrLine: {'line': b'      |                                                                        \x1b[01;31m\x1b[K^~~~~~~~~~~~\x1b[m\x1b[K\n'}
+[42.930506] (antidrone_turret) StderrLine: {'line': b'\x1b[01m\x1b[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/include/antidrone_turret/turret_logic.hpp:70:8:\x1b[m\x1b[K \x1b[01;36m\x1b[Knote: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kturret_logic::TurretStatus\x1b[m\x1b[K\xe2\x80\x99 declared here\n'}
+[42.930622] (antidrone_turret) StderrLine: {'line': b'   70 | struct \x1b[01;36m\x1b[KTurretStatus\x1b[m\x1b[K {\n'}
+[42.930766] (antidrone_turret) StderrLine: {'line': b'      |        \x1b[01;36m\x1b[K^~~~~~~~~~~~\x1b[m\x1b[K\n'}
+[42.930858] (antidrone_turret) StderrLine: {'line': b'\x1b[01m\x1b[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:32:85:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kno matching function for call to \xe2\x80\x98\x1b[01m\x1b[KTurretControllerNode::create_publisher<<expression error> >(const char [15], int)\x1b[m\x1b[K\xe2\x80\x99\n'}
+[42.931028] (antidrone_turret) StderrLine: {'line': b'   32 |     turret_status_pub_ = \x1b[01;31m\x1b[Kthis->create_publisher<antidrone_turret::msg::TurretStatus>("/turret/status", 10)\x1b[m\x1b[K;\n'}
+[42.931135] (antidrone_turret) StderrLine: {'line': b'      |                          \x1b[01;31m\x1b[K~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~\x1b[m\x1b[K\n'}
+[42.931210] (antidrone_turret) StderrLine: {'line': b'In file included from \x1b[01m\x1b[K/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:1663\x1b[m\x1b[K,\n'}
+[42.931281] (antidrone_turret) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/jazzy/include/rclcpp/rclcpp/executors/single_threaded_executor.hpp:28\x1b[m\x1b[K,\n'}
+[42.931352] (antidrone_turret) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/jazzy/include/rclcpp/rclcpp/executors.hpp:22\x1b[m\x1b[K,\n'}
+[42.931424] (antidrone_turret) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/jazzy/include/rclcpp/rclcpp/rclcpp.hpp:176\x1b[m\x1b[K,\n'}
+[42.931493] (antidrone_turret) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:1\x1b[m\x1b[K:\n'}
+[42.931562] (antidrone_turret) StderrLine: {'line': b'\x1b[01m\x1b[K/opt/ros/jazzy/include/rclcpp/rclcpp/node_impl.hpp:73:1:\x1b[m\x1b[K \x1b[01;36m\x1b[Knote: \x1b[m\x1b[Kcandidate: \xe2\x80\x98\x1b[01m\x1b[Ktemplate<class MessageT, class AllocatorT, class PublisherT> std::shared_ptr<PublisherT> rclcpp::Node::\x1b[01;32m\x1b[Kcreate_publisher\x1b[m\x1b[K(const std::string&, const rclcpp::QoS&, const rclcpp::PublisherOptionsWithAllocator<AllocatorT>&)\x1b[m\x1b[K\xe2\x80\x99\n'}
+[42.931642] (antidrone_turret) StderrLine: {'line': b'   73 | \x1b[01;36m\x1b[KNode\x1b[m\x1b[K::create_publisher(\n'}
+[42.931800] (antidrone_turret) StderrLine: {'line': b'      | \x1b[01;36m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[42.936121] (antidrone_turret) StderrLine: {'line': b'\x1b[01m\x1b[K/opt/ros/jazzy/include/rclcpp/rclcpp/node_impl.hpp:73:1:\x1b[m\x1b[K \x1b[01;36m\x1b[Knote: \x1b[m\x1b[K  template argument deduction/substitution failed:\n'}
+[42.936233] (antidrone_turret) StderrLine: {'line': b'\x1b[01m\x1b[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:32:85:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Ktemplate argument 1 is invalid\n'}
+[42.936313] (antidrone_turret) StderrLine: {'line': b'   32 |     turret_status_pub_ = \x1b[01;31m\x1b[Kthis->create_publisher<antidrone_turret::msg::TurretStatus>("/turret/status", 10)\x1b[m\x1b[K;\n'}
+[42.936387] (antidrone_turret) StderrLine: {'line': b'      |                          \x1b[01;31m\x1b[K~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~\x1b[m\x1b[K\n'}
+[42.944813] (antidrone_turret) StderrLine: {'line': b'\x1b[01m\x1b[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:\x1b[m\x1b[K In member function \xe2\x80\x98\x1b[01m\x1b[Kvoid TurretControllerNode::\x1b[01;32m\x1b[Kstatus_callback\x1b[m\x1b[K(antidrone_turret::msg::ActuatorStatus_<std::allocator<void> >::SharedPtr)\x1b[m\x1b[K\xe2\x80\x99:\n'}
+[42.945029] (antidrone_turret) StderrLine: {'line': b'\x1b[01m\x1b[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:41:5:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kcurrent_actuator_status_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope; did you mean \xe2\x80\x98\x1b[01m\x1b[Kcurrent_actuator_state_\x1b[m\x1b[K\xe2\x80\x99?\n'}
+[42.945119] (antidrone_turret) StderrLine: {'line': b'   41 |     \x1b[01;31m\x1b[Kcurrent_actuator_status_\x1b[m\x1b[K = static_cast<ActuatorStatus>(msg->state);\n'}
+[42.945196] (antidrone_turret) StderrLine: {'line': b'      |     \x1b[01;31m\x1b[K^~~~~~~~~~~~~~~~~~~~~~~~\x1b[m\x1b[K\n'}
+[42.945270] (antidrone_turret) StderrLine: {'line': b'      |     \x1b[32m\x1b[Kcurrent_actuator_state_\x1b[m\x1b[K\n'}
+[42.950967] (antidrone_turret) StderrLine: {'line': b'\x1b[01m\x1b[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:41:44:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[KActuatorStatus\x1b[m\x1b[K\xe2\x80\x99 does not name a type\n'}
+[42.951303] (antidrone_turret) StderrLine: {'line': b'   41 |     current_actuator_status_ = static_cast<\x1b[01;31m\x1b[KActuatorStatus\x1b[m\x1b[K>(msg->state);\n'}
+[42.951490] (antidrone_turret) StderrLine: {'line': b'      |                                            \x1b[01;31m\x1b[K^~~~~~~~~~~~~~\x1b[m\x1b[K\n'}
+[42.951617] (antidrone_turret) StderrLine: {'line': b'\x1b[01m\x1b[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:\x1b[m\x1b[K In member function \xe2\x80\x98\x1b[01m\x1b[Kvoid TurretControllerNode::\x1b[01;32m\x1b[Kprocess\x1b[m\x1b[K(antidrone_turret::msg::Target_<std::allocator<void> >::SharedPtr)\x1b[m\x1b[K\xe2\x80\x99:\n'}
+[42.951705] (antidrone_turret) StderrLine: {'line': b'\x1b[01m\x1b[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:58:28:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[KTurretStatus\x1b[m\x1b[K\xe2\x80\x99 is not a member of \xe2\x80\x98\x1b[01m\x1b[Kantidrone_turret::msg\x1b[m\x1b[K\xe2\x80\x99; did you mean \xe2\x80\x98\x1b[01m\x1b[Kturret_logic::TurretStatus\x1b[m\x1b[K\xe2\x80\x99?\n'}
+[42.951777] (antidrone_turret) StderrLine: {'line': b'   58 |     antidrone_turret::msg::\x1b[01;31m\x1b[KTurretStatus\x1b[m\x1b[K status_msg;\n'}
+[42.951859] (antidrone_turret) StderrLine: {'line': b'      |                            \x1b[01;31m\x1b[K^~~~~~~~~~~~\x1b[m\x1b[K\n'}
+[42.952402] (antidrone_turret) StderrLine: {'line': b'\x1b[01m\x1b[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/include/antidrone_turret/turret_logic.hpp:70:8:\x1b[m\x1b[K \x1b[01;36m\x1b[Knote: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kturret_logic::TurretStatus\x1b[m\x1b[K\xe2\x80\x99 declared here\n'}
+[42.954553] (antidrone_turret) StderrLine: {'line': b'   70 | struct \x1b[01;36m\x1b[KTurretStatus\x1b[m\x1b[K {\n'}
+[42.954654] (antidrone_turret) StderrLine: {'line': b'      |        \x1b[01;36m\x1b[K^~~~~~~~~~~~\x1b[m\x1b[K\n'}
+[42.965741] (antidrone_turret) StderrLine: {'line': b'\x1b[01m\x1b[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:59:5:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kstatus_msg\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[42.965991] (antidrone_turret) StderrLine: {'line': b'   59 |     \x1b[01;31m\x1b[Kstatus_msg\x1b[m\x1b[K.target_state = out.status.target_state;\n'}
+[42.966083] (antidrone_turret) StderrLine: {'line': b'      |     \x1b[01;31m\x1b[K^~~~~~~~~~\x1b[m\x1b[K\n'}
+[42.998989] (antidrone_turret) StderrLine: {'line': b'\x1b[01m\x1b[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:64:5:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kturret_status_pub_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[42.999179] (-) TimerEvent: {}
+[42.999302] (antidrone_turret) StderrLine: {'line': b'   64 |     \x1b[01;31m\x1b[Kturret_status_pub_\x1b[m\x1b[K->publish(status_msg);\n'}
+[42.999398] (antidrone_turret) StderrLine: {'line': b'      |     \x1b[01;31m\x1b[K^~~~~~~~~~~~~~~~~~\x1b[m\x1b[K\n'}
+[43.080112] (antidrone_turret) StdoutLine: {'line': b'[ 81%] Built target target_track_publisher_node\n'}
+[43.099285] (-) TimerEvent: {}
+[43.123703] (antidrone_turret) StdoutLine: {'line': b'[ 82%] \x1b[32mBuilding CXX object CMakeFiles/gimbal_driver_node.dir/src/gimbal_driver_node.cpp.o\x1b[0m\n'}
+[43.199514] (-) TimerEvent: {}
+[43.300825] (-) TimerEvent: {}
+[43.404632] (-) TimerEvent: {}
+[43.505862] (-) TimerEvent: {}
+[43.608176] (-) TimerEvent: {}
+[43.708436] (-) TimerEvent: {}
+[43.809658] (-) TimerEvent: {}
+[43.910008] (-) TimerEvent: {}
+[44.010476] (-) TimerEvent: {}
+[44.111195] (-) TimerEvent: {}
+[44.215928] (-) TimerEvent: {}
+[44.316262] (-) TimerEvent: {}
+[44.417037] (-) TimerEvent: {}
+[44.517466] (-) TimerEvent: {}
+[44.619978] (-) TimerEvent: {}
+[44.720362] (-) TimerEvent: {}
+[44.824010] (-) TimerEvent: {}
+[44.924387] (-) TimerEvent: {}
+[45.024682] (-) TimerEvent: {}
+[45.125239] (-) TimerEvent: {}
+[45.225795] (-) TimerEvent: {}
+[45.327827] (-) TimerEvent: {}
+[45.428260] (-) TimerEvent: {}
+[45.528762] (-) TimerEvent: {}
+[45.629370] (-) TimerEvent: {}
+[45.729927] (-) TimerEvent: {}
+[45.835958] (-) TimerEvent: {}
+[45.936331] (-) TimerEvent: {}
+[46.036882] (-) TimerEvent: {}
+[46.139164] (-) TimerEvent: {}
+[46.240331] (-) TimerEvent: {}
+[46.343780] (-) TimerEvent: {}
+[46.444136] (-) TimerEvent: {}
+[46.544675] (-) TimerEvent: {}
+[46.645142] (-) TimerEvent: {}
+[46.746501] (-) TimerEvent: {}
+[46.847406] (-) TimerEvent: {}
+[46.948077] (-) TimerEvent: {}
+[47.048831] (-) TimerEvent: {}
+[47.152074] (-) TimerEvent: {}
+[47.252359] (-) TimerEvent: {}
+[47.355948] (-) TimerEvent: {}
+[47.456270] (-) TimerEvent: {}
+[47.556863] (-) TimerEvent: {}
+[47.657216] (-) TimerEvent: {}
+[47.757686] (-) TimerEvent: {}
+[47.858516] (-) TimerEvent: {}
+[47.958917] (-) TimerEvent: {}
+[48.059496] (-) TimerEvent: {}
+[48.164140] (-) TimerEvent: {}
+[48.264488] (-) TimerEvent: {}
+[48.365074] (-) TimerEvent: {}
+[48.471951] (-) TimerEvent: {}
+[48.572412] (-) TimerEvent: {}
+[48.672849] (-) TimerEvent: {}
+[48.776609] (-) TimerEvent: {}
+[48.879072] (-) TimerEvent: {}
+[48.980004] (-) TimerEvent: {}
+[49.082012] (-) TimerEvent: {}
+[49.182872] (-) TimerEvent: {}
+[49.285007] (-) TimerEvent: {}
+[49.387996] (-) TimerEvent: {}
+[49.496679] (-) TimerEvent: {}
+[49.598153] (-) TimerEvent: {}
+[49.700245] (-) TimerEvent: {}
+[49.800736] (-) TimerEvent: {}
+[49.901339] (-) TimerEvent: {}
+[50.001939] (-) TimerEvent: {}
+[50.102272] (-) TimerEvent: {}
+[50.203217] (-) TimerEvent: {}
+[50.315952] (-) TimerEvent: {}
+[50.419962] (-) TimerEvent: {}
+[50.520420] (-) TimerEvent: {}
+[50.625189] (-) TimerEvent: {}
+[50.735004] (-) TimerEvent: {}
+[50.839956] (-) TimerEvent: {}
+[50.940263] (-) TimerEvent: {}
+[51.040585] (-) TimerEvent: {}
+[51.140967] (-) TimerEvent: {}
+[51.220873] (antidrone_turret) StderrLine: {'line': b'gmake[2]: *** [CMakeFiles/turret_controller_node.dir/build.make:76: CMakeFiles/turret_controller_node.dir/src/turret_controller_node.cpp.o] Error 1\n'}
+[51.224280] (antidrone_turret) StderrLine: {'line': b'gmake[1]: *** [CMakeFiles/Makefile2:729: CMakeFiles/turret_controller_node.dir/all] Error 2\n'}
+[51.224558] (antidrone_turret) StderrLine: {'line': b'gmake[1]: *** Waiting for unfinished jobs....\n'}
+[51.241049] (-) TimerEvent: {}
+[51.341500] (-) TimerEvent: {}
+[51.441894] (-) TimerEvent: {}
+[51.542289] (-) TimerEvent: {}
+[51.642660] (-) TimerEvent: {}
+[51.743169] (-) TimerEvent: {}
+[51.843619] (-) TimerEvent: {}
+[51.945695] (-) TimerEvent: {}
+[52.045983] (-) TimerEvent: {}
+[52.146431] (-) TimerEvent: {}
+[52.246885] (-) TimerEvent: {}
+[52.347287] (-) TimerEvent: {}
+[52.447903] (-) TimerEvent: {}
+[52.548419] (-) TimerEvent: {}
+[52.650526] (-) TimerEvent: {}
+[52.750866] (-) TimerEvent: {}
+[52.851390] (-) TimerEvent: {}
+[52.953412] (-) TimerEvent: {}
+[53.053754] (-) TimerEvent: {}
+[53.154371] (-) TimerEvent: {}
+[53.255724] (-) TimerEvent: {}
+[53.356355] (-) TimerEvent: {}
+[53.456786] (-) TimerEvent: {}
+[53.557121] (-) TimerEvent: {}
+[53.657615] (-) TimerEvent: {}
+[53.758182] (-) TimerEvent: {}
+[53.858743] (-) TimerEvent: {}
+[53.959301] (-) TimerEvent: {}
+[54.059853] (-) TimerEvent: {}
+[54.160593] (-) TimerEvent: {}
+[54.261187] (-) TimerEvent: {}
+[54.361798] (-) TimerEvent: {}
+[54.462351] (-) TimerEvent: {}
+[54.562916] (-) TimerEvent: {}
+[54.663403] (-) TimerEvent: {}
+[54.768116] (-) TimerEvent: {}
+[54.874853] (-) TimerEvent: {}
+[54.975988] (-) TimerEvent: {}
+[55.076444] (-) TimerEvent: {}
+[55.177209] (-) TimerEvent: {}
+[55.277929] (-) TimerEvent: {}
+[55.378985] (-) TimerEvent: {}
+[55.481207] (-) TimerEvent: {}
+[55.592031] (-) TimerEvent: {}
+[55.693101] (-) TimerEvent: {}
+[55.794170] (-) TimerEvent: {}
+[55.894449] (-) TimerEvent: {}
+[55.994815] (-) TimerEvent: {}
+[56.095318] (-) TimerEvent: {}
+[56.195823] (-) TimerEvent: {}
+[56.296445] (-) TimerEvent: {}
+[56.396988] (-) TimerEvent: {}
+[56.497590] (-) TimerEvent: {}
+[56.598119] (-) TimerEvent: {}
+[56.698704] (-) TimerEvent: {}
+[56.799247] (-) TimerEvent: {}
+[56.899803] (-) TimerEvent: {}
+[57.000803] (-) TimerEvent: {}
+[57.104255] (-) TimerEvent: {}
+[57.204767] (-) TimerEvent: {}
+[57.305407] (-) TimerEvent: {}
+[57.405786] (-) TimerEvent: {}
+[57.506343] (-) TimerEvent: {}
+[57.606902] (-) TimerEvent: {}
+[57.707370] (-) TimerEvent: {}
+[57.807737] (-) TimerEvent: {}
+[57.908279] (-) TimerEvent: {}
+[58.008932] (-) TimerEvent: {}
+[58.109530] (-) TimerEvent: {}
+[58.210171] (-) TimerEvent: {}
+[58.310565] (-) TimerEvent: {}
+[58.340352] (antidrone_turret) StdoutLine: {'line': b'[ 83%] \x1b[32m\x1b[1mLinking CXX executable gimbal_driver_node\x1b[0m\n'}
+[58.410620] (-) TimerEvent: {}
+[58.511004] (-) TimerEvent: {}
+[58.611543] (-) TimerEvent: {}
+[58.712111] (-) TimerEvent: {}
+[58.757820] (antidrone_turret) StdoutLine: {'line': b'[ 83%] Built target gimbal_driver_node\n'}
+[58.760208] (antidrone_turret) StderrLine: {'line': b'gmake: *** [Makefile:146: all] Error 2\n'}
+[58.763500] (antidrone_turret) CommandEnded: {'returncode': 2}
+[58.777242] (antidrone_turret) JobEnded: {'identifier': 'antidrone_turret', 'rc': 2}
+[58.788215] (-) EventReactorShutdown: {}

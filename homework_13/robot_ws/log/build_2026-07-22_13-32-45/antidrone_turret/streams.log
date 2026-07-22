@@ -1,0 +1,43 @@
+[0.021s] Invoking command in '/home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret -- -j2 -l2
+[0.103s] [  2%] Built target antidrone_turret__rs
+[0.103s] [  1%] Built target antidrone_turret__rosidl_generator_type_description
+[0.141s] [  4%] Built target gtest_main
+[0.154s] [  4%] Built target ament_cmake_python_copy_antidrone_turret
+[0.185s] [  6%] Built target gtest
+[0.204s] [ 26%] Built target antidrone_turret__rosidl_generator_c
+[0.219s] [ 27%] Built target antidrone_turret__cpp
+[0.263s] [ 29%] Built target provided_logic_test
+[0.332s] [ 37%] Built target antidrone_turret__rosidl_typesupport_fastrtps_c
+[0.369s] [ 45%] Built target antidrone_turret__rosidl_typesupport_introspection_c
+[0.410s] [ 53%] Built target antidrone_turret__rosidl_typesupport_c
+[0.473s] [ 61%] Built target antidrone_turret__rosidl_typesupport_fastrtps_cpp
+[0.529s] [ 69%] Built target antidrone_turret__rosidl_typesupport_introspection_cpp
+[0.563s] running egg_info
+[0.593s] [ 77%] Built target antidrone_turret__rosidl_typesupport_cpp
+[0.617s] writing antidrone_turret.egg-info/PKG-INFO
+[0.620s] writing dependency_links to antidrone_turret.egg-info/dependency_links.txt
+[0.621s] writing top-level names to antidrone_turret.egg-info/top_level.txt
+[0.644s] [ 77%] Built target antidrone_turret
+[0.702s] [ 79%] Built target target_track_publisher_node
+[0.742s] reading manifest file 'antidrone_turret.egg-info/SOURCES.txt'
+[0.743s] writing manifest file 'antidrone_turret.egg-info/SOURCES.txt'
+[0.755s] [ 80%] Built target actuator_node
+[0.791s] [ 80%] Built target ament_cmake_python_build_antidrone_turret_egg
+[0.805s] [ 81%] [32mBuilding CXX object CMakeFiles/turret_controller_node.dir/src/turret_controller_node.cpp.o[0m
+[0.863s] [ 83%] Built target gimbal_driver_node
+[0.891s] [ 84%] [32mBuilding CXX object CMakeFiles/yaw_servo_driver_node.dir/src/yaw_servo_driver_node.cpp.o[0m
+[5.939s] [01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:[m[K In member function ‘[01m[Kvoid TurretControllerNode::[01;32m[Kstatus_callback[m[K(antidrone_turret::msg::ActuatorStatus_<std::allocator<void> >::SharedPtr)[m[K’:
+[5.940s] [01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:42:5:[m[K [01;31m[Kerror: [m[K‘[01m[Kcurrent_actuator_status_[m[K’ was not declared in this scope; did you mean ‘[01m[Kcurrent_actuator_state_[m[K’?
+[5.940s]    42 |     [01;31m[Kcurrent_actuator_status_[m[K = static_cast<ActuatorStatus>(msg->state);
+[5.940s]       |     [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~~[m[K
+[5.940s]       |     [32m[Kcurrent_actuator_state_[m[K
+[5.943s] [01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:42:44:[m[K [01;31m[Kerror: [m[K‘[01m[KActuatorStatus[m[K’ does not name a type
+[5.943s]    42 |     current_actuator_status_ = static_cast<[01;31m[KActuatorStatus[m[K>(msg->state);
+[5.943s]       |                                            [01;31m[K^~~~~~~~~~~~~~[m[K
+[12.670s] gmake[2]: *** [CMakeFiles/turret_controller_node.dir/build.make:76: CMakeFiles/turret_controller_node.dir/src/turret_controller_node.cpp.o] Error 1
+[12.670s] gmake[1]: *** [CMakeFiles/Makefile2:729: CMakeFiles/turret_controller_node.dir/all] Error 2
+[12.671s] gmake[1]: *** Waiting for unfinished jobs....
+[14.999s] [ 85%] [32m[1mLinking CXX executable yaw_servo_driver_node[0m
+[15.404s] [ 85%] Built target yaw_servo_driver_node
+[15.405s] gmake: *** [Makefile:146: all] Error 2
+[15.408s] Invoked command in '/home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret' returned '2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret -- -j2 -l2

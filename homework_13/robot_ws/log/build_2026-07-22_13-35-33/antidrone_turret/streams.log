@@ -1,0 +1,55 @@
+[0.017s] Invoking command in '/home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret -- -j2 -l2
+[0.100s] [  1%] Built target antidrone_turret__rs
+[0.100s] [  2%] Built target antidrone_turret__rosidl_generator_type_description
+[0.136s] [  4%] Built target gtest_main
+[0.144s] [  4%] Built target ament_cmake_python_copy_antidrone_turret
+[0.176s] [  6%] Built target gtest
+[0.186s] [ 26%] Built target antidrone_turret__rosidl_generator_c
+[0.215s] [ 27%] Built target antidrone_turret__cpp
+[0.254s] [ 29%] Built target provided_logic_test
+[0.290s] [ 37%] Built target antidrone_turret__rosidl_typesupport_fastrtps_c
+[0.330s] [ 45%] Built target antidrone_turret__rosidl_typesupport_introspection_c
+[0.368s] [ 53%] Built target antidrone_turret__rosidl_typesupport_c
+[0.403s] [ 61%] Built target antidrone_turret__rosidl_typesupport_fastrtps_cpp
+[0.446s] [ 69%] Built target antidrone_turret__rosidl_typesupport_introspection_cpp
+[0.489s] [ 77%] Built target antidrone_turret__rosidl_typesupport_cpp
+[0.497s] running egg_info
+[0.533s] [ 77%] Built target antidrone_turret
+[0.541s] writing antidrone_turret.egg-info/PKG-INFO
+[0.542s] writing dependency_links to antidrone_turret.egg-info/dependency_links.txt
+[0.544s] writing top-level names to antidrone_turret.egg-info/top_level.txt
+[0.593s] [ 79%] Built target target_track_publisher_node
+[0.643s] [ 80%] Built target actuator_node
+[0.655s] reading manifest file 'antidrone_turret.egg-info/SOURCES.txt'
+[0.655s] writing manifest file 'antidrone_turret.egg-info/SOURCES.txt'
+[0.727s] [ 81%] [32mBuilding CXX object CMakeFiles/turret_controller_node.dir/src/turret_controller_node.cpp.o[0m
+[0.727s] [ 81%] Built target ament_cmake_python_build_antidrone_turret_egg
+[0.771s] [ 83%] Built target gimbal_driver_node
+[0.832s] [ 85%] Built target yaw_servo_driver_node
+[0.863s] [ 86%] [34m[1mGenerating Python code for ROS interfaces[0m
+[2.737s] [ 86%] Built target antidrone_turret__py
+[2.782s] [ 87%] [32mBuilding C object CMakeFiles/antidrone_turret__rosidl_generator_py.dir/rosidl_generator_py/antidrone_turret/msg/_target_s.c.o[0m
+[3.348s] [ 88%] [32mBuilding C object CMakeFiles/antidrone_turret__rosidl_generator_py.dir/rosidl_generator_py/antidrone_turret/msg/_actuator_status_s.c.o[0m
+[3.677s] [ 89%] [32mBuilding C object CMakeFiles/antidrone_turret__rosidl_generator_py.dir/rosidl_generator_py/antidrone_turret/msg/_gimbal_command_s.c.o[0m
+[3.906s] [ 90%] [32mBuilding C object CMakeFiles/antidrone_turret__rosidl_generator_py.dir/rosidl_generator_py/antidrone_turret/msg/_servo_command_s.c.o[0m
+[4.115s] [ 91%] [32mBuilding C object CMakeFiles/antidrone_turret__rosidl_generator_py.dir/rosidl_generator_py/antidrone_turret/msg/_turret_status_s.c.o[0m
+[4.553s] [ 92%] [32mBuilding C object CMakeFiles/antidrone_turret__rosidl_generator_py.dir/rosidl_generator_py/antidrone_turret/srv/_trigger_actuator_s.c.o[0m
+[4.791s] [ 93%] [32m[1mLinking C shared library libantidrone_turret__rosidl_generator_py.so[0m
+[4.876s] [ 93%] Built target antidrone_turret__rosidl_generator_py
+[4.912s] [ 94%] [32mBuilding C object CMakeFiles/antidrone_turret_s__rosidl_typesupport_fastrtps_c.dir/rosidl_generator_py/antidrone_turret/_antidrone_turret_s.ep.rosidl_typesupport_fastrtps_c.c.o[0m
+[5.122s] [ 95%] [32m[1mLinking C shared module rosidl_generator_py/antidrone_turret/antidrone_turret_s__rosidl_typesupport_fastrtps_c.so[0m
+[5.179s] [ 95%] Built target antidrone_turret_s__rosidl_typesupport_fastrtps_c
+[5.216s] [ 96%] [32mBuilding C object CMakeFiles/antidrone_turret_s__rosidl_typesupport_introspection_c.dir/rosidl_generator_py/antidrone_turret/_antidrone_turret_s.ep.rosidl_typesupport_introspection_c.c.o[0m
+[5.404s] [ 97%] [32m[1mLinking C shared module rosidl_generator_py/antidrone_turret/antidrone_turret_s__rosidl_typesupport_introspection_c.so[0m
+[5.471s] [ 97%] Built target antidrone_turret_s__rosidl_typesupport_introspection_c
+[5.519s] [ 98%] [32mBuilding C object CMakeFiles/antidrone_turret_s__rosidl_typesupport_c.dir/rosidl_generator_py/antidrone_turret/_antidrone_turret_s.ep.rosidl_typesupport_c.c.o[0m
+[5.745s] [ 99%] [32m[1mLinking C shared module rosidl_generator_py/antidrone_turret/antidrone_turret_s__rosidl_typesupport_c.so[0m
+[5.816s] [ 99%] Built target antidrone_turret_s__rosidl_typesupport_c
+[5.840s] [01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:[m[K In member function ‘[01m[Kvoid TurretControllerNode::[01;32m[Kstatus_callback[m[K(antidrone_turret::msg::ActuatorStatus_<std::allocator<void> >::SharedPtr)[m[K’:
+[5.840s] [01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:42:43:[m[K [01;31m[Kerror: [m[K‘[01m[KActuatorStatus[m[K’ does not name a type
+[5.840s]    42 |     current_actuator_state_ = static_cast<[01;31m[KActuatorStatus[m[K>(msg->state);
+[5.840s]       |                                           [01;31m[K^~~~~~~~~~~~~~[m[K
+[11.426s] gmake[2]: *** [CMakeFiles/turret_controller_node.dir/build.make:76: CMakeFiles/turret_controller_node.dir/src/turret_controller_node.cpp.o] Error 1
+[11.426s] gmake[1]: *** [CMakeFiles/Makefile2:729: CMakeFiles/turret_controller_node.dir/all] Error 2
+[11.427s] gmake: *** [Makefile:146: all] Error 2
+[11.430s] Invoked command in '/home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret' returned '2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret -- -j2 -l2

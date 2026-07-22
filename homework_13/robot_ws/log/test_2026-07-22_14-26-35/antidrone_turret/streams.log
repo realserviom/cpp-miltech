@@ -1,0 +1,85 @@
+[0.085s] Invoking command in '/home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/ctest -C Release -D ExperimentalTest --no-compress-output -V --force-new-ctest-process -R provided_logic_test
+[0.098s] UpdateCTestConfiguration  from :/home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret/CTestConfiguration.ini
+[0.098s] Parse Config file:/home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret/CTestConfiguration.ini
+[0.098s]    Site: devcontainer
+[0.098s]    Build name: (empty)
+[0.098s]  Add coverage exclude regular expressions.
+[0.098s] Create new tag: 20260722-1426 - Experimental
+[0.100s] UpdateCTestConfiguration  from :/home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret/CTestConfiguration.ini
+[0.100s] Parse Config file:/home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret/CTestConfiguration.ini
+[0.101s] Test project /home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret
+[0.101s] Constructing a list of tests
+[0.101s] Done constructing a list of tests
+[0.102s] Updating test list for fixtures
+[0.102s] Added 0 tests to meet fixture requirements
+[0.102s] Checking test dependency graph...
+[0.103s] Checking test dependency graph end
+[0.103s] test 1
+[0.104s]     Start 1: provided_logic_test
+[0.104s] 
+[0.104s] 1: Test command: /usr/bin/python3 "-u" "/opt/ros/jazzy/share/ament_cmake_test/cmake/run_test.py" "/home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret/test_results/antidrone_turret/provided_logic_test.gtest.xml" "--package-name" "antidrone_turret" "--output-file" "/home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret/ament_cmake_gtest/provided_logic_test.txt" "--command" "/home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret/provided_logic_test" "--gtest_output=xml:/home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret/test_results/antidrone_turret/provided_logic_test.gtest.xml"
+[0.105s] 1: Working Directory: /home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret
+[0.105s] 1: Test timeout computed to be: 60
+[0.274s] 1: -- run_test.py: invoking following command in '/home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret':
+[0.290s] 1:  - /home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret/provided_logic_test --gtest_output=xml:/home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret/test_results/antidrone_turret/provided_logic_test.gtest.xml
+[0.321s] 1: Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc
+[0.321s] 1: [==========] Running 14 tests from 4 test suites.
+[0.324s] 1: [----------] Global test environment set-up.
+[0.326s] 1: [----------] 4 tests from TargetSequenceTest
+[0.331s] 1: [ RUN      ] TargetSequenceTest.DefaultSamplesMatchHomeworkScenario
+[0.338s] 1: [       OK ] TargetSequenceTest.DefaultSamplesMatchHomeworkScenario (0 ms)
+[0.341s] 1: [ RUN      ] TargetSequenceTest.StopsWhenRepeatIsDisabled
+[0.344s] 1: [       OK ] TargetSequenceTest.StopsWhenRepeatIsDisabled (0 ms)
+[0.345s] 1: [ RUN      ] TargetSequenceTest.WrapsWhenRepeatIsEnabled
+[0.346s] 1: [       OK ] TargetSequenceTest.WrapsWhenRepeatIsEnabled (0 ms)
+[0.346s] 1: [ RUN      ] TargetSequenceTest.SkipMovesToNextVisibleSegment
+[0.347s] 1: [       OK ] TargetSequenceTest.SkipMovesToNextVisibleSegment (0 ms)
+[0.347s] 1: [----------] 4 tests from TargetSequenceTest (0 ms total)
+[0.347s] 1: 
+[0.347s] 1: [----------] 2 tests from TargetTrackSimulationTest
+[0.347s] 1: [ RUN      ] TargetTrackSimulationTest.AcceptedTriggerSkipsCurrentDrone
+[0.347s] 1: [       OK ] TargetTrackSimulationTest.AcceptedTriggerSkipsCurrentDrone (0 ms)
+[0.347s] 1: [ RUN      ] TargetTrackSimulationTest.ReachedProtectedZoneWhileReloadingSkipsCurrentDrone
+[0.347s] 1: [       OK ] TargetTrackSimulationTest.ReachedProtectedZoneWhileReloadingSkipsCurrentDrone (0 ms)
+[0.347s] 1: [----------] 2 tests from TargetTrackSimulationTest (0 ms total)
+[0.347s] 1: 
+[0.347s] 1: [----------] 4 tests from TargetTrackLoaderTest
+[0.347s] 1: [ RUN      ] TargetTrackLoaderTest.LoadsCsvRowsAndSkipsCommentsAndHeader
+[0.348s] 1: [       OK ] TargetTrackLoaderTest.LoadsCsvRowsAndSkipsCommentsAndHeader (1 ms)
+[0.348s] 1: [ RUN      ] TargetTrackLoaderTest.ReportsInvalidRows
+[0.348s] 1: [       OK ] TargetTrackLoaderTest.ReportsInvalidRows (0 ms)
+[0.348s] 1: [ RUN      ] TargetTrackLoaderTest.LoadsAllProvidedTracks
+[0.349s] 1: [       OK ] TargetTrackLoaderTest.LoadsAllProvidedTracks (2 ms)
+[0.350s] 1: [ RUN      ] TargetTrackLoaderTest.LoadsDefaultTracksAsOneSequenceWithGaps
+[0.350s] 1: [       OK ] TargetTrackLoaderTest.LoadsDefaultTracksAsOneSequenceWithGaps (1 ms)
+[0.351s] 1: [----------] 4 tests from TargetTrackLoaderTest (6 ms total)
+[0.351s] 1: 
+[0.351s] 1: [----------] 4 tests from ActuatorModelTest
+[0.351s] 1: [ RUN      ] ActuatorModelTest.StartsReady
+[0.351s] 1: [       OK ] ActuatorModelTest.StartsReady (0 ms)
+[0.352s] 1: [ RUN      ] ActuatorModelTest.AcceptedTriggerMovesToReloading
+[0.352s] 1: [       OK ] ActuatorModelTest.AcceptedTriggerMovesToReloading (0 ms)
+[0.352s] 1: [ RUN      ] ActuatorModelTest.RejectsTriggerWhileReloading
+[0.353s] 1: [       OK ] ActuatorModelTest.RejectsTriggerWhileReloading (0 ms)
+[0.354s] 1: [ RUN      ] ActuatorModelTest.MarkReadyAllowsNextTrigger
+[0.354s] 1: [       OK ] ActuatorModelTest.MarkReadyAllowsNextTrigger (0 ms)
+[0.355s] 1: [----------] 4 tests from ActuatorModelTest (0 ms total)
+[0.355s] 1: 
+[0.355s] 1: [----------] Global test environment tear-down
+[0.356s] 1: [==========] 14 tests from 4 test suites ran. (7 ms total)
+[0.356s] 1: [  PASSED  ] 14 tests.
+[0.356s] 1: -- run_test.py: return code 0
+[0.356s] 1: -- run_test.py: inject classname prefix into gtest result file '/home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret/test_results/antidrone_turret/provided_logic_test.gtest.xml'
+[0.356s] 1: -- run_test.py: verify result file '/home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret/test_results/antidrone_turret/provided_logic_test.gtest.xml'
+[0.357s] 1/1 Test #1: provided_logic_test ..............   Passed    0.25 sec
+[0.357s] 
+[0.357s] The following tests passed:
+[0.357s] 	provided_logic_test
+[0.358s] 
+[0.358s] [0;32m100% tests passed[0;0m, 0 tests failed[0;0m out of 1
+[0.358s] 
+[0.358s] Label Time Summary:
+[0.358s] gtest    =   0.25 sec*proc (1 test)
+[0.358s] 
+[0.358s] Total Test time (real) =   0.26 sec
+[0.379s] Invoked command in '/home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/ctest -C Release -D ExperimentalTest --no-compress-output -V --force-new-ctest-process -R provided_logic_test

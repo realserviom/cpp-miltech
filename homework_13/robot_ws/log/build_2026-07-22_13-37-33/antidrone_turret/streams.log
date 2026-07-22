@@ -1,0 +1,348 @@
+[0.016s] Invoking command in '/home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret -- -j2 -l2
+[0.101s] [  1%] Built target antidrone_turret__rosidl_generator_type_description
+[0.103s] [  2%] Built target antidrone_turret__rs
+[0.148s] [  4%] Built target gtest_main
+[0.151s] [  4%] Built target ament_cmake_python_copy_antidrone_turret
+[0.184s] [  6%] Built target gtest
+[0.193s] [ 26%] Built target antidrone_turret__rosidl_generator_c
+[0.224s] [ 27%] Built target antidrone_turret__cpp
+[0.256s] [ 29%] Built target provided_logic_test
+[0.295s] [ 37%] Built target antidrone_turret__rosidl_typesupport_fastrtps_c
+[0.335s] [ 45%] Built target antidrone_turret__rosidl_typesupport_introspection_c
+[0.370s] [ 53%] Built target antidrone_turret__rosidl_typesupport_c
+[0.407s] [ 61%] Built target antidrone_turret__rosidl_typesupport_fastrtps_cpp
+[0.452s] [ 69%] Built target antidrone_turret__rosidl_typesupport_introspection_cpp
+[0.497s] running egg_info
+[0.504s] [ 77%] Built target antidrone_turret__rosidl_typesupport_cpp
+[0.533s] writing antidrone_turret.egg-info/PKG-INFO
+[0.534s] writing dependency_links to antidrone_turret.egg-info/dependency_links.txt
+[0.535s] writing top-level names to antidrone_turret.egg-info/top_level.txt
+[0.548s] [ 77%] Built target antidrone_turret
+[0.588s] [ 79%] Built target target_track_publisher_node
+[0.608s] reading manifest file 'antidrone_turret.egg-info/SOURCES.txt'
+[0.609s] writing manifest file 'antidrone_turret.egg-info/SOURCES.txt'
+[0.635s] [ 80%] Built target actuator_node
+[0.670s] [ 80%] Built target ament_cmake_python_build_antidrone_turret_egg
+[0.717s] [ 81%] [32mBuilding CXX object CMakeFiles/turret_controller_node.dir/src/turret_controller_node.cpp.o[0m
+[0.776s] [ 83%] Built target gimbal_driver_node
+[0.832s] [ 85%] Built target yaw_servo_driver_node
+[0.865s] [ 86%] Built target antidrone_turret__py
+[0.921s] [ 93%] Built target antidrone_turret__rosidl_generator_py
+[0.967s] [ 95%] Built target antidrone_turret_s__rosidl_typesupport_fastrtps_c
+[1.014s] [ 97%] Built target antidrone_turret_s__rosidl_typesupport_introspection_c
+[1.054s] [ 99%] Built target antidrone_turret_s__rosidl_typesupport_c
+[21.637s] [100%] [32m[1mLinking CXX executable turret_controller_node[0m
+[22.279s] [100%] Built target turret_controller_node
+[22.305s] Invoked command in '/home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret -- -j2 -l2
+[22.319s] Invoking command in '/home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret
+[22.332s] -- Install configuration: ""
+[22.333s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/ament_index/resource_index/rosidl_interfaces/antidrone_turret
+[22.334s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/msg/Target.json
+[22.334s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/msg/ActuatorStatus.json
+[22.335s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/msg/GimbalCommand.json
+[22.335s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/msg/ServoCommand.json
+[22.335s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/msg/TurretStatus.json
+[22.335s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/srv/TriggerActuator.json
+[22.336s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret
+[22.337s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg
+[22.337s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/rosidl_generator_c__visibility_control.h
+[22.338s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/turret_status.h
+[22.338s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail
+[22.339s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/actuator_status__struct.h
+[22.340s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/target__type_support.h
+[22.340s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/gimbal_command__functions.h
+[22.340s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/gimbal_command__description.c
+[22.340s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/target__description.c
+[22.341s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/servo_command__type_support.c
+[22.342s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/turret_status__functions.c
+[22.342s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/turret_status__type_support.h
+[22.343s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/target__functions.h
+[22.343s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/actuator_status__functions.c
+[22.344s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/servo_command__description.c
+[22.344s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/gimbal_command__type_support.c
+[22.344s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/target__type_support.c
+[22.345s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/target__functions.c
+[22.346s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/gimbal_command__type_support.h
+[22.346s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/target__struct.h
+[22.346s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/actuator_status__functions.h
+[22.347s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/servo_command__type_support.h
+[22.347s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/servo_command__functions.h
+[22.347s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/turret_status__functions.h
+[22.347s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/actuator_status__type_support.h
+[22.348s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/actuator_status__type_support.c
+[22.348s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/turret_status__type_support.c
+[22.348s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/gimbal_command__functions.c
+[22.349s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/turret_status__description.c
+[22.350s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/turret_status__struct.h
+[22.350s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/actuator_status__description.c
+[22.351s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/gimbal_command__struct.h
+[22.351s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/servo_command__functions.c
+[22.351s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/servo_command__struct.h
+[22.351s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/gimbal_command.h
+[22.352s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/servo_command.h
+[22.352s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/target.h
+[22.353s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/actuator_status.h
+[22.354s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv
+[22.354s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv/detail
+[22.355s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv/detail/trigger_actuator__functions.h
+[22.355s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv/detail/trigger_actuator__functions.c
+[22.355s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv/detail/trigger_actuator__description.c
+[22.356s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv/detail/trigger_actuator__type_support.c
+[22.357s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv/detail/trigger_actuator__struct.h
+[22.357s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv/detail/trigger_actuator__type_support.h
+[22.357s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv/trigger_actuator.h
+[22.358s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/environment/library_path.sh
+[22.359s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/environment/library_path.dsv
+[22.360s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/libantidrone_turret__rosidl_generator_c.so
+[22.364s] -- Set non-toolchain portion of runtime path of "/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/libantidrone_turret__rosidl_generator_c.so" to ""
+[22.365s] -- Up-to-date: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret
+[22.365s] -- Up-to-date: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg
+[22.365s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/rosidl_typesupport_fastrtps_c__visibility_control.h
+[22.365s] -- Up-to-date: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail
+[22.365s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/turret_status__rosidl_typesupport_fastrtps_c.h
+[22.365s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/target__rosidl_typesupport_fastrtps_c.h
+[22.365s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/servo_command__rosidl_typesupport_fastrtps_c.h
+[22.366s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/actuator_status__rosidl_typesupport_fastrtps_c.h
+[22.366s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/gimbal_command__rosidl_typesupport_fastrtps_c.h
+[22.367s] -- Up-to-date: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv
+[22.367s] -- Up-to-date: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv/detail
+[22.368s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv/detail/trigger_actuator__rosidl_typesupport_fastrtps_c.h
+[22.368s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/libantidrone_turret__rosidl_typesupport_fastrtps_c.so
+[22.368s] -- Set non-toolchain portion of runtime path of "/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/libantidrone_turret__rosidl_typesupport_fastrtps_c.so" to ""
+[22.369s] -- Up-to-date: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret
+[22.369s] -- Up-to-date: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg
+[22.369s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/rosidl_typesupport_introspection_c__visibility_control.h
+[22.369s] -- Up-to-date: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail
+[22.369s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/servo_command__type_support.c
+[22.370s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/gimbal_command__type_support.c
+[22.371s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/target__type_support.c
+[22.371s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/turret_status__rosidl_typesupport_introspection_c.h
+[22.371s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/gimbal_command__rosidl_typesupport_introspection_c.h
+[22.371s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/servo_command__rosidl_typesupport_introspection_c.h
+[22.371s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/actuator_status__type_support.c
+[22.372s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/turret_status__type_support.c
+[22.372s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/target__rosidl_typesupport_introspection_c.h
+[22.372s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/actuator_status__rosidl_typesupport_introspection_c.h
+[22.372s] -- Up-to-date: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv
+[22.372s] -- Up-to-date: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv/detail
+[22.372s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv/detail/trigger_actuator__rosidl_typesupport_introspection_c.h
+[22.373s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv/detail/trigger_actuator__type_support.c
+[22.374s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/libantidrone_turret__rosidl_typesupport_introspection_c.so
+[22.375s] -- Set non-toolchain portion of runtime path of "/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/libantidrone_turret__rosidl_typesupport_introspection_c.so" to ""
+[22.375s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/libantidrone_turret__rosidl_typesupport_c.so
+[22.376s] -- Set non-toolchain portion of runtime path of "/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/libantidrone_turret__rosidl_typesupport_c.so" to ""
+[22.376s] -- Up-to-date: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret
+[22.376s] -- Up-to-date: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg
+[22.376s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/turret_status.hpp
+[22.377s] -- Up-to-date: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail
+[22.377s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/turret_status__struct.hpp
+[22.377s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/target__builder.hpp
+[22.377s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/gimbal_command__struct.hpp
+[22.377s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/target__type_support.hpp
+[22.377s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/servo_command__builder.hpp
+[22.378s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/actuator_status__type_support.hpp
+[22.378s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/turret_status__builder.hpp
+[22.378s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/servo_command__struct.hpp
+[22.379s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/actuator_status__struct.hpp
+[22.379s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/actuator_status__traits.hpp
+[22.379s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/target__struct.hpp
+[22.380s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/actuator_status__builder.hpp
+[22.380s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/gimbal_command__type_support.hpp
+[22.380s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/turret_status__type_support.hpp
+[22.380s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/gimbal_command__builder.hpp
+[22.380s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/servo_command__traits.hpp
+[22.381s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/target__traits.hpp
+[22.381s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/gimbal_command__traits.hpp
+[22.381s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/servo_command__type_support.hpp
+[22.382s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/turret_status__traits.hpp
+[22.382s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/servo_command.hpp
+[22.382s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/rosidl_generator_cpp__visibility_control.hpp
+[22.382s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/target.hpp
+[22.382s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/gimbal_command.hpp
+[22.383s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/actuator_status.hpp
+[22.383s] -- Up-to-date: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv
+[22.383s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv/trigger_actuator.hpp
+[22.383s] -- Up-to-date: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv/detail
+[22.383s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv/detail/trigger_actuator__builder.hpp
+[22.383s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv/detail/trigger_actuator__traits.hpp
+[22.383s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv/detail/trigger_actuator__struct.hpp
+[22.383s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv/detail/trigger_actuator__type_support.hpp
+[22.383s] -- Up-to-date: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret
+[22.383s] -- Up-to-date: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg
+[22.383s] -- Up-to-date: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail
+[22.383s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/actuator_status__rosidl_typesupport_fastrtps_cpp.hpp
+[22.384s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/gimbal_command__rosidl_typesupport_fastrtps_cpp.hpp
+[22.385s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/dds_fastrtps
+[22.385s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/target__rosidl_typesupport_fastrtps_cpp.hpp
+[22.385s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/servo_command__rosidl_typesupport_fastrtps_cpp.hpp
+[22.386s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/turret_status__rosidl_typesupport_fastrtps_cpp.hpp
+[22.386s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h
+[22.386s] -- Up-to-date: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv
+[22.386s] -- Up-to-date: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv/detail
+[22.387s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv/detail/trigger_actuator__rosidl_typesupport_fastrtps_cpp.hpp
+[22.387s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv/detail/dds_fastrtps
+[22.388s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/libantidrone_turret__rosidl_typesupport_fastrtps_cpp.so
+[22.390s] -- Set non-toolchain portion of runtime path of "/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/libantidrone_turret__rosidl_typesupport_fastrtps_cpp.so" to ""
+[22.392s] -- Up-to-date: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret
+[22.392s] -- Up-to-date: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg
+[22.392s] -- Up-to-date: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail
+[22.392s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/target__rosidl_typesupport_introspection_cpp.hpp
+[22.393s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/servo_command__rosidl_typesupport_introspection_cpp.hpp
+[22.394s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/gimbal_command__rosidl_typesupport_introspection_cpp.hpp
+[22.394s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/turret_status__type_support.cpp
+[22.394s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/actuator_status__type_support.cpp
+[22.395s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/target__type_support.cpp
+[22.396s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/actuator_status__rosidl_typesupport_introspection_cpp.hpp
+[22.396s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/gimbal_command__type_support.cpp
+[22.398s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/turret_status__rosidl_typesupport_introspection_cpp.hpp
+[22.398s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/msg/detail/servo_command__type_support.cpp
+[22.399s] -- Up-to-date: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv
+[22.399s] -- Up-to-date: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv/detail
+[22.399s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv/detail/trigger_actuator__rosidl_typesupport_introspection_cpp.hpp
+[22.400s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/srv/detail/trigger_actuator__type_support.cpp
+[22.401s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/libantidrone_turret__rosidl_typesupport_introspection_cpp.so
+[22.403s] -- Set non-toolchain portion of runtime path of "/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/libantidrone_turret__rosidl_typesupport_introspection_cpp.so" to ""
+[22.404s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/libantidrone_turret__rosidl_typesupport_cpp.so
+[22.405s] -- Set non-toolchain portion of runtime path of "/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/libantidrone_turret__rosidl_typesupport_cpp.so" to ""
+[22.405s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/environment/pythonpath.sh
+[22.406s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/environment/pythonpath.dsv
+[22.407s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret-0.1.0-py3.12.egg-info
+[22.408s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret-0.1.0-py3.12.egg-info/dependency_links.txt
+[22.409s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret-0.1.0-py3.12.egg-info/SOURCES.txt
+[22.409s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret-0.1.0-py3.12.egg-info/PKG-INFO
+[22.409s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret-0.1.0-py3.12.egg-info/top_level.txt
+[22.410s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret
+[22.410s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/msg
+[22.411s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/msg/_servo_command_s.c
+[22.412s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/msg/_turret_status.py
+[22.412s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/msg/_target.py
+[22.412s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/msg/_gimbal_command.py
+[22.413s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/msg/_turret_status_s.c
+[22.414s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/msg/_target_s.c
+[22.414s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/msg/_gimbal_command_s.c
+[22.414s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/msg/__init__.py
+[22.415s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/msg/_actuator_status.py
+[22.415s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/msg/_actuator_status_s.c
+[22.415s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/msg/_servo_command.py
+[22.415s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/antidrone_turret_s__rosidl_typesupport_introspection_c.so
+[22.415s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/_antidrone_turret_s.ep.rosidl_typesupport_c.c
+[22.416s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/_antidrone_turret_s.ep.rosidl_typesupport_introspection_c.c
+[22.416s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/antidrone_turret_s__rosidl_typesupport_fastrtps_c.so
+[22.416s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/antidrone_turret_s__rosidl_typesupport_c.so
+[22.416s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/__init__.py
+[22.416s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/srv
+[22.416s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/srv/_trigger_actuator_s.c
+[22.416s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/srv/__init__.py
+[22.417s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/srv/_trigger_actuator.py
+[22.417s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/_antidrone_turret_s.ep.rosidl_typesupport_fastrtps_c.c
+[22.480s] Listing '/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret'...
+[22.480s] Compiling '/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/__init__.py'...
+[22.480s] Listing '/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/msg'...
+[22.480s] Compiling '/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/msg/__init__.py'...
+[22.480s] Compiling '/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/msg/_actuator_status.py'...
+[22.480s] Compiling '/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/msg/_gimbal_command.py'...
+[22.481s] Compiling '/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/msg/_servo_command.py'...
+[22.481s] Compiling '/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/msg/_target.py'...
+[22.482s] Compiling '/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/msg/_turret_status.py'...
+[22.482s] Listing '/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/srv'...
+[22.482s] Compiling '/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/srv/__init__.py'...
+[22.482s] Compiling '/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/srv/_trigger_actuator.py'...
+[22.487s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/antidrone_turret_s__rosidl_typesupport_fastrtps_c.so
+[22.487s] -- Set non-toolchain portion of runtime path of "/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/antidrone_turret_s__rosidl_typesupport_fastrtps_c.so" to ""
+[22.488s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/antidrone_turret_s__rosidl_typesupport_introspection_c.so
+[22.489s] -- Set non-toolchain portion of runtime path of "/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/antidrone_turret_s__rosidl_typesupport_introspection_c.so" to ""
+[22.489s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/antidrone_turret_s__rosidl_typesupport_c.so
+[22.490s] -- Set non-toolchain portion of runtime path of "/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/python3.12/site-packages/antidrone_turret/antidrone_turret_s__rosidl_typesupport_c.so" to ""
+[22.490s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/libantidrone_turret__rosidl_generator_py.so
+[22.490s] -- Set non-toolchain portion of runtime path of "/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/libantidrone_turret__rosidl_generator_py.so" to ""
+[22.492s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/ament_index/resource_index/rust_packages/antidrone_turret
+[22.493s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/rust
+[22.494s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/rust/Cargo.toml
+[22.494s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/rust/src
+[22.495s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/rust/src/msg
+[22.495s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/rust/src/msg/rmw.rs
+[22.497s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/rust/src/lib.rs
+[22.498s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/rust/src/msg.rs
+[22.498s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/rust/src/srv.rs
+[22.498s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/rust/src/srv
+[22.499s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/rust/src/srv/rmw.rs
+[22.500s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/rust/build.rs
+[22.502s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/msg/Target.idl
+[22.503s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/msg/ActuatorStatus.idl
+[22.503s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/msg/GimbalCommand.idl
+[22.503s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/msg/ServoCommand.idl
+[22.503s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/msg/TurretStatus.idl
+[22.504s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/srv/TriggerActuator.idl
+[22.504s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/msg/Target.msg
+[22.506s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/msg/ActuatorStatus.msg
+[22.506s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/msg/GimbalCommand.msg
+[22.506s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/msg/ServoCommand.msg
+[22.507s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/msg/TurretStatus.msg
+[22.507s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/srv/TriggerActuator.srv
+[22.512s] -- Up-to-date: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret
+[22.512s] -- Up-to-date: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret
+[22.512s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/target_track_loader.hpp
+[22.513s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/target_track_simulation.hpp
+[22.513s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/actuator_model.hpp
+[22.513s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/turret_logic.hpp
+[22.513s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/include/antidrone_turret/antidrone_turret/target_sequence.hpp
+[22.514s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/antidrone_turret/target_track_publisher_node
+[22.527s] -- Set non-toolchain portion of runtime path of "/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/antidrone_turret/target_track_publisher_node" to ""
+[22.527s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/antidrone_turret/actuator_node
+[22.533s] -- Set non-toolchain portion of runtime path of "/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/antidrone_turret/actuator_node" to ""
+[22.534s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/antidrone_turret/turret_controller_node
+[22.543s] -- Set non-toolchain portion of runtime path of "/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/antidrone_turret/turret_controller_node" to ""
+[22.544s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/antidrone_turret/gimbal_driver_node
+[22.553s] -- Set non-toolchain portion of runtime path of "/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/antidrone_turret/gimbal_driver_node" to ""
+[22.553s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/antidrone_turret/yaw_servo_driver_node
+[22.561s] -- Set non-toolchain portion of runtime path of "/home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/lib/antidrone_turret/yaw_servo_driver_node" to ""
+[22.561s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/launch
+[22.561s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/launch/system.launch.py
+[22.562s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/config
+[22.562s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/config/sequence.yaml
+[22.563s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/tracks
+[22.563s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/tracks/approach_trigger.csv
+[22.564s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/tracks/reload_pressure.csv
+[22.564s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/tracks/far_flyby_no_trigger.csv
+[22.565s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/tracks/low_confidence_no_trigger.csv
+[22.568s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/ament_index/resource_index/package_run_dependencies/antidrone_turret
+[22.568s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/ament_index/resource_index/parent_prefix_path/antidrone_turret
+[22.568s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/environment/ament_prefix_path.sh
+[22.568s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/environment/ament_prefix_path.dsv
+[22.568s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/environment/path.sh
+[22.569s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/environment/path.dsv
+[22.569s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/local_setup.bash
+[22.569s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/local_setup.sh
+[22.569s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/local_setup.zsh
+[22.570s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/local_setup.dsv
+[22.571s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/package.dsv
+[22.572s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/ament_index/resource_index/packages/antidrone_turret
+[22.573s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/cmake/export_antidrone_turret__rosidl_generator_cExport.cmake
+[22.574s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/cmake/export_antidrone_turret__rosidl_generator_cExport-noconfig.cmake
+[22.575s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/cmake/export_antidrone_turret__rosidl_typesupport_fastrtps_cExport.cmake
+[22.576s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/cmake/export_antidrone_turret__rosidl_typesupport_fastrtps_cExport-noconfig.cmake
+[22.577s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/cmake/antidrone_turret__rosidl_typesupport_introspection_cExport.cmake
+[22.578s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/cmake/antidrone_turret__rosidl_typesupport_introspection_cExport-noconfig.cmake
+[22.578s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/cmake/antidrone_turret__rosidl_typesupport_cExport.cmake
+[22.580s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/cmake/antidrone_turret__rosidl_typesupport_cExport-noconfig.cmake
+[22.581s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/cmake/export_antidrone_turret__rosidl_generator_cppExport.cmake
+[22.581s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/cmake/export_antidrone_turret__rosidl_typesupport_fastrtps_cppExport.cmake
+[22.582s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/cmake/export_antidrone_turret__rosidl_typesupport_fastrtps_cppExport-noconfig.cmake
+[22.583s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/cmake/antidrone_turret__rosidl_typesupport_introspection_cppExport.cmake
+[22.583s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/cmake/antidrone_turret__rosidl_typesupport_introspection_cppExport-noconfig.cmake
+[22.584s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/cmake/antidrone_turret__rosidl_typesupport_cppExport.cmake
+[22.584s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/cmake/antidrone_turret__rosidl_typesupport_cppExport-noconfig.cmake
+[22.585s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/cmake/export_antidrone_turret__rosidl_generator_pyExport.cmake
+[22.587s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/cmake/export_antidrone_turret__rosidl_generator_pyExport-noconfig.cmake
+[22.587s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/cmake/rosidl_cmake-extras.cmake
+[22.588s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/cmake/ament_cmake_export_dependencies-extras.cmake
+[22.589s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/cmake/ament_cmake_export_include_directories-extras.cmake
+[22.590s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/cmake/ament_cmake_export_libraries-extras.cmake
+[22.591s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/cmake/ament_cmake_export_targets-extras.cmake
+[22.592s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake
+[22.593s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake
+[22.594s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/cmake/rosidl_cmake_aggregate_target-extras.cmake
+[22.595s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/cmake/antidrone_turretConfig.cmake
+[22.597s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/cmake/antidrone_turretConfig-version.cmake
+[22.598s] -- Installing: /home/serviom/cpp-miltech/homework_13/robot_ws/install/antidrone_turret/share/antidrone_turret/package.xml
+[22.603s] Invoked command in '/home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/serviom/cpp-miltech/homework_13/robot_ws/build/antidrone_turret

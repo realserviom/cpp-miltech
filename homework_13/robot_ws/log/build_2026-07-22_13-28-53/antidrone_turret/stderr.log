@@ -1,0 +1,67 @@
+[01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:118:44:[m[K [01;31m[Kerror: [m[K‘[01m[KTurretStatus[m[K’ is not a member of ‘[01m[Kantidrone_turret::msg[m[K’; did you mean ‘[01m[Kturret_logic::TurretStatus[m[K’?
+  118 |   rclcpp::Publisher<antidrone_turret::msg::[01;31m[KTurretStatus[m[K>::SharedPtr turret_status_pub_;
+      |                                            [01;31m[K^~~~~~~~~~~~[m[K
+In file included from [01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:2[m[K:
+[01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/include/antidrone_turret/turret_logic.hpp:70:8:[m[K [01;36m[Knote: [m[K‘[01m[Kturret_logic::TurretStatus[m[K’ declared here
+   70 | struct [01;36m[KTurretStatus[m[K {
+      |        [01;36m[K^~~~~~~~~~~~[m[K
+[01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:118:56:[m[K [01;31m[Kerror: [m[Ktemplate argument 1 is invalid
+  118 |   rclcpp::Publisher<antidrone_turret::msg::TurretStatus[01;31m[K>[m[K::SharedPtr turret_status_pub_;
+      |                                                        [01;31m[K^[m[K
+[01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:118:59:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K;[m[K’ at end of member declaration
+  118 |   rclcpp::Publisher<antidrone_turret::msg::TurretStatus>::[01;31m[KSharedPtr[m[K turret_status_pub_;
+      |                                                           [01;31m[K^~~~~~~~~[m[K
+      |                                                                    [32m[K;[m[K
+[01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:118:69:[m[K [01;31m[Kerror: [m[K‘[01m[Kturret_status_pub_[m[K’ does not name a type
+  118 |   rclcpp::Publisher<antidrone_turret::msg::TurretStatus>::SharedPtr [01;31m[Kturret_status_pub_[m[K;
+      |                                                                     [01;31m[K^~~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:[m[K In constructor ‘[01m[KTurretControllerNode::[01;32m[KTurretControllerNode[m[K()[m[K’:
+[01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:32:5:[m[K [01;31m[Kerror: [m[K‘[01m[Kturret_status_pub_[m[K’ was not declared in this scope
+   32 |     [01;31m[Kturret_status_pub_[m[K = this->create_publisher<antidrone_turret::msg::TurretStatus>("/turret/status", 10);
+      |     [01;31m[K^~~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:32:72:[m[K [01;31m[Kerror: [m[K‘[01m[KTurretStatus[m[K’ is not a member of ‘[01m[Kantidrone_turret::msg[m[K’; did you mean ‘[01m[Kturret_logic::TurretStatus[m[K’?
+   32 |     turret_status_pub_ = this->create_publisher<antidrone_turret::msg::[01;31m[KTurretStatus[m[K>("/turret/status", 10);
+      |                                                                        [01;31m[K^~~~~~~~~~~~[m[K
+[01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/include/antidrone_turret/turret_logic.hpp:70:8:[m[K [01;36m[Knote: [m[K‘[01m[Kturret_logic::TurretStatus[m[K’ declared here
+   70 | struct [01;36m[KTurretStatus[m[K {
+      |        [01;36m[K^~~~~~~~~~~~[m[K
+[01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:32:85:[m[K [01;31m[Kerror: [m[Kno matching function for call to ‘[01m[KTurretControllerNode::create_publisher<<expression error> >(const char [15], int)[m[K’
+   32 |     turret_status_pub_ = [01;31m[Kthis->create_publisher<antidrone_turret::msg::TurretStatus>("/turret/status", 10)[m[K;
+      |                          [01;31m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:1663[m[K,
+                 from [01m[K/opt/ros/jazzy/include/rclcpp/rclcpp/executors/single_threaded_executor.hpp:28[m[K,
+                 from [01m[K/opt/ros/jazzy/include/rclcpp/rclcpp/executors.hpp:22[m[K,
+                 from [01m[K/opt/ros/jazzy/include/rclcpp/rclcpp/rclcpp.hpp:176[m[K,
+                 from [01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:1[m[K:
+[01m[K/opt/ros/jazzy/include/rclcpp/rclcpp/node_impl.hpp:73:1:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Ktemplate<class MessageT, class AllocatorT, class PublisherT> std::shared_ptr<PublisherT> rclcpp::Node::[01;32m[Kcreate_publisher[m[K(const std::string&, const rclcpp::QoS&, const rclcpp::PublisherOptionsWithAllocator<AllocatorT>&)[m[K’
+   73 | [01;36m[KNode[m[K::create_publisher(
+      | [01;36m[K^~~~[m[K
+[01m[K/opt/ros/jazzy/include/rclcpp/rclcpp/node_impl.hpp:73:1:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
+[01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:32:85:[m[K [01;31m[Kerror: [m[Ktemplate argument 1 is invalid
+   32 |     turret_status_pub_ = [01;31m[Kthis->create_publisher<antidrone_turret::msg::TurretStatus>("/turret/status", 10)[m[K;
+      |                          [01;31m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:[m[K In member function ‘[01m[Kvoid TurretControllerNode::[01;32m[Kstatus_callback[m[K(antidrone_turret::msg::ActuatorStatus_<std::allocator<void> >::SharedPtr)[m[K’:
+[01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:41:5:[m[K [01;31m[Kerror: [m[K‘[01m[Kcurrent_actuator_status_[m[K’ was not declared in this scope; did you mean ‘[01m[Kcurrent_actuator_state_[m[K’?
+   41 |     [01;31m[Kcurrent_actuator_status_[m[K = static_cast<ActuatorStatus>(msg->state);
+      |     [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~~[m[K
+      |     [32m[Kcurrent_actuator_state_[m[K
+[01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:41:44:[m[K [01;31m[Kerror: [m[K‘[01m[KActuatorStatus[m[K’ does not name a type
+   41 |     current_actuator_status_ = static_cast<[01;31m[KActuatorStatus[m[K>(msg->state);
+      |                                            [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:[m[K In member function ‘[01m[Kvoid TurretControllerNode::[01;32m[Kprocess[m[K(antidrone_turret::msg::Target_<std::allocator<void> >::SharedPtr)[m[K’:
+[01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:58:28:[m[K [01;31m[Kerror: [m[K‘[01m[KTurretStatus[m[K’ is not a member of ‘[01m[Kantidrone_turret::msg[m[K’; did you mean ‘[01m[Kturret_logic::TurretStatus[m[K’?
+   58 |     antidrone_turret::msg::[01;31m[KTurretStatus[m[K status_msg;
+      |                            [01;31m[K^~~~~~~~~~~~[m[K
+[01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/include/antidrone_turret/turret_logic.hpp:70:8:[m[K [01;36m[Knote: [m[K‘[01m[Kturret_logic::TurretStatus[m[K’ declared here
+   70 | struct [01;36m[KTurretStatus[m[K {
+      |        [01;36m[K^~~~~~~~~~~~[m[K
+[01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:59:5:[m[K [01;31m[Kerror: [m[K‘[01m[Kstatus_msg[m[K’ was not declared in this scope
+   59 |     [01;31m[Kstatus_msg[m[K.target_state = out.status.target_state;
+      |     [01;31m[K^~~~~~~~~~[m[K
+[01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:64:5:[m[K [01;31m[Kerror: [m[K‘[01m[Kturret_status_pub_[m[K’ was not declared in this scope
+   64 |     [01;31m[Kturret_status_pub_[m[K->publish(status_msg);
+      |     [01;31m[K^~~~~~~~~~~~~~~~~~[m[K
+gmake[2]: *** [CMakeFiles/turret_controller_node.dir/build.make:76: CMakeFiles/turret_controller_node.dir/src/turret_controller_node.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:729: CMakeFiles/turret_controller_node.dir/all] Error 2
+gmake[1]: *** Waiting for unfinished jobs....
+gmake: *** [Makefile:146: all] Error 2
