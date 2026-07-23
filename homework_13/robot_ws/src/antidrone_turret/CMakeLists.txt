@@ -51,13 +51,25 @@ if(BUILD_TESTING)
   ament_add_gtest(provided_logic_test
     test/provided_logic_test.cpp
   )
-  
-  target_include_directories(provided_logic_test PRIVATE include)
-
 
   target_compile_definitions(provided_logic_test
     PRIVATE ANTIDRONE_TURRET_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
   )
+
+  target_include_directories(provided_logic_test PRIVATE include)
+
+  ament_add_gtest(turret_logic_test
+    test/test_turret_logic.cpp
+  )
+
+  target_compile_definitions(turret_logic_test
+    PRIVATE ANTIDRONE_TURRET_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
+  )
+
+  target_include_directories(turret_logic_test PRIVATE include)
+
+  target_link_libraries(turret_logic_test "${cpp_typesupport_target}")
+
 endif()
 
 ament_export_dependencies(rosidl_default_runtime)

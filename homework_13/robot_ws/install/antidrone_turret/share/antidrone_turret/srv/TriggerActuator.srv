@@ -1,5 +1,0 @@
-float32 confidence
-float32 distance_m
----
-bool accepted
-uint32 trigger_count
