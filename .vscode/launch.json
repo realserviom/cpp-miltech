@@ -95,12 +95,26 @@
       "miDebuggerPath": "/usr/bin/gdb",
       "preLaunchTask": "CMake: configure and build", // CMake сам збере потрібну таргет
       "setupCommands": [
+<<<<<<< Updated upstream
         {
           "description": "Увімкнути pretty-printing для STL типів у GDB.",
           "text": "-enable-pretty-printing",
           "ignoreFailures": true
         }
       ]
+=======
+          {
+            "description": "Увімкнути pretty-printing для STL типів у GDB.",
+            "text": "enable-pretty-printing",
+            "ignoreFailures": true
+          },
+          // {
+          //   "description": "Вимкнути спроби GDB захопити/створити новий керуючий термінал",
+          //   "text": "set new-console off",
+          //   "ignoreFailures": true
+          // }
+        ]
+>>>>>>> Stashed changes
     }
   ]
 }

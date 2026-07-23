@@ -34,7 +34,7 @@ public:
         DEBUG("Шлях розгону:         " << myDrone.accelPath << " м");
         DEBUG("Боєприпас:            " << myDrone.ammoName);
         DEBUG("Крок часу масиву:     " << myDrone.arrayTimeStep << " с");
-        DEBUG("Крок симуляції:       " << myDrone.simTimeStep << " с");
+        DEBUG("Крок симуляції:       " << myDrone.timeStep << " с");
         DEBUG("Радіус ураження:      " << myDrone.hitRadius << " м");
         DEBUG("Кутова швидкість:     " << myDrone.angularSpeed << " рад/c");
         DEBUG("Поріг повороту:       " << myDrone.turnThreshold << " рад");
