@@ -1,4 +1,4 @@
-# Базові пакети для стабільної роботи Ubuntu image.
+# Базові пакети для стабільної роботи devcontainer image.
 ca-certificates
 curl
 locales
