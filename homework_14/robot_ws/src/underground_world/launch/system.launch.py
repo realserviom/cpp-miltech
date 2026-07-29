@@ -44,5 +44,17 @@ def generate_launch_description():
                 description="Delay before applying queued move commands",
             ),
             world_node,
+            Node(
+                package='underground_world',
+                executable='payload_action_node',
+                name='payload_action_node',
+                output='screen'
+            ),
+            Node(
+                package='underground_world',
+                executable='mission_explorer_node',
+                name='mission_explorer_node',
+                output='screen'
+            ),
         ]
     )

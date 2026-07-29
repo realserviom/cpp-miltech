@@ -25,19 +25,31 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 )
 
 ament_auto_add_library(underground_world_core
-  src/scenario_loader.cpp
-  src/world_model.cpp
+ src/scenario_loader.cpp
+ src/world_model.cpp
 )
+
 target_include_directories(underground_world_core PUBLIC include)
 
 ament_auto_add_executable(underground_world_node src/underground_world_node.cpp)
-target_link_libraries(underground_world_node underground_world_core)
+target_include_directories(underground_world_node PRIVATE include)
+
+ament_auto_add_executable(mission_explorer_node src/mission_explorer_node.cpp)
+target_include_directories(mission_explorer_node PRIVATE include)
+
+ament_auto_add_executable(payload_action_node src/payload_action_node.cpp)
+target_include_directories(payload_action_node PRIVATE include)
 
 rosidl_get_typesupport_target(cpp_typesupport_target
   ${PROJECT_NAME}
   "rosidl_typesupport_cpp"
 )
+
 target_link_libraries(underground_world_node "${cpp_typesupport_target}")
+target_link_libraries(mission_explorer_node "${cpp_typesupport_target}")
+target_link_libraries(payload_action_node "${cpp_typesupport_target}")
+
+target_link_libraries(underground_world_core ${cpp_typesupport_target})
 
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
@@ -45,11 +57,15 @@ if(BUILD_TESTING)
   ament_add_gtest(provided_world_contract_test
     test/provided_world_contract_test.cpp
   )
-  target_include_directories(provided_world_contract_test PRIVATE include)
-  target_link_libraries(provided_world_contract_test underground_world_core)
+
   target_compile_definitions(provided_world_contract_test
     PRIVATE UNDERGROUND_WORLD_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
   )
+
+  target_include_directories(provided_world_contract_test PRIVATE include)
+
+  target_link_libraries(provided_world_contract_test "${cpp_typesupport_target}")
+
 endif()
 
 ament_export_dependencies(rosidl_default_runtime)

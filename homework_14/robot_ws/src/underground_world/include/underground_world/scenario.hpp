@@ -7,6 +7,12 @@
 
 namespace underground_world {
 
+inline const char* direction_to_string(uint8_t direction)
+{
+  static const char* direction_strings[] = {"UP", "DOWN", "LEFT", "RIGHT"};
+  return (direction < 4) ? direction_strings[direction] : "UNKNOWN";
+}
+
 struct Position {
   int x = 0;
   int y = 0;
