@@ -64,7 +64,7 @@ if(BUILD_TESTING)
 
   target_include_directories(provided_world_contract_test PRIVATE include)
 
-  target_link_libraries(provided_world_contract_test "${cpp_typesupport_target}")
+  target_link_libraries(provided_world_contract_test underground_world_core "${cpp_typesupport_target}")
 
 endif()
 

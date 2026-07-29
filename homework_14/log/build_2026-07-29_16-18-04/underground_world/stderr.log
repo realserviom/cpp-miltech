@@ -1,0 +1,60 @@
+/usr/bin/ld: CMakeFiles/provided_world_contract_test.dir/test/provided_world_contract_test.cpp.o: in function `underground_world::(anonymous namespace)::reachable_cells_from_start(underground_world::Scenario const&)':
+provided_world_contract_test.cpp:(.text+0x358): undefined reference to `underground_world::Scenario::is_passable(underground_world::Position) const'
+/usr/bin/ld: CMakeFiles/provided_world_contract_test.dir/test/provided_world_contract_test.cpp.o: in function `underground_world::(anonymous namespace)::expect_valid_required_scenario(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)':
+provided_world_contract_test.cpp:(.text+0x543): undefined reference to `underground_world::load_scenario(std::filesystem::__cxx11::path const&)'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x68f): undefined reference to `underground_world::Scenario::width() const'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x779): undefined reference to `underground_world::Scenario::height() const'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0xb01): undefined reference to `underground_world::Scenario::is_passable(underground_world::Position) const'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0xc20): undefined reference to `underground_world::Scenario::base_cell(underground_world::Position) const'
+/usr/bin/ld: CMakeFiles/provided_world_contract_test.dir/test/provided_world_contract_test.cpp.o: in function `underground_world::ProvidedWorldContractTest_ContactIdsAreStableAndOneBased_Test::TestBody()':
+provided_world_contract_test.cpp:(.text+0x16d7): undefined reference to `underground_world::load_scenario(std::filesystem::__cxx11::path const&)'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x1824): undefined reference to `underground_world::Scenario::is_passable(underground_world::Position) const'
+/usr/bin/ld: CMakeFiles/provided_world_contract_test.dir/test/provided_world_contract_test.cpp.o: in function `underground_world::ProvidedWorldContractTest_InvalidMoveMetricCountsOnlyWallOrBoundsMoves_Test::TestBody()':
+provided_world_contract_test.cpp:(.text+0x1b36): undefined reference to `underground_world::load_scenario(std::filesystem::__cxx11::path const&)'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x1b4f): undefined reference to `underground_world::WorldModel::WorldModel(underground_world::Scenario)'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x1b91): undefined reference to `underground_world::WorldModel::apply_move(unsigned char)'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x1cb9): undefined reference to `underground_world::WorldModel::metrics() const'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x1dae): undefined reference to `underground_world::WorldModel::apply_move(unsigned char)'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x1ed6): undefined reference to `underground_world::WorldModel::metrics() const'
+/usr/bin/ld: CMakeFiles/provided_world_contract_test.dir/test/provided_world_contract_test.cpp.o: in function `underground_world::ProvidedWorldContractTest_ProcessedContactIsPublishedAsX_Test::TestBody()':
+provided_world_contract_test.cpp:(.text+0x22a2): undefined reference to `underground_world::load_scenario(std::filesystem::__cxx11::path const&)'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x22bb): undefined reference to `underground_world::WorldModel::WorldModel(underground_world::Scenario)'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x22fd): undefined reference to `underground_world::WorldModel::apply_move(unsigned char)'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x2428): undefined reference to `underground_world::WorldModel::apply_move(unsigned char)'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x2564): undefined reference to `underground_world::WorldModel::make_scan()'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x295b): undefined reference to `underground_world::WorldModel::apply_enemy_down(int, underground_world::Position)'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x2a8e): undefined reference to `underground_world::WorldModel::make_scan()'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x2c3c): undefined reference to `underground_world::cell_kind_to_string[abi:cxx11](underground_world::CellKind)'
+/usr/bin/ld: CMakeFiles/provided_world_contract_test.dir/test/provided_world_contract_test.cpp.o: in function `underground_world::ProvidedWorldContractTest_ActiveContactBlocksMovementUntilProcessed_Test::TestBody()':
+provided_world_contract_test.cpp:(.text+0x34a2): undefined reference to `underground_world::load_scenario(std::filesystem::__cxx11::path const&)'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x34bb): undefined reference to `underground_world::WorldModel::WorldModel(underground_world::Scenario)'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x34fd): undefined reference to `underground_world::WorldModel::apply_move(unsigned char)'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x3628): undefined reference to `underground_world::WorldModel::apply_move(unsigned char)'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x375f): undefined reference to `underground_world::WorldModel::apply_move(unsigned char)'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x3893): undefined reference to `underground_world::WorldModel::robot_position() const'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x398b): undefined reference to `underground_world::WorldModel::metrics() const'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x3ab0): undefined reference to `underground_world::WorldModel::apply_enemy_down(int, underground_world::Position)'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x3bd2): undefined reference to `underground_world::WorldModel::apply_move(unsigned char)'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x3d03): undefined reference to `underground_world::WorldModel::robot_position() const'
+/usr/bin/ld: CMakeFiles/provided_world_contract_test.dir/test/provided_world_contract_test.cpp.o: in function `underground_world::ProvidedWorldContractTest_SuccessDoesNotRequireReturningToStart_Test::TestBody()':
+provided_world_contract_test.cpp:(.text+0x4260): undefined reference to `underground_world::load_scenario(std::filesystem::__cxx11::path const&)'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x4279): undefined reference to `underground_world::WorldModel::WorldModel(underground_world::Scenario)'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x42bb): undefined reference to `underground_world::WorldModel::apply_move(unsigned char)'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x43eb): undefined reference to `underground_world::WorldModel::make_scan()'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x441a): undefined reference to `underground_world::WorldModel::apply_move(unsigned char)'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x454a): undefined reference to `underground_world::WorldModel::make_scan()'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x45a9): undefined reference to `underground_world::WorldModel::apply_enemy_down(int, underground_world::Position)'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x46cb): undefined reference to `underground_world::WorldModel::apply_move(unsigned char)'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x4804): undefined reference to `underground_world::WorldModel::make_scan()'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x4833): undefined reference to `underground_world::WorldModel::apply_move(unsigned char)'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x4960): undefined reference to `underground_world::WorldModel::make_scan()'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x498f): undefined reference to `underground_world::WorldModel::apply_move(unsigned char)'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x4abc): undefined reference to `underground_world::WorldModel::make_scan()'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x4ae6): undefined reference to `underground_world::WorldModel::scenario() const'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x4af8): undefined reference to `underground_world::WorldModel::robot_position() const'
+/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x4c28): undefined reference to `underground_world::WorldModel::result() const'
+collect2: error: ld returned 1 exit status
+gmake[2]: *** [CMakeFiles/provided_world_contract_test.dir/build.make:107: provided_world_contract_test] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:788: CMakeFiles/provided_world_contract_test.dir/all] Error 2
+gmake[1]: *** Waiting for unfinished jobs....
+gmake: *** [Makefile:146: all] Error 2

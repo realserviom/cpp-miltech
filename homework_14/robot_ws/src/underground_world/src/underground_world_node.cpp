@@ -141,7 +141,7 @@ private:
   {
     const auto outcome = world_.apply_enemy_down(msg.contact_id, {msg.x, msg.y});
     RCLCPP_INFO(get_logger(),
-                "enemy_down contact_id=%d accepted=%s reason=%s",
+                "Ворог знешкоджений contact_id=%d accepted=%s reason=%s",
                 msg.contact_id,
                 outcome.accepted ? "true" : "false",
                 outcome.reason.c_str());

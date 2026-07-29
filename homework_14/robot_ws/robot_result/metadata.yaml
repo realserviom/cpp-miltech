@@ -1,0 +1,44 @@
+rosbag2_bagfile_information:
+  version: 9
+  storage_identifier: mcap
+  duration:
+    nanoseconds: 3250500349
+  starting_time:
+    nanoseconds_since_epoch: 1785333516031727944
+  message_count: 69
+  topics_with_message_count:
+    - topic_metadata:
+        name: /robot/result
+        type: underground_world/msg/RobotResult
+        serialization_format: cdr
+        offered_qos_profiles:
+          - history: keep_last
+            depth: 1
+            reliability: reliable
+            durability: transient_local
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+        type_description_hash: RIHS01_5793572dea9e45530397cf574b7932001c690413c652a3fcbda2846aa52c8848
+      message_count: 69
+  compression_format: ""
+  compression_mode: ""
+  relative_file_paths:
+    - robot_result_0.mcap
+  files:
+    - path: robot_result_0.mcap
+      starting_time:
+        nanoseconds_since_epoch: 1785333516031727944
+      duration:
+        nanoseconds: 3250500349
+      message_count: 69
+  custom_data: ~
+  ros_distro: jazzy

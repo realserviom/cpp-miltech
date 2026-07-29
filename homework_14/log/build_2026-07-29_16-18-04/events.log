@@ -1,0 +1,419 @@
+[0.000000] (-) TimerEvent: {}
+[0.000330] (underground_world) JobQueued: {'identifier': 'underground_world', 'dependencies': OrderedDict()}
+[0.001039] (underground_world) JobStarted: {'identifier': 'underground_world'}
+[0.008484] (underground_world) JobProgress: {'identifier': 'underground_world', 'progress': 'cmake'}
+[0.009292] (underground_world) Command: {'cmd': ['/usr/bin/cmake', '/home/serviom/cpp-miltech/homework_14/robot_ws/src/underground_world', '-DCMAKE_INSTALL_PREFIX=/home/serviom/cpp-miltech/homework_14/install/underground_world'], 'cwd': '/home/serviom/cpp-miltech/homework_14/build/underground_world', 'env': OrderedDict({'LANGUAGE': 'en_US:en', 'HOSTNAME': 'devcontainer', 'GIT_ASKPASS': '/vscode/vscode-server/bin/linux-x64/fc3def6774c76082adf699d366f31a557ce5573f/extensions/git/dist/askpass.sh', 'SHLVL': '2', 'LD_LIBRARY_PATH': '/home/serviom/cpp-miltech/homework_14/robot_ws/install/underground_world/lib:/opt/ros/jazzy/opt/rviz_ogre_vendor/lib:/opt/ros/jazzy/lib/x86_64-linux-gnu:/opt/ros/jazzy/opt/gz_math_vendor/lib:/opt/ros/jazzy/opt/gz_utils_vendor/lib:/opt/ros/jazzy/opt/gz_cmake_vendor/lib:/opt/ros/jazzy/lib', 'BROWSER': '/vscode/vscode-server/bin/linux-x64/fc3def6774c76082adf699d366f31a557ce5573f/bin/helpers/browser.sh', 'HOME': '/home/serviom', 'CYCLONEDDS_URI': 'file:///etc/cyclonedds.xml', 'OLDPWD': '/home/serviom/cpp-miltech', 'TERM_PROGRAM_VERSION': '1.128.0', 'VSCODE_IPC_HOOK_CLI': '/tmp/vscode-ipc-96510505-abb5-453e-a881-de32a18d8ee7.sock', 'ROS_PYTHON_VERSION': '3', 'VSCODE_GIT_ASKPASS_MAIN': '/vscode/vscode-server/bin/linux-x64/fc3def6774c76082adf699d366f31a557ce5573f/extensions/git/dist/askpass-main.js', 'VSCODE_GIT_ASKPASS_NODE': '/vscode/vscode-server/bin/linux-x64/fc3def6774c76082adf699d366f31a557ce5573f/node', 'VSCODE_PYTHON_AUTOACTIVATE_GUARD': '1', 'COLORTERM': 'truecolor', 'REMOTE_CONTAINERS': 'true', 'DEBUGINFOD_URLS': 'https://debuginfod.ubuntu.com', 'WAYLAND_DISPLAY': 'vscode-wayland-6a127809-4362-4a21-878f-33a13fed7dad.sock', 'COLCON_PREFIX_PATH': '/home/serviom/cpp-miltech/homework_14/robot_ws/install', 'ROS_DISTRO': 'jazzy', 'REMOTE_CONTAINERS_IPC': '/tmp/vscode-remote-containers-ipc-cda0d486-864a-483c-8826-6eb07baae6fd.sock', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'PATH': '/vscode/vscode-server/bin/linux-x64/fc3def6774c76082adf699d366f31a557ce5573f/bin/remote-cli:/opt/ros/jazzy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'XDG_RUNTIME_DIR': '/tmp/user/1000', 'REMOTE_CONTAINERS_SOCKETS': '["/tmp/.X11-unix/X1","/home/serviom/.gnupg/S.gpg-agent"]', 'DISPLAY': ':1', 'LANG': 'en_US.UTF-8', 'RMW_IMPLEMENTATION': 'rmw_cyclonedds_cpp', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'VSCODE_GIT_IPC_HANDLE': '/tmp/user/1000/vscode-git-6915a3234e.sock', 'TERM_PROGRAM': 'vscode', 'ROS_DOMAIN_ID': '0', 'AMENT_PREFIX_PATH': '/home/serviom/cpp-miltech/homework_14/robot_ws/install/underground_world:/opt/ros/jazzy', 'REMOTE_CONTAINERS_DISPLAY_SOCK': '/tmp/.X11-unix/X1', 'SHELL': '/bin/bash', 'PROMPT_COMMAND': '__vsc_prompt_cmd_original', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'SUBNET', 'VSCODE_GIT_ASKPASS_EXTRA_ARGS': '', 'PWD': '/home/serviom/cpp-miltech/homework_14/build/underground_world', 'LC_ALL': 'en_US.UTF-8', 'PYTHONPATH': '/home/serviom/cpp-miltech/homework_14/robot_ws/install/underground_world/lib/python3.12/site-packages:/opt/ros/jazzy/lib/python3.12/site-packages', 'TZ': 'Etc/UTC', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/home/serviom/cpp-miltech/homework_14/robot_ws/install/underground_world:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy'}), 'shell': False}
+[0.099739] (-) TimerEvent: {}
+[0.157633] (underground_world) StdoutLine: {'line': b'-- The C compiler identification is GNU 13.3.0\n'}
+[0.199887] (-) TimerEvent: {}
+[0.233023] (underground_world) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 13.3.0\n'}
+[0.245705] (underground_world) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[0.300077] (-) TimerEvent: {}
+[0.319627] (underground_world) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[0.326677] (underground_world) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[0.326996] (underground_world) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[0.327711] (underground_world) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[0.334116] (underground_world) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[0.399404] (underground_world) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[0.400277] (-) TimerEvent: {}
+[0.405314] (underground_world) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[0.405492] (underground_world) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[0.406010] (underground_world) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[0.410560] (underground_world) StdoutLine: {'line': b'-- Found ament_cmake_auto: 2.5.6 (/opt/ros/jazzy/share/ament_cmake_auto/cmake)\n'}
+[0.500502] (-) TimerEvent: {}
+[0.512368] (underground_world) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter \n'}
+[0.600689] (-) TimerEvent: {}
+[0.673757] (underground_world) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[0.700792] (-) TimerEvent: {}
+[0.717549] (underground_world) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[0.756254] (underground_world) StdoutLine: {'line': b'-- Found rosidl_adapter: 4.6.9 (/opt/ros/jazzy/share/rosidl_adapter/cmake)\n'}
+[0.800916] (-) TimerEvent: {}
+[0.836843] (underground_world) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 7.3.3 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)\n'}
+[0.839277] (underground_world) StdoutLine: {'line': b'-- Found rmw_cyclonedds_cpp: 2.2.3 (/opt/ros/jazzy/share/rmw_cyclonedds_cpp/cmake)\n'}
+[0.862177] (underground_world) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_cyclonedds_cpp' as default\n"}
+[0.901019] (-) TimerEvent: {}
+[0.942984] (underground_world) StdoutLine: {'line': b'-- Found TinyXML2 via Config file: /usr/lib/x86_64-linux-gnu/cmake/tinyxml2\n'}
+[0.952419] (underground_world) StdoutLine: {'line': b"-- Setting yaml-cpp_DIR to: '/opt/ros/jazzy/share/yaml_cpp_vendor/cmake/../../../opt/yaml_cpp_vendor/share/cmake/yaml-cpp'\n"}
+[1.002065] (-) TimerEvent: {}
+[1.102453] (-) TimerEvent: {}
+[1.202712] (-) TimerEvent: {}
+[1.302959] (-) TimerEvent: {}
+[1.311512] (underground_world) StdoutLine: {'line': b'-- Found ament_cmake_ros: 0.12.1 (/opt/ros/jazzy/share/ament_cmake_ros/cmake)\n'}
+[1.403275] (-) TimerEvent: {}
+[1.503598] (-) TimerEvent: {}
+[1.603952] (-) TimerEvent: {}
+[1.621248] (underground_world) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[1.704085] (-) TimerEvent: {}
+[1.804396] (-) TimerEvent: {}
+[1.904662] (-) TimerEvent: {}
+[1.995047] (underground_world) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[1.998623] (underground_world) StdoutLine: {'line': b'-- Found python_cmake_module: 0.11.1 (/opt/ros/jazzy/share/python_cmake_module/cmake)\n'}
+[2.004781] (-) TimerEvent: {}
+[2.089904] (underground_world) StdoutLine: {'line': b'-- Found PythonExtra: /usr/bin/python3  \n'}
+[2.104912] (-) TimerEvent: {}
+[2.205255] (-) TimerEvent: {}
+[2.305481] (-) TimerEvent: {}
+[2.402765] (underground_world) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter Development NumPy Development.Module Development.Embed \n'}
+[2.405557] (-) TimerEvent: {}
+[2.452140] (underground_world) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter \n'}
+[2.458833] (underground_world) StdoutLine: {'line': b"-- Found gtest sources under '/opt/ros/jazzy/src/gtest_vendor': C++ tests using 'Google Test' will be built\n"}
+[2.462447] (underground_world) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD\n'}
+[2.505670] (-) TimerEvent: {}
+[2.519990] (underground_world) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success\n'}
+[2.520578] (underground_world) StdoutLine: {'line': b'-- Found Threads: TRUE  \n'}
+[2.529171] (underground_world) StdoutLine: {'line': b'-- Configuring done (2.5s)\n'}
+[2.599400] (underground_world) StdoutLine: {'line': b'-- Generating done (0.1s)\n'}
+[2.605756] (-) TimerEvent: {}
+[2.614838] (underground_world) StdoutLine: {'line': b'-- Build files have been written to: /home/serviom/cpp-miltech/homework_14/build/underground_world\n'}
+[2.624985] (underground_world) CommandEnded: {'returncode': 0}
+[2.625560] (underground_world) JobProgress: {'identifier': 'underground_world', 'progress': 'build'}
+[2.626131] (underground_world) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/serviom/cpp-miltech/homework_14/build/underground_world', '--', '-j4', '-l4'], 'cwd': '/home/serviom/cpp-miltech/homework_14/build/underground_world', 'env': OrderedDict({'LANGUAGE': 'en_US:en', 'HOSTNAME': 'devcontainer', 'GIT_ASKPASS': '/vscode/vscode-server/bin/linux-x64/fc3def6774c76082adf699d366f31a557ce5573f/extensions/git/dist/askpass.sh', 'SHLVL': '2', 'LD_LIBRARY_PATH': '/home/serviom/cpp-miltech/homework_14/robot_ws/install/underground_world/lib:/opt/ros/jazzy/opt/rviz_ogre_vendor/lib:/opt/ros/jazzy/lib/x86_64-linux-gnu:/opt/ros/jazzy/opt/gz_math_vendor/lib:/opt/ros/jazzy/opt/gz_utils_vendor/lib:/opt/ros/jazzy/opt/gz_cmake_vendor/lib:/opt/ros/jazzy/lib', 'BROWSER': '/vscode/vscode-server/bin/linux-x64/fc3def6774c76082adf699d366f31a557ce5573f/bin/helpers/browser.sh', 'HOME': '/home/serviom', 'CYCLONEDDS_URI': 'file:///etc/cyclonedds.xml', 'OLDPWD': '/home/serviom/cpp-miltech', 'TERM_PROGRAM_VERSION': '1.128.0', 'VSCODE_IPC_HOOK_CLI': '/tmp/vscode-ipc-96510505-abb5-453e-a881-de32a18d8ee7.sock', 'ROS_PYTHON_VERSION': '3', 'VSCODE_GIT_ASKPASS_MAIN': '/vscode/vscode-server/bin/linux-x64/fc3def6774c76082adf699d366f31a557ce5573f/extensions/git/dist/askpass-main.js', 'VSCODE_GIT_ASKPASS_NODE': '/vscode/vscode-server/bin/linux-x64/fc3def6774c76082adf699d366f31a557ce5573f/node', 'VSCODE_PYTHON_AUTOACTIVATE_GUARD': '1', 'COLORTERM': 'truecolor', 'REMOTE_CONTAINERS': 'true', 'DEBUGINFOD_URLS': 'https://debuginfod.ubuntu.com', 'WAYLAND_DISPLAY': 'vscode-wayland-6a127809-4362-4a21-878f-33a13fed7dad.sock', 'COLCON_PREFIX_PATH': '/home/serviom/cpp-miltech/homework_14/robot_ws/install', 'ROS_DISTRO': 'jazzy', 'REMOTE_CONTAINERS_IPC': '/tmp/vscode-remote-containers-ipc-cda0d486-864a-483c-8826-6eb07baae6fd.sock', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'PATH': '/vscode/vscode-server/bin/linux-x64/fc3def6774c76082adf699d366f31a557ce5573f/bin/remote-cli:/opt/ros/jazzy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'XDG_RUNTIME_DIR': '/tmp/user/1000', 'REMOTE_CONTAINERS_SOCKETS': '["/tmp/.X11-unix/X1","/home/serviom/.gnupg/S.gpg-agent"]', 'DISPLAY': ':1', 'LANG': 'en_US.UTF-8', 'RMW_IMPLEMENTATION': 'rmw_cyclonedds_cpp', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'VSCODE_GIT_IPC_HANDLE': '/tmp/user/1000/vscode-git-6915a3234e.sock', 'TERM_PROGRAM': 'vscode', 'ROS_DOMAIN_ID': '0', 'AMENT_PREFIX_PATH': '/home/serviom/cpp-miltech/homework_14/robot_ws/install/underground_world:/opt/ros/jazzy', 'REMOTE_CONTAINERS_DISPLAY_SOCK': '/tmp/.X11-unix/X1', 'SHELL': '/bin/bash', 'PROMPT_COMMAND': '__vsc_prompt_cmd_original', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'SUBNET', 'VSCODE_GIT_ASKPASS_EXTRA_ARGS': '', 'PWD': '/home/serviom/cpp-miltech/homework_14/build/underground_world', 'LC_ALL': 'en_US.UTF-8', 'PYTHONPATH': '/home/serviom/cpp-miltech/homework_14/robot_ws/install/underground_world/lib/python3.12/site-packages:/opt/ros/jazzy/lib/python3.12/site-packages', 'TZ': 'Etc/UTC', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/home/serviom/cpp-miltech/homework_14/robot_ws/install/underground_world:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy'}), 'shell': False}
+[2.661816] (underground_world) StdoutLine: {'line': b'[  0%] \x1b[34m\x1b[1mGenerating Rust code for ROS interfaces\x1b[0m\n'}
+[2.662411] (underground_world) StdoutLine: {'line': b'[  1%] \x1b[34m\x1b[1mGenerating type hashes for ROS interfaces\x1b[0m\n'}
+[2.668548] (underground_world) StdoutLine: {'line': b'[  2%] \x1b[32mBuilding CXX object gtest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o\x1b[0m\n'}
+[2.669251] (underground_world) StdoutLine: {'line': b'[  2%] Built target ament_cmake_python_copy_underground_world\n'}
+[2.682462] (underground_world) StdoutLine: {'line': b'[  2%] \x1b[32mBuilding CXX object gtest/CMakeFiles/gtest.dir/src/gtest-all.cc.o\x1b[0m\n'}
+[2.705841] (-) TimerEvent: {}
+[2.806037] (-) TimerEvent: {}
+[2.906371] (-) TimerEvent: {}
+[2.959641] (underground_world) StdoutLine: {'line': b'[  2%] Built target underground_world__rosidl_generator_type_description\n'}
+[2.969965] (underground_world) StdoutLine: {'line': b'[  2%] \x1b[34m\x1b[1mGenerating C code for ROS interfaces\x1b[0m\n'}
+[2.975656] (underground_world) StdoutLine: {'line': b'[  2%] Built target underground_world__rs\n'}
+[3.005316] (underground_world) StdoutLine: {'line': b'[  3%] \x1b[34m\x1b[1mGenerating C++ code for ROS interfaces\x1b[0m\n'}
+[3.006504] (-) TimerEvent: {}
+[3.106676] (-) TimerEvent: {}
+[3.206870] (-) TimerEvent: {}
+[3.307065] (-) TimerEvent: {}
+[3.407409] (-) TimerEvent: {}
+[3.443778] (underground_world) StdoutLine: {'line': b'[  4%] \x1b[32m\x1b[1mLinking CXX static library libgtest_main.a\x1b[0m\n'}
+[3.507595] (-) TimerEvent: {}
+[3.520930] (underground_world) StdoutLine: {'line': b'[  4%] Built target underground_world__cpp\n'}
+[3.607868] (-) TimerEvent: {}
+[3.617854] (underground_world) StdoutLine: {'line': b'[  5%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_c.dir/rosidl_generator_c/underground_world/msg/detail/cell_observation__description.c.o\x1b[0m\n'}
+[3.648429] (underground_world) StdoutLine: {'line': b'[  5%] Built target gtest_main\n'}
+[3.649569] (underground_world) StdoutLine: {'line': b'running egg_info\n'}
+[3.650834] (underground_world) StdoutLine: {'line': b'creating underground_world.egg-info\n'}
+[3.653521] (underground_world) StdoutLine: {'line': b'[  6%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_c.dir/rosidl_generator_c/underground_world/msg/detail/cell_observation__functions.c.o\x1b[0m\n'}
+[3.660735] (underground_world) StdoutLine: {'line': b'writing underground_world.egg-info/PKG-INFO\n'}
+[3.660882] (underground_world) StdoutLine: {'line': b'writing dependency_links to underground_world.egg-info/dependency_links.txt\n'}
+[3.660946] (underground_world) StdoutLine: {'line': b'writing top-level names to underground_world.egg-info/top_level.txt\n'}
+[3.661054] (underground_world) StdoutLine: {'line': b"writing manifest file 'underground_world.egg-info/SOURCES.txt'\n"}
+[3.663733] (underground_world) StdoutLine: {'line': b'[  7%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_c.dir/rosidl_generator_c/underground_world/msg/detail/cell_observation__type_support.c.o\x1b[0m\n'}
+[3.683738] (underground_world) StdoutLine: {'line': b'[  8%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_c.dir/rosidl_generator_c/underground_world/msg/detail/local_scan__description.c.o\x1b[0m\n'}
+[3.687724] (underground_world) StdoutLine: {'line': b"reading manifest file 'underground_world.egg-info/SOURCES.txt'\n"}
+[3.688101] (underground_world) StdoutLine: {'line': b"writing manifest file 'underground_world.egg-info/SOURCES.txt'\n"}
+[3.703001] (underground_world) StdoutLine: {'line': b'[  9%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_c.dir/rosidl_generator_c/underground_world/msg/detail/local_scan__functions.c.o\x1b[0m\n'}
+[3.705120] (underground_world) StdoutLine: {'line': b'[  9%] Built target ament_cmake_python_build_underground_world_egg\n'}
+[3.707952] (-) TimerEvent: {}
+[3.709892] (underground_world) StdoutLine: {'line': b'[  9%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_c.dir/rosidl_generator_c/underground_world/msg/detail/local_scan__type_support.c.o\x1b[0m\n'}
+[3.710616] (underground_world) StdoutLine: {'line': b'[ 10%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_c.dir/rosidl_generator_c/underground_world/msg/detail/move_command__description.c.o\x1b[0m\n'}
+[3.732101] (underground_world) StdoutLine: {'line': b'[ 11%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_c.dir/rosidl_generator_c/underground_world/msg/detail/move_command__functions.c.o\x1b[0m\n'}
+[3.733834] (underground_world) StdoutLine: {'line': b'[ 13%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_c.dir/rosidl_generator_c/underground_world/msg/detail/enemy_down__description.c.o\x1b[0m\n'}
+[3.733984] (underground_world) StdoutLine: {'line': b'[ 13%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_c.dir/rosidl_generator_c/underground_world/msg/detail/move_command__type_support.c.o\x1b[0m\n'}
+[3.760258] (underground_world) StdoutLine: {'line': b'[ 14%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_c.dir/rosidl_generator_c/underground_world/msg/detail/enemy_down__functions.c.o\x1b[0m\n'}
+[3.760390] (underground_world) StdoutLine: {'line': b'[ 14%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_c.dir/rosidl_generator_c/underground_world/msg/detail/enemy_down__type_support.c.o\x1b[0m\n'}
+[3.764401] (underground_world) StdoutLine: {'line': b'[ 15%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_c.dir/rosidl_generator_c/underground_world/msg/detail/robot_metrics__description.c.o\x1b[0m\n'}
+[3.779689] (underground_world) StdoutLine: {'line': b'[ 16%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_c.dir/rosidl_generator_c/underground_world/msg/detail/robot_metrics__functions.c.o\x1b[0m\n'}
+[3.788168] (underground_world) StdoutLine: {'line': b'[ 17%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_c.dir/rosidl_generator_c/underground_world/msg/detail/robot_metrics__type_support.c.o\x1b[0m\n'}
+[3.789083] (underground_world) StdoutLine: {'line': b'[ 18%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_c.dir/rosidl_generator_c/underground_world/msg/detail/robot_result__description.c.o\x1b[0m\n'}
+[3.806115] (underground_world) StdoutLine: {'line': b'[ 19%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_c.dir/rosidl_generator_c/underground_world/msg/detail/robot_result__functions.c.o\x1b[0m\n'}
+[3.808043] (-) TimerEvent: {}
+[3.810460] (underground_world) StdoutLine: {'line': b'[ 19%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_c.dir/rosidl_generator_c/underground_world/msg/detail/robot_result__type_support.c.o\x1b[0m\n'}
+[3.811631] (underground_world) StdoutLine: {'line': b'[ 20%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_c.dir/rosidl_generator_c/underground_world/msg/detail/student_status__description.c.o\x1b[0m\n'}
+[3.830682] (underground_world) StdoutLine: {'line': b'[ 21%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_c.dir/rosidl_generator_c/underground_world/msg/detail/student_status__functions.c.o\x1b[0m\n'}
+[3.834973] (underground_world) StdoutLine: {'line': b'[ 22%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_c.dir/rosidl_generator_c/underground_world/msg/detail/student_status__type_support.c.o\x1b[0m\n'}
+[3.841341] (underground_world) StdoutLine: {'line': b'[ 23%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_c.dir/rosidl_generator_c/underground_world/srv/detail/payload_trigger__description.c.o\x1b[0m\n'}
+[3.854747] (underground_world) StdoutLine: {'line': b'[ 24%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_c.dir/rosidl_generator_c/underground_world/srv/detail/payload_trigger__functions.c.o\x1b[0m\n'}
+[3.862792] (underground_world) StdoutLine: {'line': b'[ 24%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_c.dir/rosidl_generator_c/underground_world/srv/detail/payload_trigger__type_support.c.o\x1b[0m\n'}
+[3.902293] (underground_world) StdoutLine: {'line': b'[ 25%] \x1b[32m\x1b[1mLinking C shared library libunderground_world__rosidl_generator_c.so\x1b[0m\n'}
+[3.908158] (-) TimerEvent: {}
+[3.927980] (underground_world) StdoutLine: {'line': b'[ 25%] Built target underground_world__rosidl_generator_c\n'}
+[3.934575] (underground_world) StdoutLine: {'line': b'[ 27%] \x1b[34m\x1b[1mGenerating C type support for eProsima Fast-RTPS\x1b[0m\n'}
+[3.934675] (underground_world) StdoutLine: {'line': b'[ 27%] \x1b[34m\x1b[1mGenerating C introspection for ROS interfaces\x1b[0m\n'}
+[3.935994] (underground_world) StdoutLine: {'line': b'[ 27%] \x1b[34m\x1b[1mGenerating C type support dispatch for ROS interfaces\x1b[0m\n'}
+[4.008241] (-) TimerEvent: {}
+[4.113400] (-) TimerEvent: {}
+[4.207004] (underground_world) StdoutLine: {'line': b'[ 28%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_c.dir/rosidl_typesupport_c/underground_world/msg/cell_observation__type_support.cpp.o\x1b[0m\n'}
+[4.213480] (-) TimerEvent: {}
+[4.237354] (underground_world) StdoutLine: {'line': b'[ 29%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_c.dir/rosidl_typesupport_c/underground_world/msg/local_scan__type_support.cpp.o\x1b[0m\n'}
+[4.259924] (underground_world) StdoutLine: {'line': b'[ 30%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_c.dir/rosidl_typesupport_c/underground_world/msg/move_command__type_support.cpp.o\x1b[0m\n'}
+[4.276890] (underground_world) StdoutLine: {'line': b'[ 31%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/underground_world/msg/detail/cell_observation__type_support.c.o\x1b[0m\n'}
+[4.286151] (underground_world) StdoutLine: {'line': b'[ 32%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_c.dir/rosidl_typesupport_c/underground_world/msg/enemy_down__type_support.cpp.o\x1b[0m\n'}
+[4.305032] (underground_world) StdoutLine: {'line': b'[ 32%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/underground_world/msg/detail/local_scan__type_support.c.o\x1b[0m\n'}
+[4.309231] (underground_world) StdoutLine: {'line': b'[ 33%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_c.dir/rosidl_typesupport_c/underground_world/msg/robot_metrics__type_support.cpp.o\x1b[0m\n'}
+[4.313567] (-) TimerEvent: {}
+[4.330003] (underground_world) StdoutLine: {'line': b'[ 34%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/underground_world/msg/detail/move_command__type_support.c.o\x1b[0m\n'}
+[4.332716] (underground_world) StdoutLine: {'line': b'[ 34%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_c.dir/rosidl_typesupport_c/underground_world/msg/robot_result__type_support.cpp.o\x1b[0m\n'}
+[4.350545] (underground_world) StdoutLine: {'line': b'[ 35%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/underground_world/msg/detail/enemy_down__type_support.c.o\x1b[0m\n'}
+[4.356304] (underground_world) StdoutLine: {'line': b'[ 36%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_c.dir/rosidl_typesupport_c/underground_world/msg/student_status__type_support.cpp.o\x1b[0m\n'}
+[4.365377] (underground_world) StdoutLine: {'line': b'[ 37%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/underground_world/msg/detail/cell_observation__type_support_c.cpp.o\x1b[0m\n'}
+[4.373513] (underground_world) StdoutLine: {'line': b'[ 38%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/underground_world/msg/detail/robot_metrics__type_support.c.o\x1b[0m\n'}
+[4.380508] (underground_world) StdoutLine: {'line': b'[ 39%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_c.dir/rosidl_typesupport_c/underground_world/srv/payload_trigger__type_support.cpp.o\x1b[0m\n'}
+[4.396629] (underground_world) StdoutLine: {'line': b'[ 40%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/underground_world/msg/detail/robot_result__type_support.c.o\x1b[0m\n'}
+[4.410025] (underground_world) StdoutLine: {'line': b'[ 41%] \x1b[32m\x1b[1mLinking CXX shared library libunderground_world__rosidl_typesupport_c.so\x1b[0m\n'}
+[4.413673] (-) TimerEvent: {}
+[4.422647] (underground_world) StdoutLine: {'line': b'[ 42%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/underground_world/msg/detail/student_status__type_support.c.o\x1b[0m\n'}
+[4.439752] (underground_world) StdoutLine: {'line': b'[ 42%] Built target underground_world__rosidl_typesupport_c\n'}
+[4.445255] (underground_world) StdoutLine: {'line': b'[ 42%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/underground_world/srv/detail/payload_trigger__type_support.c.o\x1b[0m\n'}
+[4.449180] (underground_world) StdoutLine: {'line': b'[ 42%] \x1b[34m\x1b[1mGenerating C++ type support for eProsima Fast-RTPS\x1b[0m\n'}
+[4.479029] (underground_world) StdoutLine: {'line': b'[ 43%] \x1b[32m\x1b[1mLinking C shared library libunderground_world__rosidl_typesupport_introspection_c.so\x1b[0m\n'}
+[4.504120] (underground_world) StdoutLine: {'line': b'[ 43%] Built target underground_world__rosidl_typesupport_introspection_c\n'}
+[4.513303] (underground_world) StdoutLine: {'line': b'[ 44%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/underground_world/msg/detail/local_scan__type_support_c.cpp.o\x1b[0m\n'}
+[4.513734] (-) TimerEvent: {}
+[4.613903] (-) TimerEvent: {}
+[4.662140] (underground_world) StdoutLine: {'line': b'[ 45%] \x1b[34m\x1b[1mGenerating C++ introspection for ROS interfaces\x1b[0m\n'}
+[4.713996] (-) TimerEvent: {}
+[4.804988] (underground_world) StdoutLine: {'line': b'[ 46%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/underground_world/msg/detail/move_command__type_support_c.cpp.o\x1b[0m\n'}
+[4.814147] (-) TimerEvent: {}
+[4.850850] (underground_world) StdoutLine: {'line': b'[ 47%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/underground_world/msg/detail/dds_fastrtps/cell_observation__type_support.cpp.o\x1b[0m\n'}
+[4.914285] (-) TimerEvent: {}
+[4.994099] (underground_world) StdoutLine: {'line': b'[ 48%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/underground_world/msg/detail/cell_observation__type_support.cpp.o\x1b[0m\n'}
+[5.014387] (-) TimerEvent: {}
+[5.092156] (underground_world) StdoutLine: {'line': b'[ 48%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/underground_world/msg/detail/enemy_down__type_support_c.cpp.o\x1b[0m\n'}
+[5.113722] (underground_world) StdoutLine: {'line': b'[ 49%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/underground_world/msg/detail/dds_fastrtps/local_scan__type_support.cpp.o\x1b[0m\n'}
+[5.114449] (-) TimerEvent: {}
+[5.200146] (underground_world) StdoutLine: {'line': b'[ 50%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/underground_world/msg/detail/local_scan__type_support.cpp.o\x1b[0m\n'}
+[5.217327] (-) TimerEvent: {}
+[5.317564] (-) TimerEvent: {}
+[5.341368] (underground_world) StdoutLine: {'line': b'[ 51%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/underground_world/msg/detail/robot_metrics__type_support_c.cpp.o\x1b[0m\n'}
+[5.394036] (underground_world) StdoutLine: {'line': b'[ 52%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/underground_world/msg/detail/move_command__type_support.cpp.o\x1b[0m\n'}
+[5.398391] (underground_world) StdoutLine: {'line': b'[ 53%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/underground_world/msg/detail/dds_fastrtps/move_command__type_support.cpp.o\x1b[0m\n'}
+[5.417669] (-) TimerEvent: {}
+[5.517906] (-) TimerEvent: {}
+[5.560024] (underground_world) StdoutLine: {'line': b'[ 53%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/underground_world/msg/detail/enemy_down__type_support.cpp.o\x1b[0m\n'}
+[5.593756] (underground_world) StdoutLine: {'line': b'[ 54%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/underground_world/msg/detail/robot_result__type_support_c.cpp.o\x1b[0m\n'}
+[5.618010] (-) TimerEvent: {}
+[5.653946] (underground_world) StdoutLine: {'line': b'[ 55%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/underground_world/msg/detail/dds_fastrtps/enemy_down__type_support.cpp.o\x1b[0m\n'}
+[5.718114] (-) TimerEvent: {}
+[5.729268] (underground_world) StdoutLine: {'line': b'[ 56%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/underground_world/msg/detail/robot_metrics__type_support.cpp.o\x1b[0m\n'}
+[5.818223] (-) TimerEvent: {}
+[5.847556] (underground_world) StdoutLine: {'line': b'[ 57%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/underground_world/msg/detail/student_status__type_support_c.cpp.o\x1b[0m\n'}
+[5.904269] (underground_world) StdoutLine: {'line': b'[ 58%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/underground_world/msg/detail/robot_result__type_support.cpp.o\x1b[0m\n'}
+[5.916518] (underground_world) StdoutLine: {'line': b'[ 59%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/underground_world/msg/detail/dds_fastrtps/robot_metrics__type_support.cpp.o\x1b[0m\n'}
+[5.916652] (underground_world) StdoutLine: {'line': b'[ 60%] \x1b[32m\x1b[1mLinking CXX static library libgtest.a\x1b[0m\n'}
+[5.918285] (-) TimerEvent: {}
+[5.984008] (underground_world) StdoutLine: {'line': b'[ 60%] Built target gtest\n'}
+[5.989601] (underground_world) StdoutLine: {'line': b'[ 61%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/underground_world/msg/detail/student_status__type_support.cpp.o\x1b[0m\n'}
+[6.021319] (-) TimerEvent: {}
+[6.094102] (underground_world) StdoutLine: {'line': b'[ 62%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/underground_world/srv/detail/payload_trigger__type_support_c.cpp.o\x1b[0m\n'}
+[6.109331] (underground_world) StdoutLine: {'line': b'[ 62%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/underground_world/msg/detail/dds_fastrtps/robot_result__type_support.cpp.o\x1b[0m\n'}
+[6.121421] (-) TimerEvent: {}
+[6.172231] (underground_world) StdoutLine: {'line': b'[ 63%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/underground_world/srv/detail/payload_trigger__type_support.cpp.o\x1b[0m\n'}
+[6.181934] (underground_world) StdoutLine: {'line': b'[ 64%] \x1b[34m\x1b[1mGenerating C++ type support dispatch for ROS interfaces\x1b[0m\n'}
+[6.221500] (-) TimerEvent: {}
+[6.321833] (-) TimerEvent: {}
+[6.370675] (underground_world) StdoutLine: {'line': b'[ 65%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/underground_world/msg/detail/dds_fastrtps/student_status__type_support.cpp.o\x1b[0m\n'}
+[6.380376] (underground_world) StdoutLine: {'line': b'[ 66%] \x1b[32m\x1b[1mLinking CXX shared library libunderground_world__rosidl_typesupport_fastrtps_c.so\x1b[0m\n'}
+[6.416793] (underground_world) StdoutLine: {'line': b'[ 67%] \x1b[32m\x1b[1mLinking CXX shared library libunderground_world__rosidl_typesupport_introspection_cpp.so\x1b[0m\n'}
+[6.421936] (-) TimerEvent: {}
+[6.426686] (underground_world) StdoutLine: {'line': b'[ 67%] Built target underground_world__rosidl_typesupport_fastrtps_c\n'}
+[6.432229] (underground_world) StdoutLine: {'line': b'[ 68%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/underground_world/srv/detail/dds_fastrtps/payload_trigger__type_support.cpp.o\x1b[0m\n'}
+[6.450157] (underground_world) StdoutLine: {'line': b'[ 69%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/underground_world/msg/cell_observation__type_support.cpp.o\x1b[0m\n'}
+[6.467495] (underground_world) StdoutLine: {'line': b'[ 69%] Built target underground_world__rosidl_typesupport_introspection_cpp\n'}
+[6.473196] (underground_world) StdoutLine: {'line': b'[ 69%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/underground_world/msg/local_scan__type_support.cpp.o\x1b[0m\n'}
+[6.522040] (-) TimerEvent: {}
+[6.616341] (underground_world) StdoutLine: {'line': b'[ 70%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/underground_world/msg/move_command__type_support.cpp.o\x1b[0m\n'}
+[6.622139] (-) TimerEvent: {}
+[6.624040] (underground_world) StdoutLine: {'line': b'[ 71%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/underground_world/msg/enemy_down__type_support.cpp.o\x1b[0m\n'}
+[6.648035] (underground_world) StdoutLine: {'line': b'[ 72%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/underground_world/msg/robot_metrics__type_support.cpp.o\x1b[0m\n'}
+[6.722295] (-) TimerEvent: {}
+[6.793189] (underground_world) StdoutLine: {'line': b'[ 73%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/underground_world/msg/robot_result__type_support.cpp.o\x1b[0m\n'}
+[6.799084] (underground_world) StdoutLine: {'line': b'[ 74%] \x1b[32m\x1b[1mLinking CXX shared library libunderground_world__rosidl_typesupport_fastrtps_cpp.so\x1b[0m\n'}
+[6.805318] (underground_world) StdoutLine: {'line': b'[ 75%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/underground_world/msg/student_status__type_support.cpp.o\x1b[0m\n'}
+[6.822396] (-) TimerEvent: {}
+[6.832926] (underground_world) StdoutLine: {'line': b'[ 75%] \x1b[32mBuilding CXX object CMakeFiles/underground_world__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/underground_world/srv/payload_trigger__type_support.cpp.o\x1b[0m\n'}
+[6.843497] (underground_world) StdoutLine: {'line': b'[ 75%] Built target underground_world__rosidl_typesupport_fastrtps_cpp\n'}
+[6.922567] (-) TimerEvent: {}
+[7.022937] (-) TimerEvent: {}
+[7.067391] (underground_world) StdoutLine: {'line': b'[ 76%] \x1b[32m\x1b[1mLinking CXX shared library libunderground_world__rosidl_typesupport_cpp.so\x1b[0m\n'}
+[7.115477] (underground_world) StdoutLine: {'line': b'[ 76%] Built target underground_world__rosidl_typesupport_cpp\n'}
+[7.123084] (-) TimerEvent: {}
+[7.127374] (underground_world) StdoutLine: {'line': b'[ 79%] \x1b[32mBuilding CXX object CMakeFiles/provided_world_contract_test.dir/test/provided_world_contract_test.cpp.o\x1b[0m\n'}
+[7.127492] (underground_world) StdoutLine: {'line': b'[ 79%] \x1b[32mBuilding CXX object CMakeFiles/underground_world_core.dir/src/world_model.cpp.o\x1b[0m\n'}
+[7.128909] (underground_world) StdoutLine: {'line': b'[ 79%] \x1b[32mBuilding CXX object CMakeFiles/underground_world_core.dir/src/scenario_loader.cpp.o\x1b[0m\n'}
+[7.130024] (underground_world) StdoutLine: {'line': b'[ 79%] Built target underground_world\n'}
+[7.146034] (underground_world) StdoutLine: {'line': b'[ 80%] \x1b[34m\x1b[1mGenerating Python code for ROS interfaces\x1b[0m\n'}
+[7.223167] (-) TimerEvent: {}
+[7.323391] (-) TimerEvent: {}
+[7.423604] (-) TimerEvent: {}
+[7.523807] (-) TimerEvent: {}
+[7.625455] (-) TimerEvent: {}
+[7.657708] (underground_world) StdoutLine: {'line': b'[ 81%] \x1b[32m\x1b[1mLinking CXX shared library libunderground_world_core.so\x1b[0m\n'}
+[7.691645] (underground_world) StdoutLine: {'line': b'[ 81%] Built target underground_world__py\n'}
+[7.709368] (underground_world) StdoutLine: {'line': b'[ 83%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_py.dir/rosidl_generator_py/underground_world/msg/_local_scan_s.c.o\x1b[0m\n'}
+[7.709508] (underground_world) StdoutLine: {'line': b'[ 82%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_py.dir/rosidl_generator_py/underground_world/msg/_cell_observation_s.c.o\x1b[0m\n'}
+[7.725561] (-) TimerEvent: {}
+[7.761288] (underground_world) StdoutLine: {'line': b'[ 83%] Built target underground_world_core\n'}
+[7.774827] (underground_world) StdoutLine: {'line': b'[ 84%] \x1b[32mBuilding CXX object CMakeFiles/underground_world_node.dir/src/underground_world_node.cpp.o\x1b[0m\n'}
+[7.826991] (-) TimerEvent: {}
+[7.845020] (underground_world) StdoutLine: {'line': b'[ 85%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_py.dir/rosidl_generator_py/underground_world/msg/_move_command_s.c.o\x1b[0m\n'}
+[7.845156] (underground_world) StdoutLine: {'line': b'[ 86%] \x1b[32mBuilding CXX object CMakeFiles/mission_explorer_node.dir/src/mission_explorer_node.cpp.o\x1b[0m\n'}
+[7.915796] (underground_world) StdoutLine: {'line': b'[ 87%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_py.dir/rosidl_generator_py/underground_world/msg/_enemy_down_s.c.o\x1b[0m\n'}
+[7.927095] (-) TimerEvent: {}
+[7.988371] (underground_world) StdoutLine: {'line': b'[ 87%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_py.dir/rosidl_generator_py/underground_world/msg/_robot_metrics_s.c.o\x1b[0m\n'}
+[8.027212] (-) TimerEvent: {}
+[8.088871] (underground_world) StdoutLine: {'line': b'[ 88%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_py.dir/rosidl_generator_py/underground_world/msg/_robot_result_s.c.o\x1b[0m\n'}
+[8.127319] (-) TimerEvent: {}
+[8.153065] (underground_world) StdoutLine: {'line': b'[ 89%] \x1b[32m\x1b[1mLinking CXX executable provided_world_contract_test\x1b[0m\n'}
+[8.175516] (underground_world) StdoutLine: {'line': b'[ 90%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_py.dir/rosidl_generator_py/underground_world/msg/_student_status_s.c.o\x1b[0m\n'}
+[8.217600] (underground_world) StderrLine: {'line': b"/usr/bin/ld: CMakeFiles/provided_world_contract_test.dir/test/provided_world_contract_test.cpp.o: in function `underground_world::(anonymous namespace)::reachable_cells_from_start(underground_world::Scenario const&)':\n"}
+[8.217736] (underground_world) StderrLine: {'line': b"provided_world_contract_test.cpp:(.text+0x358): undefined reference to `underground_world::Scenario::is_passable(underground_world::Position) const'\n"}
+[8.217777] (underground_world) StderrLine: {'line': b"/usr/bin/ld: CMakeFiles/provided_world_contract_test.dir/test/provided_world_contract_test.cpp.o: in function `underground_world::(anonymous namespace)::expect_valid_required_scenario(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)':\n"}
+[8.217812] (underground_world) StderrLine: {'line': b"provided_world_contract_test.cpp:(.text+0x543): undefined reference to `underground_world::load_scenario(std::filesystem::__cxx11::path const&)'\n"}
+[8.217848] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x68f): undefined reference to `underground_world::Scenario::width() const'\n"}
+[8.217880] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x779): undefined reference to `underground_world::Scenario::height() const'\n"}
+[8.217912] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0xb01): undefined reference to `underground_world::Scenario::is_passable(underground_world::Position) const'\n"}
+[8.217944] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0xc20): undefined reference to `underground_world::Scenario::base_cell(underground_world::Position) const'\n"}
+[8.217975] (underground_world) StderrLine: {'line': b"/usr/bin/ld: CMakeFiles/provided_world_contract_test.dir/test/provided_world_contract_test.cpp.o: in function `underground_world::ProvidedWorldContractTest_ContactIdsAreStableAndOneBased_Test::TestBody()':\n"}
+[8.218007] (underground_world) StderrLine: {'line': b"provided_world_contract_test.cpp:(.text+0x16d7): undefined reference to `underground_world::load_scenario(std::filesystem::__cxx11::path const&)'\n"}
+[8.218046] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x1824): undefined reference to `underground_world::Scenario::is_passable(underground_world::Position) const'\n"}
+[8.218077] (underground_world) StderrLine: {'line': b"/usr/bin/ld: CMakeFiles/provided_world_contract_test.dir/test/provided_world_contract_test.cpp.o: in function `underground_world::ProvidedWorldContractTest_InvalidMoveMetricCountsOnlyWallOrBoundsMoves_Test::TestBody()':\n"}
+[8.218108] (underground_world) StderrLine: {'line': b"provided_world_contract_test.cpp:(.text+0x1b36): undefined reference to `underground_world::load_scenario(std::filesystem::__cxx11::path const&)'\n"}
+[8.218139] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x1b4f): undefined reference to `underground_world::WorldModel::WorldModel(underground_world::Scenario)'\n"}
+[8.218169] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x1b91): undefined reference to `underground_world::WorldModel::apply_move(unsigned char)'\n"}
+[8.218198] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x1cb9): undefined reference to `underground_world::WorldModel::metrics() const'\n"}
+[8.218228] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x1dae): undefined reference to `underground_world::WorldModel::apply_move(unsigned char)'\n"}
+[8.218257] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x1ed6): undefined reference to `underground_world::WorldModel::metrics() const'\n"}
+[8.218286] (underground_world) StderrLine: {'line': b"/usr/bin/ld: CMakeFiles/provided_world_contract_test.dir/test/provided_world_contract_test.cpp.o: in function `underground_world::ProvidedWorldContractTest_ProcessedContactIsPublishedAsX_Test::TestBody()':\n"}
+[8.218317] (underground_world) StderrLine: {'line': b"provided_world_contract_test.cpp:(.text+0x22a2): undefined reference to `underground_world::load_scenario(std::filesystem::__cxx11::path const&)'\n"}
+[8.218347] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x22bb): undefined reference to `underground_world::WorldModel::WorldModel(underground_world::Scenario)'\n"}
+[8.218375] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x22fd): undefined reference to `underground_world::WorldModel::apply_move(unsigned char)'\n"}
+[8.218404] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x2428): undefined reference to `underground_world::WorldModel::apply_move(unsigned char)'\n"}
+[8.218434] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x2564): undefined reference to `underground_world::WorldModel::make_scan()'\n"}
+[8.218463] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x295b): undefined reference to `underground_world::WorldModel::apply_enemy_down(int, underground_world::Position)'\n"}
+[8.218492] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x2a8e): undefined reference to `underground_world::WorldModel::make_scan()'\n"}
+[8.218524] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x2c3c): undefined reference to `underground_world::cell_kind_to_string[abi:cxx11](underground_world::CellKind)'\n"}
+[8.218553] (underground_world) StderrLine: {'line': b"/usr/bin/ld: CMakeFiles/provided_world_contract_test.dir/test/provided_world_contract_test.cpp.o: in function `underground_world::ProvidedWorldContractTest_ActiveContactBlocksMovementUntilProcessed_Test::TestBody()':\n"}
+[8.218583] (underground_world) StderrLine: {'line': b"provided_world_contract_test.cpp:(.text+0x34a2): undefined reference to `underground_world::load_scenario(std::filesystem::__cxx11::path const&)'\n"}
+[8.218613] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x34bb): undefined reference to `underground_world::WorldModel::WorldModel(underground_world::Scenario)'\n"}
+[8.218642] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x34fd): undefined reference to `underground_world::WorldModel::apply_move(unsigned char)'\n"}
+[8.218671] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x3628): undefined reference to `underground_world::WorldModel::apply_move(unsigned char)'\n"}
+[8.218700] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x375f): undefined reference to `underground_world::WorldModel::apply_move(unsigned char)'\n"}
+[8.218728] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x3893): undefined reference to `underground_world::WorldModel::robot_position() const'\n"}
+[8.218758] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x398b): undefined reference to `underground_world::WorldModel::metrics() const'\n"}
+[8.218786] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x3ab0): undefined reference to `underground_world::WorldModel::apply_enemy_down(int, underground_world::Position)'\n"}
+[8.218815] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x3bd2): undefined reference to `underground_world::WorldModel::apply_move(unsigned char)'\n"}
+[8.218842] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x3d03): undefined reference to `underground_world::WorldModel::robot_position() const'\n"}
+[8.218871] (underground_world) StderrLine: {'line': b"/usr/bin/ld: CMakeFiles/provided_world_contract_test.dir/test/provided_world_contract_test.cpp.o: in function `underground_world::ProvidedWorldContractTest_SuccessDoesNotRequireReturningToStart_Test::TestBody()':\n"}
+[8.218900] (underground_world) StderrLine: {'line': b"provided_world_contract_test.cpp:(.text+0x4260): undefined reference to `underground_world::load_scenario(std::filesystem::__cxx11::path const&)'\n"}
+[8.218929] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x4279): undefined reference to `underground_world::WorldModel::WorldModel(underground_world::Scenario)'\n"}
+[8.218958] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x42bb): undefined reference to `underground_world::WorldModel::apply_move(unsigned char)'\n"}
+[8.218987] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x43eb): undefined reference to `underground_world::WorldModel::make_scan()'\n"}
+[8.219018] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x441a): undefined reference to `underground_world::WorldModel::apply_move(unsigned char)'\n"}
+[8.219048] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x454a): undefined reference to `underground_world::WorldModel::make_scan()'\n"}
+[8.219077] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x45a9): undefined reference to `underground_world::WorldModel::apply_enemy_down(int, underground_world::Position)'\n"}
+[8.219107] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x46cb): undefined reference to `underground_world::WorldModel::apply_move(unsigned char)'\n"}
+[8.219136] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x4804): undefined reference to `underground_world::WorldModel::make_scan()'\n"}
+[8.219164] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x4833): undefined reference to `underground_world::WorldModel::apply_move(unsigned char)'\n"}
+[8.219193] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x4960): undefined reference to `underground_world::WorldModel::make_scan()'\n"}
+[8.219222] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x498f): undefined reference to `underground_world::WorldModel::apply_move(unsigned char)'\n"}
+[8.219277] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x4abc): undefined reference to `underground_world::WorldModel::make_scan()'\n"}
+[8.219314] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x4ae6): undefined reference to `underground_world::WorldModel::scenario() const'\n"}
+[8.219348] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x4af8): undefined reference to `underground_world::WorldModel::robot_position() const'\n"}
+[8.219381] (underground_world) StderrLine: {'line': b"/usr/bin/ld: provided_world_contract_test.cpp:(.text+0x4c28): undefined reference to `underground_world::WorldModel::result() const'\n"}
+[8.227413] (-) TimerEvent: {}
+[8.229552] (underground_world) StderrLine: {'line': b'collect2: error: ld returned 1 exit status\n'}
+[8.230777] (underground_world) StderrLine: {'line': b'gmake[2]: *** [CMakeFiles/provided_world_contract_test.dir/build.make:107: provided_world_contract_test] Error 1\n'}
+[8.231037] (underground_world) StderrLine: {'line': b'gmake[1]: *** [CMakeFiles/Makefile2:788: CMakeFiles/provided_world_contract_test.dir/all] Error 2\n'}
+[8.233337] (underground_world) StderrLine: {'line': b'gmake[1]: *** Waiting for unfinished jobs....\n'}
+[8.237986] (underground_world) StdoutLine: {'line': b'[ 91%] \x1b[32mBuilding C object CMakeFiles/underground_world__rosidl_generator_py.dir/rosidl_generator_py/underground_world/srv/_payload_trigger_s.c.o\x1b[0m\n'}
+[8.325587] (underground_world) StdoutLine: {'line': b'[ 92%] \x1b[32m\x1b[1mLinking C shared library libunderground_world__rosidl_generator_py.so\x1b[0m\n'}
+[8.327665] (-) TimerEvent: {}
+[8.355312] (underground_world) StdoutLine: {'line': b'[ 92%] Built target underground_world__rosidl_generator_py\n'}
+[8.427954] (-) TimerEvent: {}
+[8.528417] (-) TimerEvent: {}
+[8.628786] (-) TimerEvent: {}
+[8.729232] (-) TimerEvent: {}
+[8.829589] (-) TimerEvent: {}
+[8.929949] (-) TimerEvent: {}
+[9.030406] (-) TimerEvent: {}
+[9.130896] (-) TimerEvent: {}
+[9.231388] (-) TimerEvent: {}
+[9.331768] (-) TimerEvent: {}
+[9.432483] (-) TimerEvent: {}
+[9.532910] (-) TimerEvent: {}
+[9.633257] (-) TimerEvent: {}
+[9.733613] (-) TimerEvent: {}
+[9.834014] (-) TimerEvent: {}
+[9.934395] (-) TimerEvent: {}
+[10.034782] (-) TimerEvent: {}
+[10.135057] (-) TimerEvent: {}
+[10.235421] (-) TimerEvent: {}
+[10.336002] (-) TimerEvent: {}
+[10.436515] (-) TimerEvent: {}
+[10.536805] (-) TimerEvent: {}
+[10.637210] (-) TimerEvent: {}
+[10.737496] (-) TimerEvent: {}
+[10.837987] (-) TimerEvent: {}
+[10.938314] (-) TimerEvent: {}
+[11.038807] (-) TimerEvent: {}
+[11.139181] (-) TimerEvent: {}
+[11.239523] (-) TimerEvent: {}
+[11.339805] (-) TimerEvent: {}
+[11.440070] (-) TimerEvent: {}
+[11.540327] (-) TimerEvent: {}
+[11.640708] (-) TimerEvent: {}
+[11.741080] (-) TimerEvent: {}
+[11.841585] (-) TimerEvent: {}
+[11.941979] (-) TimerEvent: {}
+[12.042326] (-) TimerEvent: {}
+[12.142686] (-) TimerEvent: {}
+[12.243048] (-) TimerEvent: {}
+[12.343885] (-) TimerEvent: {}
+[12.444374] (-) TimerEvent: {}
+[12.544776] (-) TimerEvent: {}
+[12.645099] (-) TimerEvent: {}
+[12.747127] (-) TimerEvent: {}
+[12.847502] (-) TimerEvent: {}
+[12.947998] (-) TimerEvent: {}
+[13.048359] (-) TimerEvent: {}
+[13.148632] (-) TimerEvent: {}
+[13.248997] (-) TimerEvent: {}
+[13.349399] (-) TimerEvent: {}
+[13.449749] (-) TimerEvent: {}
+[13.550204] (-) TimerEvent: {}
+[13.650489] (-) TimerEvent: {}
+[13.750718] (-) TimerEvent: {}
+[13.850965] (-) TimerEvent: {}
+[13.951314] (-) TimerEvent: {}
+[14.051622] (-) TimerEvent: {}
+[14.152273] (-) TimerEvent: {}
+[14.253078] (-) TimerEvent: {}
+[14.353383] (-) TimerEvent: {}
+[14.453678] (-) TimerEvent: {}
+[14.554038] (-) TimerEvent: {}
+[14.654395] (-) TimerEvent: {}
+[14.754749] (-) TimerEvent: {}
+[14.855017] (-) TimerEvent: {}
+[14.955379] (-) TimerEvent: {}
+[15.055644] (-) TimerEvent: {}
+[15.156045] (-) TimerEvent: {}
+[15.256384] (-) TimerEvent: {}
+[15.356760] (-) TimerEvent: {}
+[15.426584] (underground_world) StdoutLine: {'line': b'[ 93%] \x1b[32m\x1b[1mLinking CXX executable mission_explorer_node\x1b[0m\n'}
+[15.456975] (-) TimerEvent: {}
+[15.557242] (-) TimerEvent: {}
+[15.657474] (-) TimerEvent: {}
+[15.661645] (underground_world) StdoutLine: {'line': b'[ 93%] Built target mission_explorer_node\n'}
+[15.757735] (-) TimerEvent: {}
+[15.858087] (-) TimerEvent: {}
+[15.958425] (-) TimerEvent: {}
+[16.058738] (-) TimerEvent: {}
+[16.159131] (-) TimerEvent: {}
+[16.259495] (-) TimerEvent: {}
+[16.359749] (-) TimerEvent: {}
+[16.460082] (-) TimerEvent: {}
+[16.560398] (-) TimerEvent: {}
+[16.660686] (-) TimerEvent: {}
+[16.761000] (-) TimerEvent: {}
+[16.861314] (-) TimerEvent: {}
+[16.961591] (-) TimerEvent: {}
+[16.994556] (underground_world) StdoutLine: {'line': b'[ 94%] \x1b[32m\x1b[1mLinking CXX executable underground_world_node\x1b[0m\n'}
+[17.061704] (-) TimerEvent: {}
+[17.162103] (-) TimerEvent: {}
+[17.262357] (-) TimerEvent: {}
+[17.281593] (underground_world) StdoutLine: {'line': b'[ 94%] Built target underground_world_node\n'}
+[17.282248] (underground_world) StderrLine: {'line': b'gmake: *** [Makefile:146: all] Error 2\n'}
+[17.283656] (underground_world) CommandEnded: {'returncode': 2}
+[17.293000] (underground_world) JobEnded: {'identifier': 'underground_world', 'rc': 2}
+[17.303469] (-) EventReactorShutdown: {}

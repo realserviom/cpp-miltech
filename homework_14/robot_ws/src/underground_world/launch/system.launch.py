@@ -40,7 +40,7 @@ def generate_launch_description():
             ),
             DeclareLaunchArgument(
                 "move_commit_period_ms",
-                default_value="50",
+                default_value="100",
                 description="Delay before applying queued move commands",
             ),
             world_node,

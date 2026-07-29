@@ -131,7 +131,12 @@ private:
                                          processed_contacts_.insert(contact_id);
                                          known_walkable_.insert(p);  // Тепер ця клітинка безпечна для проходу
                                        }
+
                                        is_engaging_ = false;
+
+                                       // запустимо повернення до звичайного статусу та викличемо планування наступного кроку прямо звідси!
+                                       //  publish_status(underground_world::msg::StudentStatus::EXPLORING);
+                                       //  make_next_move();
                                      });
   }
 
