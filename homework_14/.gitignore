@@ -4,3 +4,6 @@ robot_ws/log/
 reports/*.mcap
 reports/*.db3
 reports/*/
+install
+log
+robot_ws/robot_result/
