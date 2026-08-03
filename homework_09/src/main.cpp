@@ -6,18 +6,27 @@
 #include "config/ComponentFactory.h"
 #include "MissionProcessor.h"
 #include <iomanip>
+#include "functions.h"
 
 // Визначення константи Пі, якщо її немає в cmath
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
 
-int main()
+int main(int argc, char** argv)
 {
-  try {
-    std::shared_ptr<IConfigLoader> configLoader = createLoader(LoaderType::FILE, "../data/config.json", "../data/ammo.json");
+  // std::string testId = (argc > 1) ? argv[1] : "T01";
+  // if (sendSimulationResults(testId)) {
+  //   if (checkSimulationResults(testId)) {
+  //     std::cout << "SENT!!!" << std::endl;
+  //   }
+  // }
+  // return 1;
 
-    std::shared_ptr<ITargetProvider> targetProvider = createProvider(ProviderType::TIME, "../data/targets.json");
+  try {
+    std::shared_ptr<IConfigLoader> configLoader = createLoader(LoaderType::FILE, "./data/config.json", "./data/ammo.json");
+
+    std::shared_ptr<ITargetProvider> targetProvider = createProvider(ProviderType::TIME, "./data/targets.json");
 
     std::shared_ptr<IBallisticSolver> analyticalSolver = createSolver(SolverType::TABLE);
 
@@ -76,6 +85,14 @@ int main()
 
     curMyDrone.stop();
     targetProvider->stop();
+
+    std::string testId = (argc > 1) ? argv[1] : "T01";
+
+    if (sendSimulationResults(testId)) {
+      if (checkSimulationResults(testId)) {
+        std::cout << "SENT!!!" << std::endl;
+      }
+    }
   }
   catch (const std::runtime_error& e) {
     std::cout << e.what() << std::endl;

@@ -11,8 +11,13 @@
 #include <stdbool.h>
 #include "json.hpp"
 #include "Debug.h"
+#include <httplib.h>
+#include <json.hpp>
+#include <chrono>
+#include "constants.h"
 
 using json = nlohmann::ordered_json;
+using json_noordered = nlohmann::json;
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -102,7 +107,7 @@ void saveOutputFileByStep(int length, const std::vector<SimStep>& steps)
     out["steps"].push_back(stepEntry);
   }
 
-  std::ofstream fout("../data/output.json");
+  std::ofstream fout(FILE_OUTPUT.data());
   fout << out.dump(2);
   fout.close();
 }
@@ -189,4 +194,115 @@ double normalizeAngle(float angle)
   while (angle < -M_PI)
     angle += 2.0 * M_PI;
   return angle;
+}
+
+bool sendSimulationResults(const std::string& testId)
+{
+  std::ifstream file(FILE_OUTPUT.data());
+
+  if (!file.is_open()) {
+    std::cerr << "Не вдалося відкрити output file" << std::endl;
+    return false;
+  }
+
+  json_noordered simulationData;
+  file >> simulationData;
+
+  json payload = {{"studentId", STUDENT_ID.data()}, {"testId", testId}, {"simulation", simulationData}};
+
+  httplib::Client cli(HOST.data());
+
+  cli.set_connection_timeout(2, 0);
+  cli.set_read_timeout(2, 0);
+
+  httplib::Headers headers = {{"x-api-key", API_KEY.data()}};
+
+  const int maxAttempts = 5;
+  const std::string bodyStr = payload.dump();
+
+  for (int attempt = 1; attempt <= maxAttempts; ++attempt) {
+    auto res = cli.Post("/api/dz12/results", headers, bodyStr, "application/json");
+
+    if (res) {
+      int status = res->status;
+
+      if (status >= 200 && status < 300) {
+        std::cout << "[SUCCESS] Інформація по " << testId << " відправлена успішно (Статус: " << status << ")." << std::endl;
+        return true;
+      }
+
+      if (status == 400 || status == 401) {
+        std::cerr << "[FATAL] Інформація по " << testId << " завершилася з помилкою (Статус: " << status
+                  << "). Зупинили повтрону відправку. Відповідь: " << res->body << std::endl;
+        return false;
+      }
+      std::cerr << "[WARNING] Помилка сервера (Статус: " << status << ")." << std::endl;
+    }
+    else {
+      auto err = res.error();
+      std::cerr << "[WARNING] Запит провалено. Timeout: " << httplib::to_string(err) << std::endl;
+    }
+
+    if (attempt == maxAttempts) {
+      break;
+    }
+
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+  }
+
+  std::cerr << "[ERROR]  Інформація по " << testId << " не відправлена після " << maxAttempts << " спроб." << std::endl;
+  return false;
+}
+
+bool checkSimulationResults(const std::string& testId)
+{
+  httplib::Client cli(HOST.data());
+
+  cli.set_connection_timeout(2, 0);
+  cli.set_read_timeout(2, 0);
+
+  httplib::Headers headers = {{"x-api-key", API_KEY.data()}};
+  std::string path = "/api/dz12/results/" + testId + "/" + STUDENT_ID.data();
+
+  const int maxAttempts = 5;
+
+  for (int attempt = 1; attempt <= maxAttempts; ++attempt) {
+    auto res = cli.Get(path.c_str(), headers);
+
+    if (res) {
+      int status = res->status;
+
+      if (status >= 200 && status < 300) {
+        std::cout << "[SUCCESS] Результат по " << testId << " знайдено (Статус: " << status << ")." << std::endl;
+        std::cout << "[RESPONSE] " << res->body << std::endl;
+        return true;
+      }
+
+      if (status == 404) {
+        std::cout << "[INFO] Результат по " << testId << " відсутній на сервері (404 Not Found)." << std::endl;
+        return false;
+      }
+
+      if (status == 400 || status == 401) {
+        std::cerr << "[FATAL] Перевірка по " << testId << " завершилася з помилкою (Статус: " << status
+                  << "). Зупинили повторні запити. Відповідь: " << res->body << std::endl;
+        return false;
+      }
+
+      std::cerr << "[WARNING] Помилка сервера при перевірці (Статус: " << status << ")." << std::endl;
+    }
+    else {
+      auto err = res.error();
+      std::cerr << "[WARNING] Запит провалено. Timeout: " << httplib::to_string(err) << std::endl;
+    }
+
+    if (attempt == maxAttempts) {
+      break;
+    }
+
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+  }
+
+  std::cerr << "[ERROR] Перевірка по " << testId << " не виконана після " << maxAttempts << " спроб." << std::endl;
+  return false;
 }

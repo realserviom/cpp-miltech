@@ -6,6 +6,10 @@
 #include <vector>
 #include <chrono>
 #include "RollingTargetStack.h"
+#include <json.hpp>
+#include <chrono>
+
+using json_noordered = nlohmann::json;
 
 int getIndexByMinValue(const std::vector<float>& targetTimes);
 
@@ -24,6 +28,9 @@ std::chrono::high_resolution_clock::time_point getNextTimePoint(const std::chron
                                                                 int counter);
 
 Coord predictTargetPosition(const RollingTargetStack& targetStack, float t_pol, float stepTime, int target);
+
+bool sendSimulationResults(const std::string& testId);
+bool checkSimulationResults(const std::string& testId);
 
 template <typename T>
 int countFilledElements(const T arr[], int size, T marker);
