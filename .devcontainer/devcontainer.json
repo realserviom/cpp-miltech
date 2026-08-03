@@ -32,7 +32,11 @@
   // Запуск через bash робить команду стійкою до копіювання без executable bit.
   "initializeCommand": [
     "bash",
+<<<<<<< HEAD
     ".devcontainer/scripts/initialize",
+=======
+    ".devcontainer/scripts/initialize"
+>>>>>>> main
     // Автоматично завантажує модуль modprobe на хості при старті контейнера (це якщо будемо робити GPIO mockup).
     // Можна закоментувати, якщо не потрібен.
     // "sudo modprobe gpio-mockup gpio_mockup_ranges=-1,16,-1,32"
@@ -62,12 +66,9 @@
     "--ulimit=core=-1",
     "--hostname=devcontainer",
     "--add-host=devcontainer:127.0.1.1",
-    "-v",
-    // (це якщо будемо робити GPIO mockup).
-    // "/dev:/dev",
-    "/lib/modules:/lib/modules:ro"
+    // "--volume=/dev:/dev", // це якщо будемо робити GPIO mockup
+    "--volume=/lib/modules:/lib/modules:ro"
   ],
-
   // Усе всередині customizations.vscode застосовується саме до VS Code
   // сесії в контейнері. Це не те саме, що .vscode/extensions.json на host.
   "customizations": {
