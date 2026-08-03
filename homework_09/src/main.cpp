@@ -15,14 +15,6 @@
 
 int main(int argc, char** argv)
 {
-  // std::string testId = (argc > 1) ? argv[1] : "T01";
-  // if (sendSimulationResults(testId)) {
-  //   if (checkSimulationResults(testId)) {
-  //     std::cout << "SENT!!!" << std::endl;
-  //   }
-  // }
-  // return 1;
-
   try {
     std::shared_ptr<IConfigLoader> configLoader = createLoader(LoaderType::FILE, "./data/config.json", "./data/ammo.json");
 
