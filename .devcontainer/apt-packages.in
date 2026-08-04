@@ -19,6 +19,7 @@ llvm-18
 
 # Крос-тулчейн для ARM64-пристроїв: RPi4, Radxa ROCK 5B+, Jetson.
 g++-aarch64-linux-gnu
+libssl-dev:arm64
 
 # Інструменти для заняття 2.4: локальний і remote debug, memory diagnostics.
 gdb
@@ -32,6 +33,7 @@ cmake
 clang-format
 cmake-format
 ninja-build
+libssl-dev
 
 # ROS 2 інструменти для демо блоку 5: colcon workspace, ament_auto і graph GUI.
 python3-colcon-common-extensions
