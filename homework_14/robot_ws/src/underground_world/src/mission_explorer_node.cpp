@@ -117,9 +117,7 @@ private:
   void on_local_scan(const underground_world::msg::LocalScan::SharedPtr scan)
   {
     if (is_engaging_) {
-      RCLCPP_INFO(get_logger(), "Охота на ворога!!!");
       if (current_scan_ == nullptr) {
-        RCLCPP_INFO(get_logger(), "Записали current_scan_!!!");
         current_scan_ = scan;  // записуємо в тимчасову змінну
       }
       return;  // Захист від повторної обробки під час сервісного виклику
@@ -164,9 +162,7 @@ private:
                                        is_engaging_ = false;
 
                                        // якщо ми пропустили крок
-                                       if (current_scan_) {
-                                         RCLCPP_INFO(get_logger(), "Обробляємо пропущений крок!!!");
-
+                                       if (current_scan_ != nullptr) {
                                          const auto contact = process_scan_cells(*current_scan_);
 
                                          if (contact.found) {
