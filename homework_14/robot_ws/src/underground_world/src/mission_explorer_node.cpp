@@ -28,6 +28,12 @@ struct Point {
   bool operator==(const Point& other) const { return x == other.x && y == other.y; }
 };
 
+struct ContactInfo {
+  bool found{false};
+  Point pos{};
+  int id{0};
+};
+
 class MissionExplorerNode : public rclcpp::Node {
 public:
   MissionExplorerNode()
@@ -51,6 +57,8 @@ public:
 
 private:
   Point current_pos_{0, 0};
+  underground_world::msg::LocalScan::SharedPtr current_scan_;
+
   bool is_engaging_{false};
 
   std::set<Point> known_walkable_;    // Клітинки, де фізично можна ходити (., S, x)
@@ -69,41 +77,62 @@ private:
     pub_status_->publish(msg);
   }
 
-  void on_local_scan(const underground_world::msg::LocalScan::SharedPtr scan)
+  // Окремий метод, який відповідає ТІЛЬКИ за оновлення карти та пошук нових контактів
+  ContactInfo process_scan_cells(const underground_world::msg::LocalScan& scan)
   {
-    if (is_engaging_)
-      return;  // Захист від повторної обробки під час сервісного виклику
+    current_pos_ = {scan.robot_x, scan.robot_y};
 
-    current_pos_ = {scan->robot_x, scan->robot_y};
+    ContactInfo contact;
 
-    bool has_unhandled_contact = false;
-    Point contact_pos;
-    int contact_id = 0;
-
-    for (const auto& cell : scan->cells) {
+    for (const auto& cell : scan.cells) {
       Point p{cell.x, cell.y};
-      visited_cells_.insert(p);  // Всі бачені клітинки позначаємо як відомі
+      visited_cells_.insert(p);  // Позначаємо клітинку як відому
 
       if (cell.cell_type == "." || cell.cell_type == "S" || cell.cell_type == "x") {
         known_walkable_.insert(p);
       }
       else if (cell.cell_type == "C") {
+        // Якщо контакт ще не опрацьований
         if (processed_contacts_.find(cell.contact_id) == processed_contacts_.end()) {
-          has_unhandled_contact = true;
-          contact_pos = p;
-          contact_id = cell.contact_id;
+          contact.found = true;
+          contact.pos = p;
+          contact.id = cell.contact_id;
         }
         else {
-          known_walkable_.insert(p);  // Якщо контакт уже опрацьований (стає x), туди можна ходити
+          known_walkable_.insert(p);  // Якщо контакт опрацьований, туди можна ходити
         }
       }
     }
 
-    // Якщо є незнешкоджений ворог — відпрацьовуємо PayloadTrigger
-    if (has_unhandled_contact) {
-      is_engaging_ = true;
-      publish_status(underground_world::msg::StudentStatus::ENGAGING);
-      call_payload_service(contact_id, contact_pos);
+    return contact;
+  }
+
+  void kill_contact(const ContactInfo contact)
+  {
+    is_engaging_ = true;
+    publish_status(underground_world::msg::StudentStatus::ENGAGING);
+    call_payload_service(contact.id, contact.pos);
+  }
+
+  void on_local_scan(const underground_world::msg::LocalScan::SharedPtr scan)
+  {
+    if (is_engaging_) {
+      RCLCPP_INFO(get_logger(), "Охота на ворога!!!");
+      if (current_scan_ == nullptr) {
+        RCLCPP_INFO(get_logger(), "Записали current_scan_!!!");
+        current_scan_ = scan;  // записуємо в тимчасову змінну
+      }
+      return;  // Захист від повторної обробки під час сервісного виклику
+    }
+
+    if (current_scan_ != nullptr) {
+      return;
+    }
+
+    const auto contact = process_scan_cells(*scan);
+
+    if (contact.found) {
+      kill_contact(contact);
       return;
     }
 
@@ -134,9 +163,22 @@ private:
 
                                        is_engaging_ = false;
 
-                                       // запустимо повернення до звичайного статусу та викличемо планування наступного кроку прямо звідси!
-                                       //  publish_status(underground_world::msg::StudentStatus::EXPLORING);
-                                       //  make_next_move();
+                                       // якщо ми пропустили крок
+                                       if (current_scan_) {
+                                         RCLCPP_INFO(get_logger(), "Обробляємо пропущений крок!!!");
+
+                                         const auto contact = process_scan_cells(*current_scan_);
+
+                                         if (contact.found) {
+                                           kill_contact(contact);
+                                           return;
+                                         }
+
+                                         // Плануємо наступний крок
+                                         make_next_move();
+
+                                         current_scan_ = nullptr;
+                                       }
                                      });
   }
 
