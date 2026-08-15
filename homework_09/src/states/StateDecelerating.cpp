@@ -1,17 +1,10 @@
-#include "states/StateTurning.h"
 #include "states/StateDecelerating.h"
 #include "Debug.h"
+#include "constants.h"
 
-std::unique_ptr<IDroneState> StateDecelerating::execute(Drone& curMyDrone)
+void StateDecelerating::execute(Drone& curMyDrone)
 {
-  curMyDrone.updatePosition();
-  curMyDrone.decelerate();
-
-  if (curMyDrone.getSpeed() <= 0.0f) {
-    return std::make_unique<StateTurning>();
-  }
-
-  return std::make_unique<StateDecelerating>();
+  curMyDrone.sendMovementCommand(-MAX_ACCEL, 0.0f);  // Гальмуємо на повну, не крутимося
 }
 
 const std::string StateDecelerating::name() const

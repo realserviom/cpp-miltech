@@ -1,6 +1,4 @@
 #pragma once
-#include "interfaces/ITargetProvider.h"
-#include <memory>
 #include <mutex>
 #include "AbstractTargetProvider.h"
 #include <string>
@@ -26,6 +24,8 @@ public:
   void setTargetPosition();
 
   void loadTargets() override;
+
+  ~ThreadSafeTargetProvider() override = default;
 
   int getIterationByCounter(const int& counter);
 

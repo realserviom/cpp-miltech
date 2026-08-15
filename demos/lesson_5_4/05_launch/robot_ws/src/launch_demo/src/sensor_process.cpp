@@ -14,16 +14,12 @@ public:
     const auto publish_hz = declare_parameter<double>("publish_hz", 1.0);
 
     const auto safe_hz = std::max(0.1, publish_hz);
-    const auto period = std::chrono::duration_cast<std::chrono::milliseconds>(
-      std::chrono::duration<double>(1.0 / safe_hz));
+    const auto period = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::duration<double>(1.0 / safe_hz));
     timer_ = create_wall_timer(period, [this]() { tick(); });
   }
 
 private:
-  void tick()
-  {
-    RCLCPP_INFO(get_logger(), "source_name=%s", source_name_.c_str());
-  }
+  void tick() { RCLCPP_INFO(get_logger(), "source_name=%s", source_name_.c_str()); }
 
   std::string source_name_;
   rclcpp::TimerBase::SharedPtr timer_;

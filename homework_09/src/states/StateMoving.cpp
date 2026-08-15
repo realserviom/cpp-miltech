@@ -1,12 +1,13 @@
 #include "states/StateMoving.h"
+#include "constants.h"
 
-std::unique_ptr<IDroneState> StateMoving::execute(Drone& curMyDrone)
+void StateMoving::execute(Drone& curMyDrone)
 {
+  float accel, turnRate;
   // Рівномірний рух з мінімальним обертанням
-  curMyDrone.updateRotation(curMyDrone.config.turnThreshold);
-  curMyDrone.updatePosition();
-
-  return std::make_unique<StateMoving>();
+  curMyDrone.calculateMoveParams(accel, turnRate);
+  accel = MAX_ACCEL;                                // Газуємо на повну
+  curMyDrone.sendMovementCommand(accel, turnRate);  // Рухаємося на повну, і крутимося
 }
 
 const std::string StateMoving::name() const

@@ -1,18 +1,12 @@
-#include "states/StateMoving.h"
 #include "states/StateAccelerating.h"
-#include <memory>
+#include "constants.h"
 
-std::unique_ptr<IDroneState> StateAccelerating::execute(Drone& curMyDrone)
+void StateAccelerating::execute(Drone& curMyDrone)
 {
-  curMyDrone.updateRotation(curMyDrone.config.turnThreshold);
-  curMyDrone.updatePosition();
-  curMyDrone.accelerate();
-
-  if (curMyDrone.getSpeed() >= curMyDrone.config.attackSpeed) {
-    return std::make_unique<StateMoving>();
-  }
-
-  return std::make_unique<StateAccelerating>();
+  float accel, turnRate;
+  curMyDrone.calculateMoveParams(accel, turnRate);
+  accel = MAX_ACCEL;  // Газуємо на повну
+  curMyDrone.sendMovementCommand(accel, turnRate);
 }
 
 const std::string StateAccelerating::name() const

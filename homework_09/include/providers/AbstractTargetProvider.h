@@ -1,6 +1,7 @@
 #pragma once
 #include "Types.h"
 #include "interfaces/ITargetProvider.h"
+#include <vector>
 #include <atomic>
 
 class AbstractTargetProvider : public ITargetProvider {
@@ -36,6 +37,8 @@ public:
 
   int getTargetCount() override;
 
+  std::vector<std::vector<Coord>> getTargets() override;
+
   virtual void init(int &numberCounterInTimeSpot) override;
 
   void setArrayTimeStep(float time) override;
@@ -49,8 +52,6 @@ public:
   void setTimeScale(float time) override;
 
   float getTimeScale() const override;
-
-  std::vector<std::vector<Coord>> getTargets() override;
 
   void setRunningTrue() override;
 };

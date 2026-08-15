@@ -14,19 +14,14 @@ public:
     const auto publish_hz = declare_parameter<double>("publish_hz", 1.0);
 
     const auto safe_hz = std::max(0.1, publish_hz);
-    const auto period = std::chrono::duration_cast<std::chrono::milliseconds>(
-      std::chrono::duration<double>(1.0 / safe_hz));
+    const auto period = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::duration<double>(1.0 / safe_hz));
     timer_ = create_wall_timer(period, [this]() { print_parameters(); });
   }
 
 private:
   void print_parameters()
   {
-    RCLCPP_INFO(
-      get_logger(),
-      "confidence_threshold=%.2f max_distance_m=%.1f",
-      confidence_threshold_,
-      max_distance_m_);
+    RCLCPP_INFO(get_logger(), "confidence_threshold=%.2f max_distance_m=%.1f", confidence_threshold_, max_distance_m_);
   }
 
   double confidence_threshold_{0.8};

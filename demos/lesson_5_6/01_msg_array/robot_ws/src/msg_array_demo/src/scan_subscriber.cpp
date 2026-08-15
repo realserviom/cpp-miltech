@@ -27,31 +27,21 @@ public:
   ScanSubscriber()
     : Node("scan_subscriber")
   {
-    subscription_ = create_subscription<LocalScanLite>(
-      kScanTopic,
-      10,
-      [this](const LocalScanLite& scan) { on_scan(scan); });
+    subscription_ = create_subscription<LocalScanLite>(kScanTopic, 10, [this](const LocalScanLite& scan) { on_scan(scan); });
   }
 
 private:
   void on_scan(const LocalScanLite& scan)
   {
-    RCLCPP_INFO(
-      get_logger(),
-      "received local scan scenario=%s robot=(%d,%d) cells=%zu",
-      scan.scenario_name.c_str(),
-      scan.robot_x,
-      scan.robot_y,
-      scan.cells.size());
+    RCLCPP_INFO(get_logger(),
+                "received local scan scenario=%s robot=(%d,%d) cells=%zu",
+                scan.scenario_name.c_str(),
+                scan.robot_x,
+                scan.robot_y,
+                scan.cells.size());
 
     for (const auto& cell : scan.cells) {
-      RCLCPP_INFO(
-        get_logger(),
-        "  cell=(%d,%d) type=%s contact=%s",
-        cell.x,
-        cell.y,
-        cell.cell_type.c_str(),
-        contact_label(cell).c_str());
+      RCLCPP_INFO(get_logger(), "  cell=(%d,%d) type=%s contact=%s", cell.x, cell.y, cell.cell_type.c_str(), contact_label(cell).c_str());
     }
   }
 

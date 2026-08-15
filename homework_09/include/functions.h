@@ -4,12 +4,13 @@
 #include "Types.h"
 #include <cstdio>
 #include <vector>
+#include <unistd.h>
+
+void saveFireCoordinates(double fireX, double fireY, double xd_i, double yd_i);
 #include <chrono>
 #include "RollingTargetStack.h"
 
 int getIndexByMinValue(const std::vector<float>& targetTimes);
-
-void saveOutputFileByStep(int length, const std::vector<SimStep>& steps);
 
 Coord normalize(const Coord& c);
 
@@ -23,7 +24,11 @@ std::chrono::high_resolution_clock::time_point getNextTimePoint(const std::chron
                                                                 double dt,
                                                                 int counter);
 
+double normalizeAngle(double angle);
+
 Coord predictTargetPosition(const RollingTargetStack& targetStack, float t_pol, float stepTime, int target);
+
+int openUart(const char* dev);
 
 template <typename T>
 int countFilledElements(const T arr[], int size, T marker);
