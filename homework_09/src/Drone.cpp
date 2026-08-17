@@ -40,7 +40,7 @@ void Drone::start()
 
 void Drone::sendMovementCommand(float accel, float turnRate)
 {
-  // DEBUG("Send accel, turnRate: " << accel << ", " << turnRate);
+  DEBUG("Send accel, turnRate: " << accel << ", " << turnRate);
   m_uartProcessor->sendControl(accel, turnRate);
 }
 
