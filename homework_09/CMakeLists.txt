@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 3.20)
+
 project(targets3 LANGUAGES CXX)
 
 #  Автоматично збираємо всі .cpp файли з папки src та її підпапок
@@ -7,7 +9,7 @@ file(GLOB_RECURSE SRC_FILES "src/*.cpp")
 list(REMOVE_ITEM SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
 
 # Збираємо всі заголовні файли, щоб вони гарно відображались у дереві VS Code
-file(GLOB_RECURSE HEADERS "include/*.h" "include/*.tpp")
+file(GLOB_RECURSE HEADERS "include/*.h" "include/*.hpp" "include/*.tpp")
 
 # Створюємо бібліотеку з усіх знайдених файлів (окрім main.cpp)
 add_library(targets_lib3 STATIC ${SRC_FILES} ${HEADERS})

@@ -16,6 +16,7 @@
 #include <chrono>
 #include <thread>
 #include "RollingTargetStack.h"
+#include "MavlinkTelemetry.hpp"
 
 MissionProcessor::MissionProcessor(std::shared_ptr<UARTProcessor> uartProcessor,
                                    std::shared_ptr<IBallisticSolver> solver,
@@ -72,7 +73,6 @@ std::optional<Target> MissionProcessor::fillArrays(bool& canChangeTarget,
 {
   std::optional<Target> currentTargetOption;
   for (int targetId = 0; targetId < numberOfTargets; targetId++) {
-
     auto targetOptions = m_uartProcessor->getTargetPosition(targetId);
 
     if (!targetOptions.has_value()) {
@@ -138,9 +138,25 @@ void MissionProcessor::start()
 {
   DEBUG("--- start mission thread! ---");
   running = true;
+<<<<<<< HEAD
   missionThread = std::thread(&MissionProcessor::missionLoop, this);
 }
 
+=======
+
+  m_mavlink = std::make_unique<MavlinkTelemetry>();
+
+  if (!m_mavlink->init(mavlinkIp, mavlinkPort)) {
+    std::cerr << "[Drone] Failed to initialize MAVLink telemetry!" << std::endl;
+    return false;
+  }
+
+  std::cout << "[Drone] MAVLink telemetry started on " << mavlinkIp << ":" << mavlinkPort << std::endl;
+
+  missionThread = std::thread(&MissionProcessor::missionLoop, this);
+}
+
+>>>>>>> a99eaf74d126f5fa9e70a0c25d6fb0cc0c686988
 void MissionProcessor::missionLoop()
 {
   LOG("--- ПОЧАТОК МІСІЇ ---");
@@ -236,6 +252,18 @@ void MissionProcessor::missionLoop()
         // DEBUG("--- curDrone_vy = " << std::fixed << std::setprecision(8) << telemetry.normSpeed.y << " м/c ---");
         DEBUG("--- curDrone_speed = " << std::fixed << std::setprecision(8) << telemetry.speed << " мс/c ---");
         DEBUG("--- curDrone_dir = " << std::fixed << std::setprecision(8) << telemetry.angularState << " р. ---");
+      }
+
+      // ВІДПРАВКА ТЕЛЕМЕТРІЇ В MAVLINK
+
+      if (m_mavlink) {
+        m_mavlink->processTelemetry(telemetry.pos.x,
+                                    telemetry.pos.y,
+                                    telemetry.z,
+                                    telemetry.normSpeed.x,
+                                    telemetry.normSpeed.y,
+                                    telemetry.angularState,
+                                    static_cast<uint32_t>(telemetry.t_ms));
       }
 
       // ################## РОЗРАХУНОК ТОЧКИ СКИДУ #############################################
