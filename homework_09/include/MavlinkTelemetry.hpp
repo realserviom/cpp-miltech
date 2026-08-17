@@ -11,7 +11,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-// MAVLink заголовки
 #include "mavlink/common/mavlink.h"
 
 class MavlinkTelemetry {
@@ -25,18 +24,17 @@ private:
   // Константи для геоприв'язки
   static constexpr double LAT0 = 50.4501;
   static constexpr double LON0 = 30.5234;
-  static constexpr double M_PI_VAL = 3.14159265358979323846;
 
   // Таймери відправки (в мс)
   uint32_t last_heartbeat_ms_ = 0;
   uint32_t last_telemetry_ms_ = 0;
 
   // Логіка повтору COMMAND_LONG (скид)
-  bool drop_active_ = false;
-  bool drop_acked_ = false;
-  int drop_retries_left_ = 0;
+  bool drop_active_ = false;   // скинутий і в процесі відповіді
+  bool drop_acked_ = false;    // отримали відповідь
+  int drop_retries_left_ = 0;  // кількість спроб що залишилося щоб отримати відповідь
   std::chrono::steady_clock::time_point last_cmd_sent_time_;
-  mavlink_command_long_t pending_drop_cmd_{};
+  mavlink_command_long_t pending_drop_cmd_{};  // об'єкт який відправляється коли ми скидуємо боєприпас
 
 public:
   MavlinkTelemetry() = default;
@@ -48,6 +46,8 @@ public:
     }
   }
 
+  bool getDropAcked() { return drop_acked_; }
+
   bool init(const std::string& ip = "127.0.0.1", int port = 14550)
   {
     socket_fd_ = socket(AF_INET, SOCK_DGRAM, 0);
@@ -56,11 +56,10 @@ public:
       return false;
     }
 
-    // Неблокуючий режим сокета
+    // Не блокуючий режим сокета
     int flags = fcntl(socket_fd_, F_GETFL, 0);
     fcntl(socket_fd_, F_SETFL, flags | O_NONBLOCK);
 
-    std::memset(&target_addr_, 0, sizeof(target_addr_));
     target_addr_.sin_family = AF_INET;
     target_addr_.sin_port = htons(port);
     if (inet_pton(AF_INET, ip.c_str(), &target_addr_.sin_addr) <= 0) {
@@ -72,29 +71,65 @@ public:
     return true;
   }
 
-  // Головний метод відправки, який викликається при отриманні вашої DroneTelemetry
+  void pollIncomingPackets()
+  {
+    uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+    sockaddr_in src_addr;
+    socklen_t addr_len = sizeof(src_addr);
+
+    while (true) {
+      ssize_t bytes_rx = recvfrom(socket_fd_, buf, sizeof(buf), 0, (struct sockaddr*)&src_addr, &addr_len);
+      if (bytes_rx <= 0)
+        break;  // Даних у неблокуючому сокеті більше немає
+
+      mavlink_message_t msg;
+      mavlink_status_t status;
+
+      for (ssize_t i = 0; i < bytes_rx; ++i) {
+        if (mavlink_parse_char(MAVLINK_COMM_0, buf[i], &msg, &status)) {
+          if (msg.msgid == MAVLINK_MSG_ID_COMMAND_ACK) {
+            mavlink_command_ack_t ack;
+            mavlink_msg_command_ack_decode(&msg, &ack);
+
+            if (ack.command == MAV_CMD_USER_1 && ack.result == MAV_RESULT_ACCEPTED) {
+              std::cout << "[MAVLink] SUCCESS: COMMAND_ACK received!" << std::endl;
+              drop_acked_ = true;
+              drop_active_ = false;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Головний метод відправки
   void processTelemetry(float x, float y, float z, float vx, float vy, float dir_rad, uint32_t t_ms)
   {
-    // 1. Обробка HEARTBEAT (1 раз на 1000 мс)
+    // Обробка HEARTBEAT (1 Гц, раз на 1 с)
     if (t_ms - last_heartbeat_ms_ >= 1000 || last_heartbeat_ms_ == 0) {
       sendHeartbeat();
+
+      // std::this_thread::sleep_for(std::chrono::seconds(1));
+
+      std::cout << "[MAVLink] COMMAND sendHeartbeat sent. " << std::endl;
       last_heartbeat_ms_ = t_ms;
     }
 
-    // 2. Обробка TELEMETRY (≥ 2 Гц, наприклад раз на 100 мс = 10 Гц)
+    // Обробка TELEMETRY (10 Гц, раз на 100 мс)
     if (t_ms - last_telemetry_ms_ >= 100 || last_telemetry_ms_ == 0) {
       sendGlobalPositionAndAttitude(x, y, z, vx, vy, dir_rad, t_ms);
+      std::cout << "[MAVLink] COMMAND sendGlobalPositionAndAttitude sent. " << std::endl;
       last_telemetry_ms_ = t_ms;
     }
 
-    // 3. Зчитуємо вхідні пакети (ACK)
-    pollIncomingPackets();
+    // Зчитуємо вхідні пакети (ACK)
+    // pollIncomingPackets();
 
-    // 4. Менеджер повторів скиду вантажу
-    processDropRetries();
+    // Менеджер повторів скиду вантажу
+    // processDropRetries();
   }
 
-  // Викликах при настанні моменту скиду за вашою балістикою
+  // Викликаємо при настанні моменту скиду
   void triggerCargoDrop(float drop_x, float drop_y, float drop_z)
   {
     if (drop_acked_)
@@ -170,7 +205,7 @@ private:
                                          alt_mm,                             // relative_alt
                                          static_cast<int16_t>(vx * 100.0f),  // cm/s
                                          static_cast<int16_t>(vy * 100.0f),  // cm/s
-                                         0,  // vz (якщо z стабільний/не враховуємо)
+                                         0,
                                          hdg_cdeg);
     sendBuffer(msg_pos);
 
@@ -229,37 +264,6 @@ private:
       else {
         std::cout << "[MAVLink] ACK not received after 5 attempts." << std::endl;
         drop_active_ = false;  // Вичерпали спроби
-      }
-    }
-  }
-
-  void pollIncomingPackets()
-  {
-    uint8_t buf[MAVLINK_MAX_PACKET_LEN];
-    sockaddr_in src_addr;
-    socklen_t addr_len = sizeof(src_addr);
-
-    while (true) {
-      ssize_t bytes_rx = recvfrom(socket_fd_, buf, sizeof(buf), 0, (struct sockaddr*)&src_addr, &addr_len);
-      if (bytes_rx <= 0)
-        break;  // Даних у неблокуючому сокеті більше немає
-
-      mavlink_message_t msg;
-      mavlink_status_t status;
-
-      for (ssize_t i = 0; i < bytes_rx; ++i) {
-        if (mavlink_parse_char(MAVLINK_COMM_0, buf[i], &msg, &status)) {
-          if (msg.msgid == MAVLINK_MSG_ID_COMMAND_ACK) {
-            mavlink_command_ack_t ack;
-            mavlink_msg_command_ack_decode(&msg, &ack);
-
-            if (ack.command == MAV_CMD_USER_1 && ack.result == MAV_RESULT_ACCEPTED) {
-              std::cout << "[MAVLink] SUCCESS: COMMAND_ACK received!" << std::endl;
-              drop_acked_ = true;
-              drop_active_ = false;
-            }
-          }
-        }
       }
     }
   }

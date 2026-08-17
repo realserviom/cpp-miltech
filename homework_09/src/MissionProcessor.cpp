@@ -138,25 +138,17 @@ void MissionProcessor::start()
 {
   DEBUG("--- start mission thread! ---");
   running = true;
-<<<<<<< HEAD
-  missionThread = std::thread(&MissionProcessor::missionLoop, this);
-}
-
-=======
 
   m_mavlink = std::make_unique<MavlinkTelemetry>();
 
-  if (!m_mavlink->init(mavlinkIp, mavlinkPort)) {
-    std::cerr << "[Drone] Failed to initialize MAVLink telemetry!" << std::endl;
-    return false;
+  if (!m_mavlink->init(m_mavlinkIp, m_mavlinkPort)) {
+    std::cout << "[Drone] Failed to initialize MAVLink telemetry!" << std::endl;
   }
 
-  std::cout << "[Drone] MAVLink telemetry started on " << mavlinkIp << ":" << mavlinkPort << std::endl;
-
+  std::cout << "[Drone] MAVLink telemetry started on " << m_mavlinkIp << ":" << m_mavlinkPort << std::endl;
   missionThread = std::thread(&MissionProcessor::missionLoop, this);
 }
 
->>>>>>> a99eaf74d126f5fa9e70a0c25d6fb0cc0c686988
 void MissionProcessor::missionLoop()
 {
   LOG("--- ПОЧАТОК МІСІЇ ---");
@@ -316,6 +308,9 @@ void MissionProcessor::missionLoop()
 
         gpio.pulse_drop();
         drop = true;
+
+        m_mavlink->triggerCargoDrop(telemetry.pos.x, telemetry.pos.y, telemetry.z);
+
         std::cout << "[Ballistics] Команду DROP виконано!" << std::endl;
         continue;
       }
@@ -350,7 +345,11 @@ void MissionProcessor::missionLoop()
 
     if (drop == true) {
       dlink::Result outResult;
-      if (m_uartProcessor->getResult(outResult)) {
+
+      // Зчитуємо вхідні пакети (ACK)
+      m_mavlink->pollIncomingPackets();
+
+      if (m_uartProcessor->getResult(outResult) && m_mavlink->getDropAcked()) {
         LOG("--- Результат --- ");
         LOG("hit: " << std::to_string(outResult.hit));
         LOG("targetId: " << std::to_string(outResult.targetId));
