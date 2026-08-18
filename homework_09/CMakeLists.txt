@@ -35,3 +35,11 @@ target_link_options(targets3 PRIVATE -fsanitize=address)
 
 # Встановлюємо назву бінарника
 set_target_properties(targets3 PROPERTIES OUTPUT_NAME "targets3")
+
+# Ігноруємо специфічні для MAVLink зауваження
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    add_compile_options(
+        -Wno-address-of-packed-member
+        -Wno-pedantic
+    )
+endif()

@@ -247,7 +247,6 @@ void MissionProcessor::missionLoop()
       }
 
       // ВІДПРАВКА ТЕЛЕМЕТРІЇ В MAVLINK
-
       if (m_mavlink) {
         m_mavlink->processTelemetry(telemetry.pos.x,
                                     telemetry.pos.y,
@@ -309,7 +308,10 @@ void MissionProcessor::missionLoop()
         gpio.pulse_drop();
         drop = true;
 
-        m_mavlink->triggerCargoDrop(telemetry.pos.x, telemetry.pos.y, telemetry.z);
+        // відправляємо команду скид і мали б нижче дочекатися відповіді
+        if (m_mavlink) {
+          m_mavlink->triggerCargoDrop(telemetry.pos.x, telemetry.pos.y, telemetry.z);
+        }
 
         std::cout << "[Ballistics] Команду DROP виконано!" << std::endl;
         continue;
@@ -349,7 +351,12 @@ void MissionProcessor::missionLoop()
       // Зчитуємо вхідні пакети (ACK)
       m_mavlink->pollIncomingPackets();
 
-      if (m_uartProcessor->getResult(outResult) && m_mavlink->getDropAcked()) {
+      if (m_mavlink->getDropAcked()) {
+        LOG("--- Відповідь від QGC (якої не буде) --- ");
+        LOG("----------------- ");
+      }
+
+      if (m_uartProcessor->getResult(outResult)) {
         LOG("--- Результат --- ");
         LOG("hit: " << std::to_string(outResult.hit));
         LOG("targetId: " << std::to_string(outResult.targetId));
@@ -359,11 +366,14 @@ void MissionProcessor::missionLoop()
         running = false;
         break;
       }
+
+      if (m_mavlink && m_mavlink->getDropAcked()) {
+        LOG("--- Тригер що відповідь була ---");
+      }
+
+      std::this_thread::sleep_for(std::chrono::nanoseconds(100000000));
     }
 
-    std::this_thread::sleep_for(std::chrono::nanoseconds(100000000));
+    curMyDrone->stop();  // Зупиняємо потік фізики дрона
+    LOG("--- КІНЕЦЬ МІСІЇ ---");
   }
-
-  curMyDrone->stop();  // Зупиняємо потік фізики дрона
-  LOG("--- КІНЕЦЬ МІСІЇ ---");
-}

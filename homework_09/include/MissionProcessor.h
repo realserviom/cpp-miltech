@@ -37,7 +37,8 @@ private:
   std::unique_ptr<RollingTargetStack> targetStack;
 
   std::unique_ptr<MavlinkTelemetry> m_mavlink;
-  std::string m_mavlinkIp = "127.0.0.1";
+  // std::string m_mavlinkIp = "127.0.0.1";
+  std::string m_mavlinkIp = "172.26.160.1";  // for wsl
   int m_mavlinkPort = 14550;
 
 public:
