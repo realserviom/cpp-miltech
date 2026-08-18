@@ -56,7 +56,7 @@ void GPIOController::set_start(int value) {
       if (file.is_open()) {
         file << "1";
         file.close();
-        std::cout << "Дані успішно записано!" << std::endl;
+        std::cout << "Дані у файл про старт успішно записано!" << std::endl;
       }
       else {
         std::cerr << "Не вдалося відкрити файл для запису!" << std::endl;

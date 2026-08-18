@@ -187,6 +187,7 @@ private:
 
     // Курс hdg (0..35999 сотих градуса)
     double deg = dir_rad * (180.0 / M_PI);
+
     while (deg < 0)
       deg += 360.0;
     while (deg >= 360)
@@ -209,6 +210,14 @@ private:
                                          hdg_cdeg);
     sendBuffer(msg_pos);
 
+    double yaw_rad = (M_PI / 2.0) - dir_rad;
+
+    // Нормалізуємо в діапазон [-PI, PI] (бажано для MAVLink)
+    while (yaw_rad > M_PI)
+      yaw_rad -= 2.0 * M_PI;
+    while (yaw_rad < -M_PI)
+      yaw_rad += 2.0 * M_PI;
+
     // ATTITUDE
     mavlink_message_t msg_att;
     mavlink_msg_attitude_pack(sysid_,
@@ -217,7 +226,7 @@ private:
                               t_ms,
                               0.0f,
                               0.0f,
-                              dir_rad,  // roll=0, pitch=0, yaw=dir_rad
+                              static_cast<float>(yaw_rad),  // yaw (курс у радіанах)
                               0.0f,
                               0.0f,
                               0.0f  // rates

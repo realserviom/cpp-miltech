@@ -349,9 +349,11 @@ void MissionProcessor::missionLoop()
       dlink::Result outResult;
 
       // Зчитуємо вхідні пакети (ACK)
-      m_mavlink->pollIncomingPackets();
+      if (m_mavlink) {
+        m_mavlink->pollIncomingPackets();
+      }
 
-      if (m_mavlink->getDropAcked()) {
+      if (m_mavlink && m_mavlink->getDropAcked()) {
         LOG("--- Відповідь від QGC (якої не буде) --- ");
         LOG("----------------- ");
       }
@@ -366,14 +368,11 @@ void MissionProcessor::missionLoop()
         running = false;
         break;
       }
-
-      if (m_mavlink && m_mavlink->getDropAcked()) {
-        LOG("--- Тригер що відповідь була ---");
-      }
-
-      std::this_thread::sleep_for(std::chrono::nanoseconds(100000000));
     }
 
-    curMyDrone->stop();  // Зупиняємо потік фізики дрона
-    LOG("--- КІНЕЦЬ МІСІЇ ---");
+    std::this_thread::sleep_for(std::chrono::nanoseconds(100000000));
   }
+
+  curMyDrone->stop();  // Зупиняємо потік фізики дрона
+  LOG("--- КІНЕЦЬ МІСІЇ ---");
+}
