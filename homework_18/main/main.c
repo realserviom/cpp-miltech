@@ -7,10 +7,6 @@
 #include "esp_log.h"
 #include "esp_timer.h"
 #include "driver/uart.h"
-
-static const char *TAG = "SENSOR"; // Тег, який буде відображатися у логах
-
-
 #include "driver/gpio.h"
 #include "freertos/event_groups.h"
 
@@ -28,6 +24,7 @@ static const char *TAG = "SENSOR"; // Тег, який буде відображ
 #define TX_PIN_1 17
 #define RX_PIN_1 18
 
+// це інший спосіб поки закоментований
 //static EventGroupHandle_t displayEventGroup;
 
 static volatile uint64_t last_interrupt_time = 0;
@@ -301,7 +298,7 @@ static void updateDisplayData( GyroSample *s, bool has_data ) {
 }
 
 static void displayTask(void* pvParameters) {
-     // GyroSample s;
+    // GyroSample s;
     //char line[24];
 
     oledPowerOff();
@@ -363,8 +360,6 @@ static void displayTask(void* pvParameters) {
         uart_write_bytes(UART_NUM_CLIENT, result_str, strlen(result_str));
     }
 }
-
-
 
 // Функція розрахунку CRC16 (наприклад, Modbus або CCITT)
 uint16_t calculateCRC(const uint8_t *data, uint16_t length) {
@@ -465,7 +460,7 @@ static void uartReceiveTask(void* pvParameters) {
 
     while (1) {
         // Читаємо байти з UART1 (пін 18)
-        // Чекаємо поки назбирається весь пакет із 5 байтів
+        // Чекаємо поки назбирається весь пакет із 6 байтів
         int length = uart_read_bytes(UART_NUM_1, &rx_buffer[total_read], 6 - total_read, pdMS_TO_TICKS(100));
         
         if (length > 0) {
@@ -554,10 +549,10 @@ void app_main(void) {
     init_uart();
     init_text_uart();
 
-    // 1. Створюємо Event Group
+    // Створюємо Event Group
     //displayEventGroup = xEventGroupCreate();
 
-    // 2. Ініціалізуємо кнопку
+    // Ініціалізуємо кнопку
     init_button();
 
 
