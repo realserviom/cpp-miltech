@@ -6,7 +6,6 @@
 #include "driver/i2c_master.h"
 #include "esp_log.h"
 #include "esp_timer.h"
-#include "driver/uart.h"
 
 static const char *TAG = "SENSOR"; // Тег, який буде відображатися у логах
 
@@ -16,61 +15,14 @@ static const char *TAG = "SENSOR"; // Тег, який буде відображ
 
 #define BUTTON_GPIO           GPIO_NUM_4  // Або будь-який інший вільний PIN
 #define EVENT_BUTTON_PRESSED  (1 << 0)
-#define UART_NUM UART_NUM_1 // Використовуємо UART1
 
-#define SENSOR_PERIOD 1
-#define DISPLAY_PERIOD 2
-
-#define UART_NUM_CLIENT UART_NUM_2
-#define TX_PIN_2 20
-#define RX_PIN_2 21
-
-#define TX_PIN_1 17
-#define RX_PIN_1 18
-
-//static EventGroupHandle_t displayEventGroup;
+static EventGroupHandle_t displayEventGroup;
 
 static volatile uint64_t last_interrupt_time = 0;
 
 static TaskHandle_t displayTaskHandle = NULL;
 
 static volatile int sensor_period_ms = 100;
-static volatile int display_period_ms = 5000;
-
-void init_uart() {
-    uart_config_t uart_config = {
-        .baud_rate = 115200,
-        .data_bits = UART_DATA_8_BITS,
-        .parity    = UART_PARITY_DISABLE,
-        .stop_bits = UART_STOP_BITS_1,
-        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
-        .source_clk = UART_SCLK_DEFAULT,
-    };
-
-    // Налаштовуємо параметри (конфігурація, буфери)
-    uart_param_config(UART_NUM, &uart_config);
-
-    // Прив'язуємо піни: 17 - TX, 18 - RX (-1 означає без керування потоком)
-    uart_set_pin(UART_NUM, TX_PIN_1, RX_PIN_1, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
-
-    // Встановлюємо драйвер (номер, буфер на приймання, буфер на передачу, черга)
-    uart_driver_install(UART_NUM, 1024, 0, 0, NULL, 0);
-}
-
-void init_text_uart(void) {
-    uart_config_t uart_config2 = {
-        .baud_rate = 115200,
-        .data_bits = UART_DATA_8_BITS,
-        .parity    = UART_PARITY_DISABLE,
-        .stop_bits = UART_STOP_BITS_1,
-        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
-        .source_clk = UART_SCLK_DEFAULT,
-    };
-
-    uart_param_config(UART_NUM_CLIENT, &uart_config2);
-    uart_set_pin(UART_NUM_CLIENT, TX_PIN_2, RX_PIN_2, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
-    uart_driver_install(UART_NUM_CLIENT, 1024, 0, 0, NULL, 0);
-}
 
 static void IRAM_ATTR button_isr_handler(void* arg) {
 
@@ -87,7 +39,7 @@ static void IRAM_ATTR button_isr_handler(void* arg) {
 
         BaseType_t xHigherPriorityTaskWoken = pdFALSE;
         
-        //esp_rom_printf("Button Pressed (ISR)!\n");
+        esp_rom_printf("Button Pressed (ISR)!\n");
 
         // Відправляємо сигнал у Event Group
         // xEventGroupSetBitsFromISR(displayEventGroup, EVENT_BUTTON_PRESSED,
@@ -129,7 +81,6 @@ typedef struct {
 static i2c_master_dev_handle_t mpu;
 static i2c_master_dev_handle_t oled;
 static QueueHandle_t gyroQueue; // черга гіроскопа
-
 
 static void i2cInit(void) {
     i2c_master_bus_config_t bus = {
@@ -244,7 +195,7 @@ static void oledText(int page, const char* s) {
 static void sensorTask(void* pvParameters) {
     TickType_t wake = xTaskGetTickCount();
     for (;;) {
-        vTaskDelayUntil(&wake, pdMS_TO_TICKS(100));
+        vTaskDelayUntil(&wake, pdMS_TO_TICKS(sensor_period_ms));
         GyroSample s = mpuReadGyro();
 
         // Число 0 — це час очікування (таймаут) у тактах системного таймера (Ticks), 
@@ -254,8 +205,8 @@ static void sensorTask(void* pvParameters) {
         // Намагаємося відправити дані в чергу з таймаутом 0
         if (xQueueSend(gyroQueue, &s, 0) == pdPASS) {
             // Використовуємо printf з \n та fflush
-            //printf("Sent to queue -> X: %.1f, Y: %.1f, Z: %.1f\n", s.x, s.y, s.z);
-            //fflush(stdout); 
+            printf("UART TX -> Gyro X: %.1f, Y: %.1f, Z: %.1f [Period: %dms]\n", s.x, s.y, s.z, sensor_period_ms);
+            fflush(stdout); 
         } 
         
          {
@@ -278,31 +229,40 @@ static void oledPowerOff(void) {
 }
 
 // Винесемо логіку малювання в окрему допоміжну функцію
-static void updateDisplayData( GyroSample *s, bool has_data ) {
+static void updateDisplayData(void) {
+    GyroSample s;
+    bool has_data = false;
 
-    if (!has_data) {
-      return;
+    // Вичитаємо найсвіжіші дані з черги
+    while (xQueueReceive(gyroQueue, &s, 0) == pdPASS) {
+        has_data = true;
     }
 
-    char line[24];
-    snprintf(line, sizeof(line), "gx: %8.1f", s->x);
-    oledText(1, line);
-    snprintf(line, sizeof(line), "gy: %8.1f", s->y);
-    oledText(3, line);
-    snprintf(line, sizeof(line), "gz: %8.1f", s->z);
-    oledText(5, line);
+    // Якщо в черзі нічого не було, даємо 100 мс на отримання першого ж виміру
+    if (!has_data) {
+        has_data = (xQueueReceive(gyroQueue, &s, pdMS_TO_TICKS(100)) == pdPASS);
+    }
 
-    oledFlush();
-    oledPowerOn();
+    if (has_data) {
+        char line[24];
+        snprintf(line, sizeof(line), "gx: %8.1f", s.x);
+        oledText(1, line);
+        snprintf(line, sizeof(line), "gy: %8.1f", s.y);
+        oledText(3, line);
+        snprintf(line, sizeof(line), "gz: %8.1f", s.z);
+        oledText(5, line);
 
-    vTaskDelay(pdMS_TO_TICKS(500)); // Показуємо 0.5 с
-    oledPowerOff();
-    
+        oledFlush();
+        oledPowerOn();
+
+        vTaskDelay(pdMS_TO_TICKS(500)); // Показуємо 0.5 с
+        oledPowerOff();
+    }
 }
 
 static void displayTask(void* pvParameters) {
-     // GyroSample s;
-    //char line[24];
+    GyroSample s;
+    char line[24];
 
     oledPowerOff();
 
@@ -334,228 +294,58 @@ static void displayTask(void* pvParameters) {
         // інший спосіб по лічильнику переривань в самій функції викликається
         // ulTaskNotifyTake який шукає контекст суто того методу з якого його викликали
         // і по displayTaskHandle який фігурує в методі переривання button_isr_handler кнопки
-        uint32_t ulNotifiedValue = ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(display_period_ms));
+        uint32_t ulNotifiedValue = ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(5000));
 
         if (ulNotifiedValue > 0) {
-           // printf("Push button!\n");
+            printf("Push button!\n");
         } else {
-           // printf("Timeout 5s elapsed\n");
+            printf("Timeout 5s elapsed\n");
         }
 
-        GyroSample s;
-        bool has_data = false;
 
-        // Вичитаємо найсвіжіші дані з черги
-        while (xQueueReceive(gyroQueue, &s, 0) == pdPASS) {
-            has_data = true;
-        }
-
-        // Якщо в черзі нічого не було, даємо 100 мс на отримання першого ж виміру
-        if (!has_data) {
-            has_data = (xQueueReceive(gyroQueue, &s, pdMS_TO_TICKS(100)) == pdPASS);
-        }
-
-        updateDisplayData(&s, has_data);
-
-        char result_str[128];
-        sprintf(result_str, "Result: gx: %8.1f, gy: %8.1f, gz: %8.1f, display time: %d, sensor time: %d\n", s.x, s.y, s.z, display_period_ms, sensor_period_ms);
-        // Відправляємо текст через UART_NUM_CLIENT
-        uart_write_bytes(UART_NUM_CLIENT, result_str, strlen(result_str));
+        updateDisplayData();
     }
 }
 
-
-
-// Функція розрахунку CRC16 (наприклад, Modbus або CCITT)
-uint16_t calculateCRC(const uint8_t *data, uint16_t length) {
-    uint16_t crc = 0xFFFF;
-    for (uint16_t i = 0; i < length; i++) {
-        crc ^= data[i];
-        for (uint8_t j = 0; j < 8; j++) {
-            if (crc & 0x0001) {
-                crc = (crc >> 1) ^ 0xA001;
-            } else {
-                crc = crc >> 1;
-            }
-        }
-    }
-    return crc;
-}
-
-
-void sendPacket(uint8_t cmd, uint16_t val) {
-    uint8_t packet[6]; // 1 (заголовок) + 1 (команда) + 2 (значення) + 2 (CRC) = 6 байт
-    packet[0] = 0xAA; // Заголовок
-    packet[1] = cmd;  // Команда
-    packet[2] = (uint8_t)(val & 0xFF);       // Молодший байт значення
-    packet[3] = (uint8_t)(val >> 8);         // Старший байт значення
-
-    // Рахуємо CRC для перших 4 байт (заголовок, команда, значення [2 байти])
-    uint16_t crc = calculateCRC(packet, 4); 
+// Читання команд по UART від комп'ютера
+static void uartCommandTask(void* pvParameters) {
+    char rx_buffer[64];
     
-    packet[4] = (uint8_t)(crc & 0xFF);       // Молодший байт CRC
-    packet[5] = (uint8_t)(crc >> 8);         // Старший байт CRC
-
-    // Відправляємо масив байтів у UART (тепер довжина 6 байт)
-    uart_write_bytes(UART_NUM, (const char *)packet, 6);
-    
-    printf("Відправлено пакет -> CMD: 0x%02X, VAL: %d, CRC: 0x%04X\n", cmd, val, crc);
-}
-
-static void handle_period_command(uint8_t cmd, const char *buffer, int prefix_len, volatile int *target_var, int min_val, int max_val, const char *name) {
-    int new_period = atoi(buffer + prefix_len);
-    if (new_period >= min_val && new_period <= max_val) {
-        sendPacket((uint8_t)cmd, (uint16_t)new_period);
-    } else {
-        printf("NACK: Invalid %s period (use %d-%d)\n", name, min_val, max_val);
-    }
-    fflush(stdout);
-}
-
-// Головна задача, яка слухає ввід із консолі (Serial Monitor)
-void uartCommandTask(void *pvParameters) {
-    printf("Введіть команду (напр: SENSOR_PERIOD 500 або DISPLAY_PERIOD 5000) і натисніть Enter:\n");
-
-    char buffer[64];
-    int index = 0;
-
+    // Налаштування UART0 для читання з консолі (stdin)
+    // У ESP-IDF стандартний ввід вже прив'язаний до UART0, тому можемо читати через getchar або fgets
     while (1) {
-        uint8_t ch;
-        // Читаємо по одному байту з UART1 (або іншого порту) з таймаутом 50 мс
-        int len = uart_read_bytes(UART_NUM, &ch, 1, pdMS_TO_TICKS(50));
+        // Читаємо рядок з термінала комп'ютера (блокуючий виклик)
+        if (fgets(rx_buffer, sizeof(rx_buffer), stdin) != NULL) {
+            // Прибираємо символ перенесення рядка в кінці
+            rx_buffer[strcspn(rx_buffer, "\r\n")] = 0;
 
-        if (len <= 0) {
-            vTaskDelay(pdMS_TO_TICKS(50));
-            continue; // Нічого не прийшло, йдемо далі
-        }
-
-        // if (ch == EOF) {
-        //     vTaskDelay(pdMS_TO_TICKS(50));
-        //     continue;
-        // }
-        
-        if (ch == '\n' || ch == '\r') {
-            buffer[index] = '\0'; // Завершуємо рядок
-            
-            if (index > 0) {
-                buffer[strcspn(buffer, "\r\n")] = 0;
-
-                if (strncmp(buffer, "SENSOR_PERIOD ", 14) == 0) {
-                    handle_period_command(SENSOR_PERIOD, buffer, 14, &sensor_period_ms, 20, 500, "Sensor");
-                } 
-                else if (strncmp(buffer, "DISPLAY_PERIOD ", 15) == 0) {
-                    handle_period_command(DISPLAY_PERIOD, buffer, 15, &display_period_ms, 100, 30000, "Display");
-                } 
-                else {
-                    printf("ACK: Unknown command -> %s\n", buffer);
-                    fflush(stdout);
-                }
-            }
-            index = 0;
-        } 
-        else if (index < sizeof(buffer) - 1) {
-            buffer[index++] = (char)ch;
-        }
-    }
-}
-
-static void uartReceiveTask(void* pvParameters) {
-    uint8_t rx_buffer[6];
-    size_t total_read = 0;
-
-    while (1) {
-        // Читаємо байти з UART1 (пін 18)
-        // Чекаємо поки назбирається весь пакет із 5 байтів
-        int length = uart_read_bytes(UART_NUM_1, &rx_buffer[total_read], 6 - total_read, pdMS_TO_TICKS(100));
-        
-        if (length > 0) {
-            total_read += length;
-            
-            // Якщо є перший байт, але він не 0xAA (синхронізація по заголовоку)
-            if (total_read > 0 && rx_buffer[0] != 0xAA) {
-                // Зсуваємо буфер у пошуках правильного заголовка
-                rx_buffer[0] = rx_buffer[1]; // спрощений приклад зсуву
-                total_read = 1;
-                continue;
-            }
-
-            // Як тільки назбирали рівно 6 байтів пакету
-            if (total_read >= 6) {
-                uint8_t header = rx_buffer[0];
-                uint8_t cmd    = rx_buffer[1];
-                uint16_t  val =  rx_buffer[2] | ((uint16_t)rx_buffer[3] << 8);
-                
-                // Збираємо назад CRC із двох байтів (молодший + старший)
-                uint16_t received_crc = rx_buffer[4] | ((uint16_t)rx_buffer[5] << 8);
-                
-                // Рахуємо CRC для перших трьох байтів отриманого пакету
-                uint16_t calculated_crc = calculateCRC(rx_buffer, 4);
-
-                // Перевіряємо цілісність
-                if (calculated_crc == received_crc) {
-                    if(cmd == SENSOR_PERIOD) {
-                        sensor_period_ms = val;
-                        char cmd_str[64];
-                        sprintf(cmd_str, "Успішно змінено SENSOR_PERIOD! VAL: %d\n", val);
-
-                        // Відправляємо текст через UART2
-                        uart_write_bytes(UART_NUM_CLIENT, cmd_str, strlen(cmd_str));
-
-                       
-                    }
-
-                    if(cmd == DISPLAY_PERIOD) {
-                        display_period_ms = val;
-                        char cmd_str[64];
-                        sprintf(cmd_str, "Успішно змінено DISPLAY_PERIOD! VAL: %d\n", val);
-                        // Відправляємо текст через UART2
-                        uart_write_bytes(UART_NUM_CLIENT, cmd_str, strlen(cmd_str));
-                    }
-                    
+            // Перевіряємо команду зміни періоду, наприклад: "PERIOD 500" або просто число "250"
+            if (strncmp(rx_buffer, "PERIOD ", 7) == 0) {
+                int new_period = atoi(rx_buffer + 7);
+                if (new_period >= 20 && new_period <= 5000) {
+                    sensor_period_ms = new_period;
+                    // Підтвердження рядком у відповідь на комп'ютер за вимогами задачі
+                    printf("ACK: Period changed to %d ms\n", sensor_period_ms);
                 } else {
-                    printf("Помилка CRC! Отримано: 0x%04X, розраховано: 0x%04X\n", received_crc, calculated_crc);
+                    printf("NACK: Invalid period value (use 20-5000)\n");
                 }
-
-                // Скидаємо лічильник для читання наступного пакету
-                total_read = 0;
+                fflush(stdout);
+            } else if (strlen(rx_buffer) > 0) {
+                printf("ACK: Unknown command -> %s\n", rx_buffer);
+                fflush(stdout);
             }
         }
-        
-        vTaskDelay(pdMS_TO_TICKS(10));
+        vTaskDelay(pdMS_TO_TICKS(50));
     }
 }
-
-void uartReceiveAnswer(void *pvParameters) {
-    vTaskDelay(pdMS_TO_TICKS(2000)); // Чекаємо ініціалізації системи
-   
-    while (1) {
-
-        // Слухаємо відповідь (ACK / NACK) у буфер
-        char rx_buf[128] = {0};
-        int len = uart_read_bytes(UART_NUM_CLIENT, rx_buf, sizeof(rx_buf) - 1, pdMS_TO_TICKS(1000));
-
-        if (len > 0) {
-            rx_buf[len] = '\0'; // Завершуємо рядок
-            // Очищаємо від зайвих символів переходу рядка
-            rx_buf[strcspn(rx_buf, "\r\n")] = 0;
-            
-            printf("[UART2 Client] Отримано відповідь: [%s]\n", rx_buf);
-        } 
-
-        vTaskDelay(pdMS_TO_TICKS(100));
-    }
-}
-
 
 void app_main(void) {
     i2cInit();
     mpuInit();
     oledInit();
-    init_uart();
-    init_text_uart();
 
     // 1. Створюємо Event Group
-    //displayEventGroup = xEventGroupCreate();
+    displayEventGroup = xEventGroupCreate();
 
     // 2. Ініціалізуємо кнопку
     init_button();
@@ -596,11 +386,10 @@ void app_main(void) {
     // видалити (vTaskDelete) або змінити її пріоритет. Якщо це не потрібно — передають NULL.
 
     xTaskCreate(displayTask, "display", 4096, NULL, 4, &displayTaskHandle);
+
+    // обробки вхідних команд UART
     xTaskCreate(uartCommandTask, "uart_cmd", 4096, NULL, 3, NULL);
-    xTaskCreate(uartReceiveTask, "uart_rec", 4096, NULL, 6, NULL);
-    xTaskCreate(uartReceiveAnswer, "answer_client", 4096, NULL, 2, NULL);
-   
+    
+    printf("UART initialized. System started successfully. Send 'PERIOD <ms>' to change rate.\n");
+    fflush(stdout);
 }
-
-
-
