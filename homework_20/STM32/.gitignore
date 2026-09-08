@@ -1,3 +1,31 @@
 build
 mx.scratch
 !.settings
+
+# --- Папки збірки та тимчасові файли ---
+/build/
+/.cache/
+CMakeCache.txt
+CMakeFiles/
+cmake-build-*/
+*.cmake
+
+# --- Налаштування середовищ розробки та IDE ---
+.settings/
+.vscode/
+*.launch
+*.pyc
+*.pyo
+
+# --- Системні файли ОС ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Логи та артефакти компіляції ---
+*.log
+*.elf
+*.bin
+*.hex
+*.map
+*.lst
