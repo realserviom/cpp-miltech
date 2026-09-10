@@ -6,8 +6,9 @@
 #include <cstring>
 #include "main.h"
 
-extern I2C_HandleTypeDef hi2c1;
+// extern I2C_HandleTypeDef hi2c1;
 extern UART_HandleTypeDef huart1;
+extern UART_HandleTypeDef huart2;
 
 namespace {
 
@@ -74,9 +75,17 @@ extern "C" {
 
 // Якщо ви використовуєте задачі, які також лежать у freertos.c, їхні прототипи 
 // теж бажано оголосити тут, щоб xTaskCreate знав, що це за функції:
-extern void buttonTask(void* pvParameters);
-extern void heartbeatTask(void* pvParameters);
-extern void uartReceiveTask(void* pvParameters);
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void buttonTask(void *argument);
+void heartbeatTask(void *argument);
+void uartReceiveTask(void *argument);
+
+#ifdef __cplusplus
+}
+#endif
 
 extern "C" void app_start(void) {
     // q = xQueueCreate(8, sizeof(Sample));
@@ -87,14 +96,28 @@ extern "C" void app_start(void) {
 
     //xTaskCreate(sensorTask, "sensor", 256, nullptr, 4, nullptr);
     //xTaskCreate(commsTask, "comms", 256, nullptr, 3, nullptr);
-    xTaskCreate(buttonTask, "button", 128, nullptr, 2, &btnTaskH);
+    //xTaskCreate(buttonTask, "button", 128, nullptr, 2, &btnTaskH);
+
+    BaseType_t result = xTaskCreate(buttonTask, "button", 256, nullptr, 2, &btnTaskH);
+    if (result != pdPASS) {
+        // Помилка: недостатньо пам'яті у FreeRTOS Heap (configTOTAL_HEAP_SIZE)
+        printf("ERROR 1: Failed to create buttonTask! Heap is full or stack is too large.\r\n");
+        // Тут можна додати зупинку виконання або зациклення
+        configASSERT(0);
+    }
+
+    if (btnTaskH == NULL) {
+        // Помилка виділення пам'яті в купі (Heap)
+        printf("ERROR 2: Failed to create buttonTask! Heap is full or stack is too large.\r\n");
+        configASSERT(0);
+    }
+
     xTaskCreate(heartbeatTask, "hb", 192, nullptr, 1, nullptr);
     xTaskCreate(uartReceiveTask, "uart_rx", 256, nullptr, 3, nullptr);
 }
 
 extern "C" void HAL_GPIO_EXTI_Callback(uint16_t pin) {
     if (pin == GPIO_PIN_0) {
-
         // значення яке записується передане woken по посиланню відслідковує пріоритет задачі 
         // яку перервала кнопка
         // якщо пріоритет задачі що виконувалася вищий за задачу кнопки (наприклад 3 бо кнопка має 2 пріоритет)

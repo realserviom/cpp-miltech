@@ -24,6 +24,7 @@
 
 #define MAGIC0 0xA5
 #define MAGIC1 0x5A
+#define FLASH_USER_START_ADDR ADDR_FLASH_SECTOR_7
 
 
 // Створюємо назви для switch
@@ -89,10 +90,14 @@ static inline uint16_t crc16(const uint8_t* data, size_t len) {
 }
 
 enum PacketType : uint8_t {
-    PKT_ANSWER    = 0x01,  // відповідь строкою
-    PKT_CONTROL   = 0x02,  // передача команди
-    PKT_FOR_STM = 0x03     // передача пакета для STM
+    // відповідь строкою
+    PKT_ANSWER    = 0x01,
+    // тип пакету від і до STM32 з даним
+    PKT_DATA = 0x02,
+    // тип пакету до STM32 для отримання конфігурації
+    PKT_GET_DATA = 0x03 
 };
+
 
 #pragma pack(push, 1)
 
@@ -101,14 +106,8 @@ struct Answer {
     char msg[100];
 };
 
-// PKT_CONTROL — команда керування сенсором і OLED
-struct Control {
-    uint16_t sensor_period_ms;       // період опитування сенсора (20..500 мс)
-    uint16_t time_show;              // час показу даних на OLED (100..30000)
-};
-
-// PKT_FOR_STM — конфігурація що передається на STM
-struct For_stm {
+// PKT_DATA — конфігурація що передається на STM
+struct Data {
     char name[20]; 
     uint8_t val;
     char mode[20]; 
@@ -132,13 +131,13 @@ static inline size_t encode(uint8_t type, const void* payload, uint8_t payloadLe
     return (size_t)payloadLen + 6;
 }
 
-
-void sendControl(uint16_t sensor_period_ms, uint16_t display_period_ms)
+void sendConfigRequest()
 {
-  struct Control c = {sensor_period_ms, display_period_ms};
-  uint8_t out[64];
-  size_t m = encode(PKT_CONTROL, &c, sizeof c, out);
-  uart_write_bytes(UART_NUM, (const char *)out, m);
+    printf("sendConfigRequest\n\r");
+    uint8_t out[128]; 
+    // Передаємо NULL та 0, оскільки корисного навантаження (payload) немає
+    size_t m = encode(PKT_GET_DATA, NULL, 0, out);
+    uart_write_bytes(UART_NUM, (const char *)out, m);
 }
 
 void sendAnswer(const char *msg)
@@ -152,19 +151,18 @@ void sendAnswer(const char *msg)
     uart_write_bytes(UART_NUM, (const char *)out, m);
 }
 
-void sendFor_stm(const char *name_str, uint8_t val_num, const char *mode_str)
+void sendData(const char *name_str, uint8_t val_num, const char *mode_str)
 {
-    struct For_stm data;
+    struct Data data;
     
     snprintf(data.name, sizeof(data.name), "%s", name_str);
     data.val = val_num;
     snprintf(data.mode, sizeof(data.mode), "%s", mode_str);
 
     uint8_t out[64];
-    size_t m = encode(PKT_FOR_STM, (const uint8_t *)&data, sizeof(data), out);
+    size_t m = encode(PKT_DATA, (const uint8_t *)&data, sizeof(data), out);
     uart_write_bytes(UART_NUM, (const char *)out, m);
 }
-
 
 // Стан парсера
 typedef enum { 
@@ -243,28 +241,6 @@ static bool parser_feed(uart_parser_t *p, uint8_t byte, uint8_t *outType, uint8_
         }
     }
     return false;
-}
-
-// ################## поки не використовуємо #########################
-void uartReceiveAnswer(void *pvParameters) {
-    vTaskDelay(pdMS_TO_TICKS(2000)); // Чекаємо ініціалізації системи
-   
-    while (1) {
-
-        // Слухаємо відповідь (ACK / NACK) у буфер
-        char rx_buf[256] = {0};
-        int len = uart_read_bytes(UART_NUM_CLIENT, rx_buf, sizeof(rx_buf) - 1, pdMS_TO_TICKS(1000));
-
-        if (len > 0) {
-            rx_buf[len] = '\0'; // Завершуємо рядок
-            // Очищаємо від зайвих символів переходу рядка
-            rx_buf[strcspn(rx_buf, "\r\n")] = 0;
-            
-            printf("[UART2 Client] Отримано відповідь: [%s]\n", rx_buf);
-        } 
-
-        vTaskDelay(pdMS_TO_TICKS(100));
-    }
 }
 
 

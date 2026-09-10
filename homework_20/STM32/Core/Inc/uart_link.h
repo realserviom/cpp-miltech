@@ -23,8 +23,13 @@ static inline uint16_t crc16(const uint8_t* data, size_t len) {
 }
 
 enum PacketType : uint8_t {
-    PKT_ANSWER    = 0x01,  // відповідь строкою
-    PKT_FOR_STM   = 0x03   // передача пакета для STM
+    // відповідь строкою
+    PKT_ANSWER    = 0x01,
+    // тип пакету від ESP32 з даними для запису в STM32 
+    // такий самий пакет використовується для зворотньої передачі  
+    PKT_DATA = 0x02,
+    // тип пакету від ESP32 по якому повертаються дані
+    PKT_GET_DATA = 0x03 
 };
 
 #pragma pack(push, 1)
@@ -34,8 +39,8 @@ struct Answer {
     char msg[100];
 };
 
-// PKT_FOR_STM
-struct For_stm {
+// PKT_DATA
+struct Data {
     char name[20]; 
     uint8_t val;
     char mode[20]; 
@@ -129,6 +134,7 @@ static bool parser_feed(uart_parser_t *p, uint8_t byte, uint8_t *outType, uint8_
 
 // Оголошуємо що функція живе у freertos.c
 extern void uartSend(const uint8_t* data, size_t len);
+extern void espUartSend(const uint8_t* data, size_t len);
 
 // Функція формування та відправки відповіді
 static inline void sendAnswer(const char *msg) {
@@ -138,7 +144,14 @@ static inline void sendAnswer(const char *msg) {
     uint8_t out[128]; 
     size_t m = encode(PKT_ANSWER, (const uint8_t *)&a, sizeof(a), out);
     
-    uartSend(out, m);
+    espUartSend(out, m);
+}
+
+void sendPacketToESP32(const struct Data *data)
+{
+    uint8_t out[64];
+    size_t m = encode(PKT_DATA, (const uint8_t *)data, sizeof(*data), out);
+    espUartSend(out, m);
 }
 
 #endif // UART_LINK_H

@@ -42,6 +42,7 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
     Core/Src/app.cpp
+    Core/Src/freertos.c
 )
 
 # Add include paths

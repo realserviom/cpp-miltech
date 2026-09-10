@@ -7,6 +7,7 @@
 #include "esp_log.h"
 #include <string.h>
 
+// підключення до wifi router - a
 static inline void wifi_init_sta(const wifi_config_t *wifi_config) {
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
@@ -24,6 +25,24 @@ static inline void wifi_init_sta(const wifi_config_t *wifi_config) {
 
     printf("Connecting to WiFi SSID: %s...\n", wifi_config->sta.ssid);
     esp_wifi_connect();
+}
+
+// підняття власного router - a
+static inline void wifi_init_softap(const wifi_config_t *wifi_config) {
+    ESP_ERROR_CHECK(esp_netif_init());
+    ESP_ERROR_CHECK(esp_event_loop_create_default());
+    esp_netif_create_default_wifi_ap(); // Створюємо мережевий інтерфейс для AP
+
+    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP));
+    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, (wifi_config_t *)wifi_config));
+    
+    ESP_ERROR_CHECK(esp_wifi_start());
+
+    printf("WiFi Access Point started! SSID: %s Password: %s\n", 
+           wifi_config->ap.ssid, wifi_config->ap.password);
 }
 
 #endif // WIFI_CONFIG_H

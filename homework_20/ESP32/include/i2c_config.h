@@ -4,13 +4,8 @@
 #include "driver/i2c_master.h"
 #include "esp_log.h"
 
-// Піни та адреси (можна винести сюди або залишити в main.c)
-#define K_SDA 8
-#define K_SCL 9
-#define K_MPU_ADDR 0x68
-#define K_OLED_ADDR 0x3C
-
 // Оголошуємо змінні через extern, щоб вони були доступні усім, хто підключить цей файл
+
 extern i2c_master_dev_handle_t mpu;
 extern i2c_master_dev_handle_t oled;
 

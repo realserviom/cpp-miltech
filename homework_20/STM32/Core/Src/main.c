@@ -19,7 +19,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
-#include "i2c.h"
 #include "usart.h"
 #include "usb_device.h"
 #include "gpio.h"
@@ -84,7 +83,7 @@ int main(void)
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+      HAL_Init();
 
   /* USER CODE BEGIN Init */
 
@@ -99,8 +98,8 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_I2C1_Init();
   MX_USART1_UART_Init();
+  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   app_start(); // <--- Додайте виклики вашого коду сюди
   /* USER CODE END 2 */

@@ -26,24 +26,26 @@ i2c_master_dev_handle_t mpu = NULL;
 static volatile uint64_t last_interrupt_time = 0;
 volatile uint16_t sensor_period_ms = 100;
 volatile uint16_t display_period_ms = 5000;
+volatile bool isConfigLoaded = false;
 
 static esp_err_t sendHtml(httpd_req_t *req);
+static esp_err_t sendLoadingHtml(httpd_req_t *req);
 static esp_err_t handleSave(httpd_req_t *req);
 static esp_err_t favicon_get_handler(httpd_req_t *req);
 
 // Змінні для збереження наших параметрів
 static char deviceCMD[64] = "DISPLAY_PERIOD 5000"; // Текстовий параметр команди
-static char deviceName[32] = "ESP32_Device"; // Текстовий параметр
+static char deviceName[20] = "ESP32_Device"; // Текстовий параметр
 static int pwmValue = 128;                  // Числовий параметр (або твій sensor_period_ms)
-static char modeSelection[16] = "auto";     // Вибір radio (замість String)
+static char modeSelection[20] = "auto";     // Вибір radio (замість String)
 static char ledStatus[4] = "OFF";          // режим світодіода жовтого
 
 // Хендл для веб-сервера ESP-IDF
 static httpd_handle_t server = NULL;
 
 // Налаштування Wi-Fi
-#define ESP_WIFI_SSID      "Wokwi-GUEST"
-#define ESP_WIFI_PASS      ""
+#define ESP_WIFI_SSID      "ESP32-WIFI"
+#define ESP_WIFI_PASS      "12345678"
 #define ESP_WIFI_CHANNEL   0
 
 #define BUTTON_GPIO           GPIO_NUM_4  // Або будь-який інший вільний PIN
@@ -53,19 +55,14 @@ static httpd_handle_t server = NULL;
 #define SENSOR_PERIOD 1
 #define DISPLAY_PERIOD 2
 
-#define UART_NUM_CLIENT UART_NUM_2 // Використовуємо UART2
-#define TX_PIN_2 GPIO_NUM_20
-#define RX_PIN_2 GPIO_NUM_21
-
 #define TX_PIN_1 GPIO_NUM_17
 #define RX_PIN_1 GPIO_NUM_18
 
 #define LED_GPIO GPIO_NUM_5  // пін жовтого світлодіода
-#define LED_RED_GPIO GPIO_NUM_6 // пін червоного світодіода (працює тільки коли зберігаються дані)
+#define LED_RED_GPIO GPIO_NUM_19 // пін червоного світодіода (працює тільки коли зберігаються дані)
 
-
-#define K_SDA 8
-#define K_SCL 9
+#define K_SDA GPIO_NUM_21
+#define K_SCL GPIO_NUM_22
 #define K_MPU_ADDR 0x68
 #define K_OLED_ADDR 0x3C
 
@@ -93,8 +90,7 @@ static QueueHandle_t gyroQueue; // черга гіроскопа
 
 // Сховища для даних
 struct Answer currentAnswer;
-struct Control currentControl;
-struct For_stm currentFor_stm;
+struct Data currentData;
 
 // Ініціалізація жовтого світлодіода
 void init_led(void) {
@@ -118,16 +114,30 @@ void init_uarts() {
 void initServer(void) {
     // Підключаємося до Wi-Fi
     // Створюємо та заповнюємо структуру конфігурації (включаючи канал, якщо потрібно)
+    // wifi_config_t wifi_config = {
+    //     .sta = {
+    //         .ssid = ESP_WIFI_SSID,
+    //         .password = ESP_WIFI_PASS,
+    //         .channel = 0 // 0 означає автосканування каналу
+    //     },
+    // };
+
+    // Передаємо адресу структури у функцію
+    //wifi_init_sta(&wifi_config);
+
     wifi_config_t wifi_config = {
-        .sta = {
-            .ssid = ESP_WIFI_SSID,
-            .password = ESP_WIFI_PASS,
-            .channel = 0 // 0 означає автосканування каналу
+        .ap = {
+            .ssid = ESP_WIFI_SSID,  // Назва вашої мережі, яку буде бачити телефон/ПК
+            .channel = 1,
+            .password = ESP_WIFI_PASS,        // Пароль від мережі (мінімум 8 символів)
+            .max_connection = 4,           // Максимальна кількість пристроїв, що підключаються
+            .authmode = WIFI_AUTH_WPA2_PSK,
         },
     };
 
     // Передаємо адресу структури у функцію
-    wifi_init_sta(&wifi_config);
+    wifi_init_softap(&wifi_config);
+
     vTaskDelay(pdMS_TO_TICKS(2000)); // Невелика пауза на отримання IP-адреси
     printf("Connected! HTTP server starting...\n");
     route_webserver(&server);
@@ -135,7 +145,7 @@ void initServer(void) {
 
 static void regWrite(i2c_master_dev_handle_t d, uint8_t reg, uint8_t val) {
     uint8_t buf[2] = { reg, val };
-    ESP_ERROR_CHECK(i2c_master_transmit(d, buf, 2, -1));
+    ESP_ERROR_CHECK(i2c_master_transmit(d, buf, 2, pdMS_TO_TICKS(1000)));
 }
 
 static void mpuInit(void) {
@@ -163,18 +173,10 @@ static void sensorTask(void* pvParameters) {
         // Число 0 — це час очікування (таймаут) у тактах системного таймера (Ticks), 
         // який задача готова зачекати, якщо черга виявиться повністю заповненою.
         // xQueueSend(gyroQueue, &s, 0);
-
-        // Намагаємося відправити дані в чергу з таймаутом 0
+        // якщо 0 не будемо очікувати
         if (xQueueSend(gyroQueue, &s, 0) == pdPASS) {
-            // Використовуємо printf з \n та fflush
-            //printf("Sent to queue -> X: %.1f, Y: %.1f, Z: %.1f\n", s.x, s.y, s.z);
-            //fflush(stdout); 
+            printf("Sent to queue -> X: %.1f, Y: %.1f, Z: %.1f\n", s.x, s.y, s.z);
         } 
-        
-         {
-           // printf("Queue full! Sample dropped.\n");
-           // fflush(stdout);
-        }
     }
 }
 
@@ -264,62 +266,56 @@ static void uartReceiveTask(void* pvParameters)
 
         for (int i = 0; i < rx_len; i++) {
             if (parser_feed(&parser, rx_buf[i], &outType, outPayload, &outLen)) {
-
                 if (outType == PKT_ANSWER && outLen == sizeof(struct Answer)) {
                     memcpy(&currentAnswer, outPayload, sizeof(struct Answer));
                     printf("Отримали відповідь!  Msg: %s\n", currentAnswer.msg);
                 }
-                else if (outType == PKT_CONTROL && outLen == sizeof(struct Control)) {
-                    memcpy(&currentControl, outPayload, sizeof(struct Control));
+                // answer from stm32 with structer Data
+                else if (outType == PKT_DATA && outLen == sizeof(struct Data)) {
+                    memcpy(&currentData, outPayload, sizeof(struct Data));
+                    isConfigLoaded = true;
 
-                    sensor_period_ms = currentControl.sensor_period_ms;
-                    display_period_ms = currentControl.time_show; // Або display_period_ms, залежно від назви у структурі
+                    strncpy(deviceName, currentData.name, sizeof(deviceName) - 1);
+                    deviceName[sizeof(deviceName) - 1] = '\0';
 
-                    // Оголошуємо буфер один раз, щоб уникнути помилки повторного оголошення
-                    char cmd_str[128];
-                    
-                    snprintf(cmd_str, sizeof(cmd_str), "Успішно змінено SENSOR_PERIOD! VAL: %u\n", sensor_period_ms);
-                    sendAnswer(cmd_str);
+                    pwmValue = currentData.val;
 
-                    snprintf(cmd_str, sizeof(cmd_str), "Успішно змінено DISPLAY_PERIOD! VAL: %u\n", display_period_ms);
-                    sendAnswer(cmd_str);
+                    strncpy(modeSelection, currentData.mode, sizeof(modeSelection) - 1);
+                    modeSelection[sizeof(modeSelection) - 1] = '\0';
+
+                    printf("GET PKT_DATA!\n");
+                    printf("deviceName: %s\n", deviceName);
+                    printf("pwmValue: %d\n", pwmValue);
+                    printf("modeSelection: %s\n", modeSelection);
                 }
-                else if (outType == PKT_FOR_STM && outLen == sizeof(struct For_stm)) { // Виправлено PRT_ на PKT_
-                    memcpy(&currentFor_stm, outPayload, sizeof(struct For_stm));
-                    printf("GET PKT_FOR_STM!\n");
+                // answer for test (cyclic uart only for ESP32) 
+                else if (outType == PKT_GET_DATA) {
+                    isConfigLoaded = true;
+                    printf("TEST ANSWER PKT_DATA!\n");
                 }
                 else {
                     printf("NO NAME! outType: %d\n", outType);
                 }
             }
         }
+        
     }
 }
-
-
-
 
 void app_main(void) {
 
     // Спочатку ініціалізуємо NVS (один раз на старті програми)
     init_nvs();
+
     i2cInit();
     mpuInit();
     oledInit();
-    init_uarts();
     init_led();
     init_red_led();
     init_button();
+
+    init_uarts();
      
-
-    // Створюємо Event Group
-    //displayEventGroup = xEventGroupCreate();
-
-    // Для сенсорів завжди роблять так. Створюють буфер з одиним значенням
-    // xQueueCreate(1, sizeof(GyroSample))
-    // Завжди перезаписує єдиний елемент у черзі найновішим значенням
-    // xQueueOverwrite(gyroQueue, &sample);
-
     // створюємо чергу з 8 елементів розміром sizeof(GyroSample)
     // ця черга не буде переписуватися якщо заповниться буфер до 8 елементів
     gyroQueue = xQueueCreate(8, sizeof(GyroSample)); 
@@ -350,9 +346,18 @@ void app_main(void) {
     // видалити (vTaskDelete) або змінити її пріоритет. Якщо це не потрібно — передають NULL.
 
     xTaskCreate(displayTask, "display", 4096, NULL, 4, &displayTaskHandle);
+  
+    initServer();
+
+    vTaskDelay(pdMS_TO_TICKS(2000));
+
+    sendConfigRequest();
+
     xTaskCreate(uartReceiveTask, "uart_rec", 4096, NULL, 6, NULL);
 
-    initServer();
+    while (1) {
+        vTaskDelay(pdMS_TO_TICKS(10));
+    }
 }
 
 

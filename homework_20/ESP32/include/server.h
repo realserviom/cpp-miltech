@@ -9,18 +9,41 @@
 
 extern volatile uint16_t sensor_period_ms;
 extern volatile uint16_t display_period_ms;
+extern volatile bool isConfigLoaded;
 
 
 // ############### Функції генерації HTML-сторінок ####################
+
+static esp_err_t sendLoadingHtml(httpd_req_t *req) {
+    char resp_str[1024];
+
+    snprintf(resp_str, sizeof(resp_str), R"rawliteral(
+    <!DOCTYPE html>
+        <html>
+            <head>
+                <meta charset='UTF-8'>
+                <meta http-equiv='refresh' content='2'>
+            </head>
+            <body>
+                <h2>System is initializing...</h2>
+                <p>Please wait. Retrieving parameters from the device...</p>
+            </body>
+        </html>
+    )rawliteral");
+
+    httpd_resp_send(req, resp_str, HTTPD_RESP_USE_STRLEN);
+    return ESP_OK;
+}
+
+
 static esp_err_t sendHtml(httpd_req_t *req) {
-    char resp_str[2048]; // Буфер під всю HTML сторінку
+    char resp_str[4096]; // Буфер під всю HTML сторінку
 
     // Підготуємо статуси для radio кнопок
     const char *auto_chk = (strcmp(modeSelection, "auto") == 0) ? "checked" : "";
     const char *manual_chk = (strcmp(modeSelection, "manual") == 0) ? "checked" : "";
     const char *off_chk = (strcmp(modeSelection, "off") == 0) ? "checked" : "";
 
-    // Формуємо HTML за один раз через snprintf (замість .replace)
     snprintf(resp_str, sizeof(resp_str), R"rawliteral(
     <!DOCTYPE html>
     <html>
@@ -31,15 +54,21 @@ static esp_err_t sendHtml(httpd_req_t *req) {
     <body>
       <h1>Налаштування пристрою</h1>
       <form action='/save' method='POST'>
-        Команда: <input type='text' name='cmd' value='%s'><br><br>
+        Команда: <input type='text' name='cmd' value='%s'><br>
+        
+        <p style='color: #4CAF50'>Щоб відправити параметри на STM32 введіть в поле cmd строку: CONFIG_TO_ESP32</p>
+        <p style='color: #4CAF50'>Щоб змінити період показу даних введіть: DISPLAY_PERIOD</p>
+        <p style='color: #4CAF50'>Щоб змінити період захвату даних з сенсора введіть: SENSOR_PERIOD</p>
+
+        <br>
+        <p>ПАРАМЕТРИ</p>
         Текстове ім'я: <input type='text' name='name' value='%s'><br><br>
         Числове значення: <input type='number' name='val' value='%d'><br><br>
        
         Режим роботи:<br>
-        <input type='radio' id='auto' name='mode' value='auto' %s> Автоматичний<br>
-        <input type='radio' id='manual' name='mode' value='manual' %s> Ручний<br>
-        <input type='radio' id='off' name='mode' value='off' %s> Вимкнено<br><br>
-        
+        <input type='radio' id='auto' name='mode' value='auto' %s /> Автоматичний<br>
+        <input type='radio' id='manual' name='mode' value='manual' %s /> Ручний<br>
+        <input type='radio' id='off' name='mode' value='off' %s /> Вимкнено<br><br>
         <input type='submit' value='Зберегти'>
       </form>
 
@@ -99,21 +128,7 @@ static esp_err_t handleSave(httpd_req_t *req) {
 
     // Якщо все добре, виводимо отриманий вміст
     printf("Отримано дані: %s\n", content);
-
-    // Зчитуємо параметр 'name'
-    if (getPostParam(content, "name", deviceName, sizeof(deviceName)) != ESP_OK) {
-        printf("Нема параметру: %s\n", "name");
-    } 
-
-    // Зчитуємо параметр 'mode'
-    if (getPostParam(content, "mode", modeSelection, sizeof(modeSelection)) != ESP_OK) {
-        printf("Нема параметру: %s\n", "mode");
-    } 
-
-    // Зчитуємо параметр 'val' 
-    if (getPostParamInt(content, "val", &pwmValue) != ESP_OK) {
-        printf("Нема параметру: %s\n", "val");
-    } 
+   
 
     // Зчитуємо параметр 'cmd'
     if (getPostParam(content, "cmd", deviceCMD, sizeof(deviceCMD)) == ESP_OK) {
@@ -122,14 +137,37 @@ static esp_err_t handleSave(httpd_req_t *req) {
         if (strncmp(deviceCMD, "SENSOR_PERIOD ", 14) == 0) {
             uint16_t new_period = (uint16_t)strtoul(deviceCMD + 14, NULL, 10);
             if(valid_period_command(new_period, 20, 500, "Sensor") == ESP_OK) {
-                sendControl(new_period, display_period_ms);
+                sensor_period_ms = new_period;
+                printf("Успішно змінено SENSOR_PERIOD! VAL: %u\n", sensor_period_ms);
             }           
         } 
         else if (strncmp(deviceCMD, "DISPLAY_PERIOD ", 15) == 0) {
             uint16_t new_period = (uint16_t)strtoul(deviceCMD + 15, NULL, 10);
             if(valid_period_command(new_period, 100, 30000, "Display") == ESP_OK) {
-                sendControl(sensor_period_ms, new_period);
+                display_period_ms = new_period;
+                printf("Успішно змінено DISPLAY_PERIOD! VAL: %u\n", display_period_ms);
             }
+        } else if (strncmp(deviceCMD, "CONFIG_TO_ESP32", 15) == 0) {
+
+            // Зчитуємо параметр 'name'
+            if (getPostParam(content, "name", deviceName, sizeof(deviceName)) != ESP_OK) {
+                printf("Нема параметру: %s\n", "name");
+            } 
+
+            // Зчитуємо параметр 'mode'
+            if (getPostParam(content, "mode", modeSelection, sizeof(modeSelection)) != ESP_OK) {
+                printf("Нема параметру: %s\n", "mode");
+            } 
+
+            // Зчитуємо параметр 'val' 
+            if (getPostParamInt(content, "val", &pwmValue) != ESP_OK) {
+                printf("Нема параметру: %s\n", "val");
+            } 
+
+            sendData((const char *)deviceName, pwmValue, (const char *)modeSelection);
+
+            printf("Успішно відправили на збереження дані  CONFIG_TO_ESP32\r\n");
+
         } 
         else {
             printf("ACK: Unknown command -> %s\n", deviceCMD);
@@ -175,6 +213,17 @@ static esp_err_t favicon_get_handler(httpd_req_t *req) {
     return ESP_OK;
 }
 
+// 1. Створюємо єдиний обробник для шляху "/"
+static esp_err_t root_handler(httpd_req_t *req) {
+    if (!isConfigLoaded) {
+        // Повертаємо сторінку завантаження
+        return sendLoadingHtml(req); 
+    } else {
+        // Повертаємо робочу сторінку
+        return sendHtml(req); 
+    }
+}
+
 // Функція запуску та роутингу сервера прямо в заголовочному файлі
 static inline void route_webserver(httpd_handle_t server_handle) {
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
@@ -186,7 +235,7 @@ static inline void route_webserver(httpd_handle_t server_handle) {
         httpd_uri_t root_uri = {
             .uri      = "/",
             .method   = HTTP_GET,
-            .handler  = sendHtml,
+            .handler  = root_handler,
             .user_ctx = NULL
         };
         httpd_register_uri_handler(server_handle, &root_uri);
