@@ -2,7 +2,7 @@
 # MAVSDK у цьому ДЗ зафiксовано на конкретнiй версiї, щоб не шукати пакет вручну.
 ARG MAVSDK_VERSION=2.12.9
 
-FROM _____ AS builder
+FROM ubuntu:22.04 AS builder
 
 ARG MAVSDK_VERSION
 ENV DEBIAN_FRONTEND=noninteractive
@@ -22,11 +22,11 @@ WORKDIR /src
 COPY . .
 
 # Заповнити команду CMake-збирання.
-RUN _____
+RUN cmake -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release
 
 # Етап 2: запуск
 # Для простоти ДЗ той самий MAVSDK .deb встановлюється i в образ запуску.
-FROM _____
+FROM ubuntu:22.04
 
 ARG MAVSDK_VERSION
 ENV DEBIAN_FRONTEND=noninteractive
@@ -47,6 +47,6 @@ WORKDIR /app
 COPY --from=builder /src/build/c2_service .
 
 HEALTHCHECK --interval=5s --timeout=2s --retries=3 \
-  CMD test -f /tmp/c2_healthy || exit 1
+  CMD find /tmp/c2_healthy -mmin -0.1 | grep -q . || exit 1
 
 CMD ["./c2_service"]
