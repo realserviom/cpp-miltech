@@ -16,6 +16,7 @@
 #include <chrono>
 #include <thread>
 #include "RollingTargetStack.h"
+#include "MavlinkTelemetry.hpp"
 
 MissionProcessor::MissionProcessor(std::shared_ptr<UARTProcessor> uartProcessor,
                                    std::shared_ptr<IBallisticSolver> solver,
@@ -72,7 +73,6 @@ std::optional<Target> MissionProcessor::fillArrays(bool& canChangeTarget,
 {
   std::optional<Target> currentTargetOption;
   for (int targetId = 0; targetId < numberOfTargets; targetId++) {
-
     auto targetOptions = m_uartProcessor->getTargetPosition(targetId);
 
     if (!targetOptions.has_value()) {
@@ -138,6 +138,14 @@ void MissionProcessor::start()
 {
   DEBUG("--- start mission thread! ---");
   running = true;
+
+  m_mavlink = std::make_unique<MavlinkTelemetry>();
+
+  if (!m_mavlink->init(m_mavlinkIp, m_mavlinkPort)) {
+    std::cout << "[Drone] Failed to initialize MAVLink telemetry!" << std::endl;
+  }
+
+  std::cout << "[Drone] MAVLink telemetry started on " << m_mavlinkIp << ":" << m_mavlinkPort << std::endl;
   missionThread = std::thread(&MissionProcessor::missionLoop, this);
 }
 
@@ -238,6 +246,17 @@ void MissionProcessor::missionLoop()
         DEBUG("--- curDrone_dir = " << std::fixed << std::setprecision(8) << telemetry.angularState << " р. ---");
       }
 
+      // ВІДПРАВКА ТЕЛЕМЕТРІЇ В MAVLINK
+      if (m_mavlink) {
+        m_mavlink->processTelemetry(telemetry.pos.x,
+                                    telemetry.pos.y,
+                                    telemetry.z,
+                                    telemetry.normSpeed.x,
+                                    telemetry.normSpeed.y,
+                                    telemetry.angularState,
+                                    static_cast<uint32_t>(telemetry.t_ms));
+      }
+
       // ################## РОЗРАХУНОК ТОЧКИ СКИДУ #############################################
       // -----------  заповнення масивів для пошуку найближчих цілей ---------------------------
       std::optional<Target> targetPosition = fillArrays(canChangeTarget, *curMyDrone, distDuringFall, t_pol);
@@ -288,6 +307,12 @@ void MissionProcessor::missionLoop()
 
         gpio.pulse_drop();
         drop = true;
+
+        // відправляємо команду скид і мали б нижче дочекатися відповіді
+        if (m_mavlink) {
+          m_mavlink->triggerCargoDrop(telemetry.pos.x, telemetry.pos.y, telemetry.z);
+        }
+
         std::cout << "[Ballistics] Команду DROP виконано!" << std::endl;
         continue;
       }
@@ -322,6 +347,17 @@ void MissionProcessor::missionLoop()
 
     if (drop == true) {
       dlink::Result outResult;
+
+      // Зчитуємо вхідні пакети (ACK)
+      if (m_mavlink) {
+        m_mavlink->pollIncomingPackets();
+      }
+
+      if (m_mavlink && m_mavlink->getDropAcked()) {
+        LOG("--- Відповідь від QGC (якої не буде) --- ");
+        LOG("----------------- ");
+      }
+
       if (m_uartProcessor->getResult(outResult)) {
         LOG("--- Результат --- ");
         LOG("hit: " << std::to_string(outResult.hit));

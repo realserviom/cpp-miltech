@@ -29,7 +29,7 @@ file(GLOB_RECURSE SRC_FILES "src/*.cpp")
 # Вилучаємо main.cpp зі списку джерел для бібліотеки
 list(REMOVE_ITEM SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
 
-# Заголовочні файли для відображення в IDE
+# Збираємо всі заголовні файли, щоб вони гарно відображались у дереві VS Code
 file(GLOB_RECURSE HEADERS "include/*.h" "include/*.hpp" "include/*.tpp")
 
 # Створюємо статичну бібліотеку проєкту
@@ -61,4 +61,17 @@ target_link_libraries(targets3 PRIVATE
 )
 target_link_options(targets3 PRIVATE -fsanitize=address)
 
+<<<<<<< HEAD
+# Встановлюємо назву бінарника
 set_target_properties(targets3 PROPERTIES OUTPUT_NAME "targets3")
+
+# Ігноруємо специфічні для MAVLink зауваження
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    add_compile_options(
+        -Wno-address-of-packed-member
+        -Wno-pedantic
+    )
+endif()
+=======
+set_target_properties(targets3 PROPERTIES OUTPUT_NAME "targets3")
+>>>>>>> feature/homework-011

@@ -8,6 +8,7 @@
 #include "interfaces/IDroneState.h"
 #include "UARTProcessor.h"
 #include "RollingTargetStack.h"
+#include "MavlinkTelemetry.hpp"
 
 class MissionProcessor {
 private:
@@ -34,6 +35,11 @@ private:
   std::atomic<bool> running{false};
   std::atomic<bool> isReady{false};
   std::unique_ptr<RollingTargetStack> targetStack;
+
+  std::unique_ptr<MavlinkTelemetry> m_mavlink;
+  // std::string m_mavlinkIp = "127.0.0.1";
+  std::string m_mavlinkIp = "172.19.192.1";  // for wsl
+  int m_mavlinkPort = 14550;
 
 public:
   Coord dropPoint;        // точка скиду
