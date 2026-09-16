@@ -1,0 +1,28 @@
+[01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:[m[K In member function ‘[01m[Kvoid TurretControllerNode::[01;32m[Kprocess[m[K(antidrone_turret::msg::Target_<std::allocator<void> >::SharedPtr)[m[K’:
+[01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:40:19:[m[K [01;31m[Kerror: [m[K‘[01m[Kusing std::__shared_ptr_access<antidrone_turret::msg::Target_<std::allocator<void> >, __gnu_cxx::_S_atomic, false, false>::element_type = struct antidrone_turret::msg::Target_<std::allocator<void> >[m[K’ {aka ‘[01m[Kstruct antidrone_turret::msg::Target_<std::allocator<void> >[m[K’} has no member named ‘[01m[Kdistance[m[K’; did you mean ‘[01m[Kdistance_m[m[K’?
+   40 |     Target t{msg->[01;31m[Kdistance[m[K, msg->azimuth, msg->elevation, msg->locked};
+      |                   [01;31m[K^~~~~~~~[m[K
+      |                   [32m[Kdistance_m[m[K
+[01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:40:34:[m[K [01;31m[Kerror: [m[K‘[01m[Kusing std::__shared_ptr_access<antidrone_turret::msg::Target_<std::allocator<void> >, __gnu_cxx::_S_atomic, false, false>::element_type = struct antidrone_turret::msg::Target_<std::allocator<void> >[m[K’ {aka ‘[01m[Kstruct antidrone_turret::msg::Target_<std::allocator<void> >[m[K’} has no member named ‘[01m[Kazimuth[m[K’
+   40 |     Target t{msg->distance, msg->[01;31m[Kazimuth[m[K, msg->elevation, msg->locked};
+      |                                  [01;31m[K^~~~~~~[m[K
+[01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:40:48:[m[K [01;31m[Kerror: [m[K‘[01m[Kusing std::__shared_ptr_access<antidrone_turret::msg::Target_<std::allocator<void> >, __gnu_cxx::_S_atomic, false, false>::element_type = struct antidrone_turret::msg::Target_<std::allocator<void> >[m[K’ {aka ‘[01m[Kstruct antidrone_turret::msg::Target_<std::allocator<void> >[m[K’} has no member named ‘[01m[Kelevation[m[K’
+   40 |     Target t{msg->distance, msg->azimuth, msg->[01;31m[Kelevation[m[K, msg->locked};
+      |                                                [01;31m[K^~~~~~~~~[m[K
+[01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:40:64:[m[K [01;31m[Kerror: [m[K‘[01m[Kusing std::__shared_ptr_access<antidrone_turret::msg::Target_<std::allocator<void> >, __gnu_cxx::_S_atomic, false, false>::element_type = struct antidrone_turret::msg::Target_<std::allocator<void> >[m[K’ {aka ‘[01m[Kstruct antidrone_turret::msg::Target_<std::allocator<void> >[m[K’} has no member named ‘[01m[Klocked[m[K’
+   40 |     Target t{msg->distance, msg->azimuth, msg->elevation, msg->[01;31m[Klocked[m[K};
+      |                                                                [01;31m[K^~~~~~[m[K
+[01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:47:16:[m[K [01;31m[Kerror: [m[K‘[01m[Kstruct antidrone_turret::msg::GimbalCommand_<std::allocator<void> >[m[K’ has no member named ‘[01m[Kazimuth[m[K’
+   47 |     gimbal_msg.[01;31m[Kazimuth[m[K = result.gimbal.target_azimuth;
+      |                [01;31m[K^~~~~~~[m[K
+[01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:48:16:[m[K [01;31m[Kerror: [m[K‘[01m[Kstruct antidrone_turret::msg::GimbalCommand_<std::allocator<void> >[m[K’ has no member named ‘[01m[Kelevation[m[K’
+   48 |     gimbal_msg.[01;31m[Kelevation[m[K = result.gimbal.target_elevation;
+      |                [01;31m[K^~~~~~~~~[m[K
+[01m[K/home/serviom/cpp-miltech/homework_13/robot_ws/src/antidrone_turret/src/turret_controller_node.cpp:53:33:[m[K [01;31m[Kerror: [m[K‘[01m[Kusing std::__shared_ptr_access<antidrone_turret::msg::Target_<std::allocator<void> >, __gnu_cxx::_S_atomic, false, false>::element_type = struct antidrone_turret::msg::Target_<std::allocator<void> >[m[K’ {aka ‘[01m[Kstruct antidrone_turret::msg::Target_<std::allocator<void> >[m[K’} has no member named ‘[01m[Kdistance[m[K’; did you mean ‘[01m[Kdistance_m[m[K’?
+   53 |       call_trigger_service(msg->[01;31m[Kdistance[m[K);
+      |                                 [01;31m[K^~~~~~~~[m[K
+      |                                 [32m[Kdistance_m[m[K
+gmake[2]: *** [CMakeFiles/turret_controller_node.dir/build.make:76: CMakeFiles/turret_controller_node.dir/src/turret_controller_node.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:725: CMakeFiles/turret_controller_node.dir/all] Error 2
+gmake[1]: *** Waiting for unfinished jobs....
+gmake: *** [Makefile:146: all] Error 2

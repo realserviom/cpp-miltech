@@ -38,6 +38,7 @@
   показує роботу з масивом у `.msg`: `CellObservationLite[] cells`,
   заповнення масиву через `push_back` і обхід через range-for.
 
+
 ## 2026-07-03
 
 ### Added
