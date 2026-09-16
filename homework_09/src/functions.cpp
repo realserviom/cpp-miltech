@@ -1,14 +1,12 @@
-#include <cstdint>
-#include <iostream>
-#include <stdio.h>
 #include <stdlib.h>
 #include <cmath>
-#include <string.h>
-#include <fstream>
 #include "functions.h"
 #include "RollingTargetStack.h"
 #include "Types.h"
 #include <stdbool.h>
+#include <fcntl.h>
+#include <termios.h>
+#include <chrono>
 #include "json.hpp"
 #include "Debug.h"
 #include <httplib.h>
@@ -139,6 +137,26 @@ std::chrono::high_resolution_clock::time_point getNextTimePoint(std::chrono::hig
   return startTime + std::chrono::duration_cast<std::chrono::high_resolution_clock::duration>(durationOffset);
 }
 
+// Функція налаштування UART
+int openUart(const char* dev)
+{
+  int fd = open(dev, O_RDWR | O_NOCTTY | O_NONBLOCK);
+  if (fd < 0) {
+    std::perror("Помилка відкриття UART");
+    return -1;
+  }
+
+  termios tio{};
+  tcgetattr(fd, &tio);
+  cfmakeraw(&tio);  // 8N1, сирий бінарний режим
+  cfsetispeed(&tio, B115200);
+  cfsetospeed(&tio, B115200);  // швидкість 115200
+  tio.c_cflag |= (CLOCAL | CREAD);
+  tcsetattr(fd, TCSANOW, &tio);
+
+  return fd;
+}
+
 Coord predictTargetPosition(const RollingTargetStack& targetStack, float t_pol, float stepTime, int target)
 {
   std::size_t stackSize = targetStack.size(target);
@@ -174,10 +192,10 @@ Coord predictTargetPosition(const RollingTargetStack& targetStack, float t_pol, 
   double scaleY = 1.0;
 
   if (v_mod > 0.0001) {
-    // При максимальній швидкості за віссю (дріб = 1) масштаб стане: 0.5 / (1 + 1) = 0.25
     scaleX = 0.5 / (1.0 + std::abs(v2x) / v_mod);
     scaleY = 0.5 / (1.0 + std::abs(v2y) / v_mod);
   }
+
   // Прогнозуємо позицію за формулою кінематики
   Coord predictedPos;
   predictedPos.x = x3 + (v2x * t_pol) + (0.5 * ax * t_pol * t_pol) * scaleX;
@@ -193,6 +211,7 @@ double normalizeAngle(float angle)
     angle -= 2.0 * M_PI;
   while (angle < -M_PI)
     angle += 2.0 * M_PI;
+
   return angle;
 }
 

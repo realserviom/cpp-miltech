@@ -245,9 +245,8 @@ std::optional<Contact> WorldModel::active_contact_at(const Position position) co
 
 std::optional<Contact> WorldModel::contact_at(const Position position) const
 {
-  const auto iter = std::find_if(scenario_.contacts.begin(), scenario_.contacts.end(), [position](const Contact& contact) {
-    return contact.position == position;
-  });
+  const auto iter = std::find_if(
+    scenario_.contacts.begin(), scenario_.contacts.end(), [position](const Contact& contact) { return contact.position == position; });
   if (iter == scenario_.contacts.end()) {
     return std::nullopt;
   }

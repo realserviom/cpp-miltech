@@ -46,9 +46,7 @@ public:
     , samples_(make_samples())
   {
     publisher_ = create_publisher<typed_topic_demo::msg::Target>(kTargetTopic, 10);
-    timer_ = create_wall_timer(
-      std::chrono::milliseconds{1000},
-      [this]() { publish_next(); });
+    timer_ = create_wall_timer(std::chrono::milliseconds{1000}, [this]() { publish_next(); });
   }
 
 private:
@@ -57,14 +55,13 @@ private:
     const auto& sample = samples_[next_index_ % samples_.size()];
     publisher_->publish(sample);
 
-    RCLCPP_INFO(
-      get_logger(),
-      "published target visible=%s x=%.1f y=%.1f distance_m=%.1f confidence=%.2f",
-      sample.visible ? "true" : "false",
-      sample.x,
-      sample.y,
-      sample.distance_m,
-      sample.confidence);
+    RCLCPP_INFO(get_logger(),
+                "published target visible=%s x=%.1f y=%.1f distance_m=%.1f confidence=%.2f",
+                sample.visible ? "true" : "false",
+                sample.x,
+                sample.y,
+                sample.distance_m,
+                sample.confidence);
 
     ++next_index_;
   }

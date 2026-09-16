@@ -13,11 +13,7 @@ constexpr auto kScanTopic = "/demo/local_scan";
 using CellObservationLite = msg_array_demo::msg::CellObservationLite;
 using LocalScanLite = msg_array_demo::msg::LocalScanLite;
 
-CellObservationLite make_cell(
-  const int x,
-  const int y,
-  const char* cell_type,
-  const int contact_id = 0)
+CellObservationLite make_cell(const int x, const int y, const char* cell_type, const int contact_id = 0)
 {
   CellObservationLite cell;
   cell.x = x;
@@ -65,24 +61,14 @@ private:
     const auto scan = make_scan();
     publisher_->publish(scan);
 
-    RCLCPP_INFO(
-      get_logger(),
-      "published local scan robot=(%d,%d) cells=%zu",
-      scan.robot_x,
-      scan.robot_y,
-      scan.cells.size());
+    RCLCPP_INFO(get_logger(), "published local scan robot=(%d,%d) cells=%zu", scan.robot_x, scan.robot_y, scan.cells.size());
 
     for (const auto& cell : scan.cells) {
       if (cell.cell_type != "C") {
         continue;
       }
 
-      RCLCPP_INFO(
-        get_logger(),
-        "visible contact id=%d at cell=(%d,%d)",
-        cell.contact_id,
-        cell.x,
-        cell.y);
+      RCLCPP_INFO(get_logger(), "visible contact id=%d at cell=(%d,%d)", cell.contact_id, cell.x, cell.y);
     }
   }
 

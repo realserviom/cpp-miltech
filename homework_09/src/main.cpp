@@ -7,6 +7,7 @@
 #include "MissionProcessor.h"
 #include <iomanip>
 #include "functions.h"
+#include "UARTProcessor.h"
 
 // Визначення константи Пі, якщо її немає в cmath
 #ifndef M_PI
@@ -19,57 +20,38 @@ int main(int argc, char** argv)
     std::shared_ptr<IConfigLoader> configLoader = createLoader(LoaderType::FILE, "./data/config.json", "./data/ammo.json");
 
     std::shared_ptr<ITargetProvider> targetProvider = createProvider(ProviderType::TIME, "./data/targets.json");
+    // Налаштування socat для тестування:
+    // sudo apt update && sudo apt install -y socat - встановлення
+    // socat -d -d pty,raw,echo=0,link=/tmp/ttyA pty,raw,echo=0,link=/tmp/ttyB - налаштування
+    // ./build/checker_linux_x86_64 1 --uart /tmp/ttyB --start-line 24 --drop-line 23 --sim --sim-bank /tmp/my_gpio_bank
 
+    // cd src && ../build/targets3
+
+    // const char* uartDevice = "/dev/ttyAMA1"; - це для Raspberry Pi
+    const char* uartDevice = "/tmp/ttyA";  // це socat
+    int uartFd = openUart(uartDevice);
+
+    if (uartFd < 0) {
+      return 1;  // Виходимо, якщо порт не відкрився
+    }
+
+    std::cout << "UART порт " << uartDevice << " успішно налаштовано на 115200 бод." << std::endl;
+
+    // Створюємо uartProcessor який буде працювати в окремому потоці і обробляти дані з UART
+
+    auto uartProcessor = std::make_shared<UARTProcessor>(uartFd);
+
+    // Створюємо аналитичний балістичний калькулятор табличного типу
     std::shared_ptr<IBallisticSolver> analyticalSolver = createSolver(SolverType::TABLE);
 
-    MissionProcessor processor(targetProvider, analyticalSolver, configLoader);
+    std::shared_ptr<IConfigLoader> configLoader = createLoader(LoaderType::FILE, "../data/config.json");
 
-    DroneConfig myDroneConfig;
+    MissionProcessor processor(uartProcessor, analyticalSolver, configLoader, uartFd);
 
-    const AmmoParams* ammo = nullptr;
+    uartProcessor->start();
+    processor.start();
 
-    // ініціалізація параметрів дрона і початкових параметрів руху
-    processor.init(myDroneConfig, ammo);
-
-    // Поточний стан дрона
-    Drone curMyDrone(myDroneConfig);
-
-    // Завантаження боєприпасу
-    ammo = configLoader->getAmmoParameters(myDroneConfig.ammoName);
-
-    if (ammo == nullptr) {
-      throw std::runtime_error("Помилка: боєприпас " + std::string(myDroneConfig.ammoName) + " не знайдено в базі!");
-    }
-
-    DEBUG("Знайдено боєприпас: " << myDroneConfig.ammoName);
-    DEBUG("Параметри: mass: " << std::fixed << std::setprecision(3) << ammo->mass << ", drag: " << ammo->drag << ", lift: " << ammo->lift);
-
-    float t_pol;               // час польоту
-    float distDuringFall = 0;  // дистанція, яку проходить снаряд за час t_pol (горизонтальна відстань від точки скидання до цілі)
-
-    try {
-      distDuringFall = analyticalSolver->getDistDuringFall(t_pol, myDroneConfig, ammo);
-    }
-    catch (const std::runtime_error& e) {
-      throw std::runtime_error("[AnalyticalSolver] КРИТИЧНА ПОМИЛКА: " + std::string(e.what()));
-    }
-
-    DEBUG("Горизонтальна дистанція яку проходить дрон за час " << t_pol << " сек. рівна " << distDuringFall << " м.");
-    DEBUG("-----------------------------------");
-
-    if (distDuringFall <= 0) {
-      throw std::runtime_error("Горизонтальна дистанція повинна бути додатня");
-    }
-
-    targetProvider->setArrayTimeStep(myDroneConfig.arrayTimeStep);
-    targetProvider->setTargetTimeStep(myDroneConfig.targetTimeStep);
-    targetProvider->setTimeScale(myDroneConfig.timeScale);
-
-    curMyDrone.start();
-    targetProvider->start();
-    processor.start(curMyDrone, distDuringFall, t_pol);
-
-    while (!curMyDrone.isThreadReady() || !targetProvider->isThreadReady() || !processor.isThreadReady()) {
+    while (!uartProcessor->isThreadReady() || !processor.isThreadReady()) {
       std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
 
@@ -85,6 +67,10 @@ int main(int argc, char** argv)
         std::cout << "SENT!!!" << std::endl;
       }
     }
+
+    std::cout << "[MAIN] Місію завершено. Зупиняємо UARTProcessor..." << std::endl;
+    uartProcessor->stop();
+    std::cout << "[MAIN] UARTProcessor зупинено. Вихід з програми!" << std::endl;
   }
   catch (const std::runtime_error& e) {
     std::cout << e.what() << std::endl;

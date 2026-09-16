@@ -97,11 +97,9 @@ public:
     metrics_pub_ = create_publisher<RobotMetrics>(kMetricsTopic, qos);
     result_pub_ = create_publisher<RobotResult>(kResultTopic, qos);
 
-    move_sub_ = create_subscription<MoveCommand>(
-      kMoveTopic, qos, [this](const MoveCommand::SharedPtr msg) { on_move(*msg); });
+    move_sub_ = create_subscription<MoveCommand>(kMoveTopic, qos, [this](const MoveCommand::SharedPtr msg) { on_move(*msg); });
 
-    enemy_down_sub_ = create_subscription<EnemyDown>(
-      kEnemyDownTopic, qos, [this](const EnemyDown::SharedPtr msg) { on_enemy_down(*msg); });
+    enemy_down_sub_ = create_subscription<EnemyDown>(kEnemyDownTopic, qos, [this](const EnemyDown::SharedPtr msg) { on_enemy_down(*msg); });
 
     move_commit_timer_ = create_wall_timer(move_commit_period_, [this]() { commit_next_move(); });
     initial_publish_timer_ = create_wall_timer(std::chrono::milliseconds{250}, [this]() {
