@@ -1,0 +1,15 @@
+{
+    "configurations": [
+        {
+            "name": "ESP32",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "compileCommands": "${workspaceFolder}/build/compile_commands.json",
+            "cStandard": "c23",
+            "cppStandard": "c++20",
+            "intelliSenseMode": "gcc-xtensa"
+        }
+    ],
+    "version": 4
+}

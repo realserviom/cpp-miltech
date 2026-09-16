@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug STM32 (ST-Link / OpenOCD)",
+            "type": "cortex-debug",
+            "request": "launch",
+            "servertype": "openocd",
+            // Вставляємо шлях, замінивши зворотні слеші на подвійні або прямі:
+            "serverpath": "c:/ST/STM32CubeIDE_2.2.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.openocd.win32_2.4.500.202604080855/tools/bin/openocd.exe",
+            "device": "STM32F411CE",
+            "executable": "${workspaceFolder}/build/Debug/black-pill-first.elf",
+            "configFiles": [
+                "interface/stlink-dap.cfg",
+                "target/stm32f4x.cfg"
+            ],
+            "openOCDLaunchCommands": [ "reset_config none" ],
+            "searchDir": [
+                "c:/ST/STM32CubeIDE_2.2.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.debug.openocd_2.3.400.202606220929/resources/openocd/st_scripts"
+                // "c:/ST/STM32CubeIDE_2.2.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mpu.debug.openocd_2.2.300.202606010821/resources/openocd/st_scripts"           
+            ],
+            "runToEntryPoint": "main",
+            "svdFile": "${workspaceFolder}/STM32F411.svd", // За бажанням: шлях до файлу регістрів периферії (.svd)
+            "rtos": "FreeRTOS" // Дуже корисно для відладки тасків FreeRTOS!
+        }
+    ]
+}
