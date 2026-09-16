@@ -9,8 +9,13 @@
 #include <chrono>
 #include "json.hpp"
 #include "Debug.h"
+#include <httplib.h>
+#include <json.hpp>
+#include <chrono>
+#include "constants.h"
 
 using json = nlohmann::ordered_json;
+using json_noordered = nlohmann::json;
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -46,6 +51,63 @@ int getIndexByMinValue(const std::vector<float>& targetTimes)
   }
 
   return std::distance(targetTimes.begin(), minIt);
+}
+
+void saveOutputFileByStep(int length, const std::vector<SimStep>& steps)
+{
+  json out;
+  out["totalSteps"] = length;
+
+  printf("============== length = %d ===========\n", length);
+
+  out["steps"] = json::array();
+
+  auto endIt = (static_cast<size_t>(length) <= steps.size()) ? steps.begin() + length : steps.end();
+
+  double last_time = 0.0;
+  float last_direction = 0.0f;
+
+  for (auto it = steps.begin(); it != endIt; ++it) {
+    json stepEntry;
+
+    stepEntry["position"] = {{"x", it->pos.x}, {"y", it->pos.y}};
+
+    // Округлення до 2 знаків після коми
+    float angle = it->direction;
+
+    if (angle < 0) {
+      angle += 2.0 * M_PI;
+    }
+
+    stepEntry["direction"] = std::round(angle * 100.0) / 100.0;
+
+    stepEntry["state"] = it->state;
+    stepEntry["targetIndex"] = it->targetIdx;
+
+    double delta = it->timeSecSinceStart - last_time;
+
+    if (delta > 0.15) {  // якщо стрибок більший за 0.15
+      DEBUG("Увага! Пропущено крок часу " << it->counter << " між " << last_time << " та " << it->timeSecSinceStart);
+      DEBUG("New direction: " << it->direction << ", old direction: " << last_direction);
+    }
+
+    last_time = it->timeSecSinceStart;
+    last_direction = it->direction;
+
+    // Округлення до 3 знаків після коми
+    stepEntry["timeSecSinceStart"] = std::round(it->timeSecSinceStart * 1000.0) / 1000.0;
+
+    stepEntry["dropPoint"] = {{"x", it->dropPoint.x}, {"y", it->dropPoint.y}};
+    stepEntry["aimPoint"] = {{"x", it->aimPoint.x}, {"y", it->aimPoint.y}};
+    stepEntry["predictedTarget"] = {{"x", it->predictedTarget.x}, {"y", it->predictedTarget.y}};
+    stepEntry["counter"] = it->counter;
+
+    out["steps"].push_back(stepEntry);
+  }
+
+  std::ofstream fout(FILE_OUTPUT.data());
+  fout << out.dump(2);
+  fout.close();
 }
 
 std::chrono::duration<float> getDurationTime(std::chrono::high_resolution_clock::time_point startTime, double dt)
@@ -151,4 +213,115 @@ double normalizeAngle(float angle)
     angle += 2.0 * M_PI;
 
   return angle;
+}
+
+bool sendSimulationResults(const std::string& testId)
+{
+  std::ifstream file(FILE_OUTPUT.data());
+
+  if (!file.is_open()) {
+    std::cerr << "Не вдалося відкрити output file" << std::endl;
+    return false;
+  }
+
+  json_noordered simulationData;
+  file >> simulationData;
+
+  json payload = {{"studentId", STUDENT_ID.data()}, {"testId", testId}, {"simulation", simulationData}};
+
+  httplib::Client cli(HOST.data());
+
+  cli.set_connection_timeout(2, 0);
+  cli.set_read_timeout(2, 0);
+
+  httplib::Headers headers = {{"x-api-key", API_KEY.data()}};
+
+  const int maxAttempts = 5;
+  const std::string bodyStr = payload.dump();
+
+  for (int attempt = 1; attempt <= maxAttempts; ++attempt) {
+    auto res = cli.Post("/api/dz12/results", headers, bodyStr, "application/json");
+
+    if (res) {
+      int status = res->status;
+
+      if (status >= 200 && status < 300) {
+        std::cout << "[SUCCESS] Інформація по " << testId << " відправлена успішно (Статус: " << status << ")." << std::endl;
+        return true;
+      }
+
+      if (status == 400 || status == 401) {
+        std::cerr << "[FATAL] Інформація по " << testId << " завершилася з помилкою (Статус: " << status
+                  << "). Зупинили повтрону відправку. Відповідь: " << res->body << std::endl;
+        return false;
+      }
+      std::cerr << "[WARNING] Помилка сервера (Статус: " << status << ")." << std::endl;
+    }
+    else {
+      auto err = res.error();
+      std::cerr << "[WARNING] Запит провалено. Timeout: " << httplib::to_string(err) << std::endl;
+    }
+
+    if (attempt == maxAttempts) {
+      break;
+    }
+
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+  }
+
+  std::cerr << "[ERROR]  Інформація по " << testId << " не відправлена після " << maxAttempts << " спроб." << std::endl;
+  return false;
+}
+
+bool checkSimulationResults(const std::string& testId)
+{
+  httplib::Client cli(HOST.data());
+
+  cli.set_connection_timeout(2, 0);
+  cli.set_read_timeout(2, 0);
+
+  httplib::Headers headers = {{"x-api-key", API_KEY.data()}};
+  std::string path = "/api/dz12/results/" + testId + "/" + STUDENT_ID.data();
+
+  const int maxAttempts = 5;
+
+  for (int attempt = 1; attempt <= maxAttempts; ++attempt) {
+    auto res = cli.Get(path.c_str(), headers);
+
+    if (res) {
+      int status = res->status;
+
+      if (status >= 200 && status < 300) {
+        std::cout << "[SUCCESS] Результат по " << testId << " знайдено (Статус: " << status << ")." << std::endl;
+        std::cout << "[RESPONSE] " << res->body << std::endl;
+        return true;
+      }
+
+      if (status == 404) {
+        std::cout << "[INFO] Результат по " << testId << " відсутній на сервері (404 Not Found)." << std::endl;
+        return false;
+      }
+
+      if (status == 400 || status == 401) {
+        std::cerr << "[FATAL] Перевірка по " << testId << " завершилася з помилкою (Статус: " << status
+                  << "). Зупинили повторні запити. Відповідь: " << res->body << std::endl;
+        return false;
+      }
+
+      std::cerr << "[WARNING] Помилка сервера при перевірці (Статус: " << status << ")." << std::endl;
+    }
+    else {
+      auto err = res.error();
+      std::cerr << "[WARNING] Запит провалено. Timeout: " << httplib::to_string(err) << std::endl;
+    }
+
+    if (attempt == maxAttempts) {
+      break;
+    }
+
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+  }
+
+  std::cerr << "[ERROR] Перевірка по " << testId << " не виконана після " << maxAttempts << " спроб." << std::endl;
+  return false;
 }

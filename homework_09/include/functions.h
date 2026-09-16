@@ -9,6 +9,10 @@
 void saveFireCoordinates(double fireX, double fireY, double xd_i, double yd_i);
 #include <chrono>
 #include "RollingTargetStack.h"
+#include <json.hpp>
+#include <chrono>
+
+using json_noordered = nlohmann::json;
 
 int getIndexByMinValue(const std::vector<float>& targetTimes);
 
@@ -28,6 +32,8 @@ double normalizeAngle(double angle);
 
 Coord predictTargetPosition(const RollingTargetStack& targetStack, float t_pol, float stepTime, int target);
 
+bool sendSimulationResults(const std::string& testId);
+bool checkSimulationResults(const std::string& testId);
 int openUart(const char* dev);
 
 template <typename T>

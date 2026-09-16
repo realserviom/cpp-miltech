@@ -5,6 +5,7 @@
 #include "Types.h"
 #include "config/ComponentFactory.h"
 #include "MissionProcessor.h"
+#include <iomanip>
 #include "functions.h"
 #include "UARTProcessor.h"
 
@@ -13,9 +14,12 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-int main()
+int main(int argc, char** argv)
 {
   try {
+    std::shared_ptr<IConfigLoader> configLoader = createLoader(LoaderType::FILE, "./data/config.json", "./data/ammo.json");
+
+    std::shared_ptr<ITargetProvider> targetProvider = createProvider(ProviderType::TIME, "./data/targets.json");
     // Налаштування socat для тестування:
     // sudo apt update && sudo apt install -y socat - встановлення
     // socat -d -d pty,raw,echo=0,link=/tmp/ttyA pty,raw,echo=0,link=/tmp/ttyB - налаштування
@@ -52,6 +56,18 @@ int main()
     }
 
     processor.missionThread.join();
+
+    curMyDrone.stop();
+    targetProvider->stop();
+
+    std::string testId = (argc > 1) ? argv[1] : "T01";
+
+    if (sendSimulationResults(testId)) {
+      if (checkSimulationResults(testId)) {
+        std::cout << "SENT!!!" << std::endl;
+      }
+    }
+
     std::cout << "[MAIN] Місію завершено. Зупиняємо UARTProcessor..." << std::endl;
     uartProcessor->stop();
     std::cout << "[MAIN] UARTProcessor зупинено. Вихід з програми!" << std::endl;

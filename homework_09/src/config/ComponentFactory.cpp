@@ -34,7 +34,7 @@ std::shared_ptr<IBallisticSolver> createSolver(SolverType type)
     case SolverType::ANALYTICAL:
       return std::make_shared<AnalyticalSolver>();
     case SolverType::TABLE:
-      return std::make_shared<TableSolver>("../data/ballistic_table.txt");
+      return std::make_shared<TableSolver>("./data/ballistic_table.txt");
     default:
       return nullptr;
   }
