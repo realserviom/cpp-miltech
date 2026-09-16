@@ -1,0 +1,173 @@
+#include "UARTProcessor.h"
+#include <cstring>
+#include <optional>
+#include <unistd.h>
+#include "Debug.h"
+#include "drone_link.h"
+
+UARTProcessor::UARTProcessor(int fd)
+  : uartFd(fd)
+  , running(false)
+{
+}
+
+void UARTProcessor::sendControl(float accel, float turnRate)
+{
+  dlink::Control c{accel, turnRate};
+  uint8_t out[64];
+  size_t m = dlink::encode(dlink::PKT_CONTROL, &c, sizeof c, out);
+  write(uartFd, out, m);
+}
+
+UARTProcessor::~UARTProcessor()
+{
+  stop();
+
+  if (uartFd >= 0) {
+    ::close(uartFd);
+    uartFd = -1;  // Хороша звичка — занулити або виставити в -1
+  }
+}
+
+void UARTProcessor::start()
+{
+  if (!running) {
+    running = true;
+    workerThread = std::thread(&UARTProcessor::processLoop, this);
+  }
+}
+
+void UARTProcessor::stop()
+{
+  if (running) {
+    running = false;
+
+    // Закриваємо порт, щоб перервати блокуючий read() в іншому потоці
+    if (uartFd >= 0) {
+      ::close(uartFd);
+      uartFd = -1;  // Хороша звичка — занулити або виставити в -1
+    }
+
+    if (workerThread.joinable()) {
+      workerThread.join();
+    }
+  }
+}
+
+bool UARTProcessor::isThreadReady() const
+{
+  return isReady;
+}
+
+void UARTProcessor::processLoop()
+{
+  uint8_t incomingByte;
+  uint8_t outType;
+  uint8_t outPayload[512];
+  uint8_t outLen;
+
+  while (running) {
+    // Читаємо з UART, поки є дані
+    while (running && read(uartFd, &incomingByte, 1) > 0) {
+      if (parser.feed(incomingByte, outType, outPayload, outLen)) {
+        // Захищаємо запис м'ютексом
+        std::lock_guard<std::mutex> lock(dataMutex);
+
+        if (outType == dlink::PKT_TELEMETRY && outLen == sizeof(dlink::Telemetry)) {
+          std::memcpy(&currentTelemetry, outPayload, sizeof(dlink::Telemetry));
+          hasTelemetry = true;
+        }
+        else if (outType == dlink::PKT_TARGET && outLen == sizeof(dlink::TargetPos)) {
+          auto time = std::chrono::high_resolution_clock::now();
+
+          std::memcpy(&currentTarget, outPayload, sizeof(dlink::TargetPos));
+          hasTarget = true;
+
+          Coord newPosition = Coord{currentTarget.x, currentTarget.y};
+
+          auto it = lastTelemetryTime.find(currentTarget.id);
+
+          velocityTargets[currentTarget.id] = it == lastTelemetryTime.end()
+                                                ? Coord{0, 0}
+                                                : (newPosition - positionTargets[currentTarget.id]) /
+                                                    std::chrono::duration<float>(time - lastTelemetryTime[currentTarget.id]).count();
+          positionTargets[currentTarget.id] = newPosition;
+          lastTelemetryTime[currentTarget.id] = time;
+
+          // DEBUG("GET TargetPos!");
+          // DEBUG("Target " << std::to_string(currentTarget.id) << " pos: (" << newPosition.x << ", " << newPosition.y << "), velocity: ("
+          //                 << velocityTargets[currentTarget.id].x << ", " << velocityTargets[currentTarget.id].y << ")");
+        }
+        else if (outType == dlink::PKT_AMMO && outLen == sizeof(dlink::AmmoCfg)) {
+          std::memcpy(&currentAmmo, outPayload, sizeof(dlink::AmmoCfg));
+          DEBUG("GET AmmoCfg!");
+          hasAmmo = true;
+        }
+        else if (outType == dlink::PKT_RESULT && outLen == sizeof(dlink::Result)) {
+          std::memcpy(&currentResult, outPayload, sizeof(dlink::Result));
+          DEBUG("GET Result!");
+          hasResult = true;
+        }
+        else {
+          DEBUG("NO NAME! outType: " << outType);
+        }
+      }
+    }
+    usleep(100000);  // 100 мс пауза
+  }
+}
+
+const dlink::AmmoCfg* UARTProcessor::getAmmoConfigPtr()
+{
+  std::lock_guard<std::mutex> lock(dataMutex);
+  return hasAmmo ? &currentAmmo : nullptr;
+}
+
+bool UARTProcessor::getTelemetry(DroneTelemetry& tel)
+{
+  std::lock_guard<std::mutex> lock(dataMutex);
+
+  if (!hasTelemetry)
+    return false;
+
+  tel.pos = Coord{currentTelemetry.x, currentTelemetry.y};
+
+  // Повертаємо нормалізований вектор швидкості
+  tel.normSpeed.x = currentTelemetry.vx;
+  tel.normSpeed.y = currentTelemetry.vy;
+  tel.speed = currentTelemetry.speed;
+  tel.angularState = currentTelemetry.dir;
+  tel.stateId = currentTelemetry.state;
+  tel.z = currentTelemetry.z;
+  tel.t_ms = currentTelemetry.t_ms;
+  return true;
+}
+
+std::optional<Target> UARTProcessor::getTargetPosition(const uint8_t targetId)
+{
+  std::lock_guard<std::mutex> lock(dataMutex);
+
+  // Перевірка меж
+  if (targetId < 0 || targetId >= positionTargets.size() || targetId >= velocityTargets.size()) {
+    // DEBUG("Error: targetId " << std::to_string(targetId) << " not found!");
+    return std::nullopt;  // Повертаємо "нічого"
+  }
+
+  Target targetPos;
+  targetPos.pos = positionTargets[targetId];
+  targetPos.velocity = velocityTargets[targetId];
+
+  // DEBUG("Target " << std::to_string(targetId) << " pos: (" << targetPos.pos.x << ", " << targetPos.pos.y << "), velocity: ("
+  //                 << targetPos.velocity.x << ", " << targetPos.velocity.y << ")");
+
+  return targetPos;
+}
+
+bool UARTProcessor::getResult(dlink::Result& outResult)
+{
+  std::lock_guard<std::mutex> lock(dataMutex);
+  if (!hasResult)
+    return false;
+  outResult = currentResult;
+  return true;
+}

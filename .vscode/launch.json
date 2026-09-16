@@ -97,15 +97,15 @@
       "setupCommands": [
           {
             "description": "Увімкнути pretty-printing для STL типів у GDB.",
-            "text": "enable-pretty-printing",
+            "text": "-enable-pretty-printing",
             "ignoreFailures": true
           },
-          // {
-          //   "description": "Вимкнути спроби GDB захопити/створити новий керуючий термінал",
-          //   "text": "set new-console off",
-          //   "ignoreFailures": true
-          // }
-        ]
+          {
+            "description": "Вимкнути спроби GDB захопити/створити новий керуючий термінал",
+            "text": "set new-console off",
+            "ignoreFailures": true
+          }
+      ]
     }
   ]
 }

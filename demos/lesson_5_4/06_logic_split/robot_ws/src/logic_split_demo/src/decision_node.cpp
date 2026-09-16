@@ -27,13 +27,10 @@ public:
     : Node("decision_node")
     , samples_(make_samples())
   {
-    config_.confidence_threshold =
-      static_cast<float>(declare_parameter<double>("confidence_threshold", 0.8));
+    config_.confidence_threshold = static_cast<float>(declare_parameter<double>("confidence_threshold", 0.8));
     config_.max_distance_m = static_cast<float>(declare_parameter<double>("max_distance_m", 30.0));
 
-    timer_ = create_wall_timer(
-      std::chrono::milliseconds{1000},
-      [this]() { tick(); });
+    timer_ = create_wall_timer(std::chrono::milliseconds{1000}, [this]() { tick(); });
   }
 
 private:
@@ -42,13 +39,12 @@ private:
     const auto& sample = samples_[next_index_ % samples_.size()];
     const auto decision = logic_split_demo::decide(sample, config_);
 
-    RCLCPP_INFO(
-      get_logger(),
-      "visible=%s confidence=%.2f distance_m=%.1f decision=%s",
-      sample.visible ? "true" : "false",
-      sample.confidence,
-      sample.distance_m,
-      logic_split_demo::decision_name(decision));
+    RCLCPP_INFO(get_logger(),
+                "visible=%s confidence=%.2f distance_m=%.1f decision=%s",
+                sample.visible ? "true" : "false",
+                sample.confidence,
+                sample.distance_m,
+                logic_split_demo::decision_name(decision));
 
     ++next_index_;
   }

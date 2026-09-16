@@ -42,17 +42,11 @@ int main(int argc, char** argv)
   request->confidence = argc > 1 ? parse_arg(argv, 1, 0.9F) : 0.9F;
   request->distance_m = argc > 2 ? parse_arg(argv, 2, 25.0F) : 25.0F;
 
-  client->async_send_request(
-    request,
-    [node](rclcpp::Client<TriggerActuator>::SharedFuture future) {
-      const auto response = future.get();
-      RCLCPP_INFO(
-        node->get_logger(),
-        "accepted=%s trigger_count=%u",
-        response->accepted ? "true" : "false",
-        response->trigger_count);
-      rclcpp::shutdown();
-    });
+  client->async_send_request(request, [node](rclcpp::Client<TriggerActuator>::SharedFuture future) {
+    const auto response = future.get();
+    RCLCPP_INFO(node->get_logger(), "accepted=%s trigger_count=%u", response->accepted ? "true" : "false", response->trigger_count);
+    rclcpp::shutdown();
+  });
 
   rclcpp::spin(node);
   return 0;

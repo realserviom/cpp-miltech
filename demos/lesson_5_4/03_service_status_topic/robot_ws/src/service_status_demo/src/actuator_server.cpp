@@ -27,26 +27,20 @@ public:
     const auto status_publish_hz = declare_parameter<double>("status_publish_hz", 2.0);
 
     status_publisher_ = create_publisher<ActuatorStatus>(kStatusTopic, 10);
-    service_ = create_service<TriggerActuator>(
-      kTriggerService,
-      [this](
-        const std::shared_ptr<TriggerActuator::Request> request,
-        std::shared_ptr<TriggerActuator::Response> response) {
-        on_trigger(request, response);
-      });
+    service_ =
+      create_service<TriggerActuator>(kTriggerService,
+                                      [this](const std::shared_ptr<TriggerActuator::Request> request,
+                                             std::shared_ptr<TriggerActuator::Response> response) { on_trigger(request, response); });
 
     const auto safe_hz = std::max(0.1, status_publish_hz);
-    const auto period = std::chrono::duration_cast<std::chrono::milliseconds>(
-      std::chrono::duration<double>(1.0 / safe_hz));
+    const auto period = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::duration<double>(1.0 / safe_hz));
     status_timer_ = create_wall_timer(period, [this]() { publish_status(); });
 
     publish_status();
   }
 
 private:
-  void on_trigger(
-    const std::shared_ptr<TriggerActuator::Request>& request,
-    const std::shared_ptr<TriggerActuator::Response>& response)
+  void on_trigger(const std::shared_ptr<TriggerActuator::Request>& request, const std::shared_ptr<TriggerActuator::Response>& response)
   {
     if (!ready_) {
       response->accepted = false;
@@ -61,12 +55,11 @@ private:
     response->accepted = true;
     response->trigger_count = trigger_count_;
 
-    RCLCPP_INFO(
-      get_logger(),
-      "shot accepted confidence=%.2f distance_m=%.1f trigger_count=%u",
-      request->confidence,
-      request->distance_m,
-      trigger_count_);
+    RCLCPP_INFO(get_logger(),
+                "shot accepted confidence=%.2f distance_m=%.1f trigger_count=%u",
+                request->confidence,
+                request->distance_m,
+                trigger_count_);
 
     publish_status();
     schedule_reload();
@@ -78,13 +71,11 @@ private:
       reload_timer_->cancel();
     }
 
-    reload_timer_ = create_wall_timer(
-      std::chrono::milliseconds{std::max(1, reload_ms_)},
-      [this]() {
-        ready_ = true;
-        publish_status();
-        reload_timer_->cancel();
-      });
+    reload_timer_ = create_wall_timer(std::chrono::milliseconds{std::max(1, reload_ms_)}, [this]() {
+      ready_ = true;
+      publish_status();
+      reload_timer_->cancel();
+    });
   }
 
   void publish_status()

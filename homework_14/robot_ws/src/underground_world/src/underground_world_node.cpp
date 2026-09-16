@@ -98,7 +98,7 @@ public:
     scan_pub_ = create_publisher<LocalScan>(kScanTopic, state_qos);
     metrics_pub_ = create_publisher<RobotMetrics>(kMetricsTopic, state_qos);
     result_pub_ = create_publisher<RobotResult>(kResultTopic, state_qos);
-
+    
     move_sub_ = create_subscription<MoveCommand>(kMoveTopic, event_qos, [this](const MoveCommand::SharedPtr msg) { on_move(*msg); });
 
     enemy_down_sub_ =

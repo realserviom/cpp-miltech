@@ -17,22 +17,19 @@ public:
     : Node("target_subscriber")
   {
     subscription_ = create_subscription<typed_topic_demo::msg::Target>(
-      kTargetTopic,
-      10,
-      [this](const typed_topic_demo::msg::Target& target) { on_target(target); });
+      kTargetTopic, 10, [this](const typed_topic_demo::msg::Target& target) { on_target(target); });
   }
 
 private:
   void on_target(const typed_topic_demo::msg::Target& target)
   {
-    RCLCPP_INFO(
-      get_logger(),
-      "received target label=%s x=%.1f y=%.1f distance_m=%.1f confidence=%.2f",
-      typed_topic_demo::target_label(target).c_str(),
-      target.x,
-      target.y,
-      target.distance_m,
-      target.confidence);
+    RCLCPP_INFO(get_logger(),
+                "received target label=%s x=%.1f y=%.1f distance_m=%.1f confidence=%.2f",
+                typed_topic_demo::target_label(target).c_str(),
+                target.x,
+                target.y,
+                target.distance_m,
+                target.confidence);
   }
 
   rclcpp::Subscription<typed_topic_demo::msg::Target>::SharedPtr subscription_;

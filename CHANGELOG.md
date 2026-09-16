@@ -3,6 +3,20 @@
 Усі помітні зміни в цьому репо фіксуються тут.
 Формат - [Keep a Changelog](https://keepachangelog.com/uk/1.1.0/), дати в ISO 8601.
 
+
+## 2026-07-26
+
+### Fixed
+
+- Block 5 / Lesson 5.6 / Homework 14: для `/robot/local_scan`,
+  `/robot/metrics` і `/robot/result` додано спільний `Reliable`,
+  `Transient Local`, `KeepLast(1)` QoS-контракт. Late subscriber тепер
+  отримує останній стан після запуску, зокрема коли `ros2 bag record`
+  сповільнює старт ноди рішення. Для subscription на state topic-и надано
+  helper `underground_world::make_state_qos()`.
+
+### Added
+
 ## 2026-07-17
 
 ### Removed

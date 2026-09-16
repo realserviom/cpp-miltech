@@ -1,24 +1,25 @@
 #pragma once
 #include "./interfaces/IBallisticSolver.h"
 #include "./interfaces/IConfigLoader.h"
-#include "./interfaces/ITargetProvider.h"
 #include <vector>
 #include <memory>
 #include "Debug.h"
 #include "Drone.h"
 #include "interfaces/IDroneState.h"
+#include "UARTProcessor.h"
 #include "RollingTargetStack.h"
+#include "MavlinkTelemetry.hpp"
 
 class MissionProcessor {
 private:
     // Вказівники на наші стратегії
-  std::shared_ptr<ITargetProvider> m_targetProvider = nullptr;
+  std::shared_ptr<UARTProcessor> m_uartProcessor = nullptr;
   std::shared_ptr<IBallisticSolver> m_solver = nullptr;
   std::shared_ptr<IConfigLoader> m_configLoader = nullptr;
+  int m_fd;
 
+  uint8_t target;
   mutable std::mutex proccessMutex;
-
-  int target;
 
   // масив який містить час підльоту до кожної цілі
   std::vector<float> targetTimes;
@@ -29,54 +30,42 @@ private:
   // масив який містить кут напрямку для кожної цілі відносто осі X в радіанах
   std::vector<float> targetAngles;
 
-  void missionLoop(Drone& curMyDrone, const float distDuringFall, const float t_pol);
+  void missionLoop();
 
   std::atomic<bool> running{false};
   std::atomic<bool> isReady{false};
+  std::unique_ptr<RollingTargetStack> targetStack;
+
+  std::unique_ptr<MavlinkTelemetry> m_mavlink;
+  // std::string m_mavlinkIp = "127.0.0.1";
+  std::string m_mavlinkIp = "172.19.192.1";  // for wsl
+  int m_mavlinkPort = 14550;
 
 public:
-  std::vector<SimStep> steps;  // Масив кроків для симуляції
-
   Coord dropPoint;        // точка скиду
   Coord aimPoint;         // куди впаде бомба
   Coord predictedTarget;  // прогнозована позиція цілі
 
-  int numberOfTargets = 0;
+  uint8_t numberOfTargets = 0;
+  float hitRadius = 0.0f;
   std::thread missionThread;
 
-  MissionProcessor(std::shared_ptr<ITargetProvider> targetProvider,
-                   std::shared_ptr<IBallisticSolver> solver,
-                   std::shared_ptr<IConfigLoader> configLoader)
-    : m_targetProvider(targetProvider)
-    , m_solver(solver)
-    , m_configLoader(configLoader)
-  {
-    target = 0;
-    dropPoint = {0, 0};
-    aimPoint = {0, 0};
-    predictedTarget = {0, 0};
-  }
+  bool already_dropped = false;
 
-  void init(DroneConfig& myDrone, const AmmoParams*& ammo);
+  explicit MissionProcessor(std::shared_ptr<UARTProcessor> uartProcessor,
+                            std::shared_ptr<IBallisticSolver> solver,
+                            std::shared_ptr<IConfigLoader> configLoader,
+                            int& fd);
 
-  void fillArrays(bool& canChangeTarget,
-                  const int& counter,
-                  const DroneTelemetry& telemetry,
-                  const Drone& curMyDrone,
-                  const float distDuringFall,
-                  const float t_pol,
-                  RollingTargetStack& targetStack);
+  void init(DroneConfig& myDrone);
 
-  void setTargetProvider(std::shared_ptr<ITargetProvider> targetProvider);
-  void setBallisticSolver(std::shared_ptr<IBallisticSolver> solver);
-  void setConfigLoader(std::shared_ptr<IConfigLoader> configLoader);
-  void addStep(const int counter, DroneTelemetry& telemetry);
+  std::optional<Target> fillArrays(bool& canChangeTarget, const Drone& curMyDrone, const float distDuringFall, const float t_pol);
 
-  std::unique_ptr<IDroneState> changeTarget(
-    float& targetAngle, const bool& canChangeTarget, const std::string& currentStateName, float dir, Drone& curMyDrone);
+  std::unique_ptr<IDroneState> changeTarget(float& targetAngle, const bool& canChangeTarget, Drone& curMyDrone);
 
-  void start(Drone& curMyDrone, const float distDuringFall, const float t_pol);
+  void start();
   bool isThreadReady() const;
+  void setNumberOfTarget(uint8_t number);
+  void setHitRadius(float number);
 
-  void setRunningTrue();
 };
