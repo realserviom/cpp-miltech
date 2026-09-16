@@ -24,6 +24,8 @@
 #define TX_PIN_1 17
 #define RX_PIN_1 18
 
+#define UART_CONSOLE UART_NUM_0
+
 // це інший спосіб поки закоментований
 //static EventGroupHandle_t displayEventGroup;
 
@@ -67,6 +69,22 @@ void init_text_uart(void) {
     uart_param_config(UART_NUM_CLIENT, &uart_config2);
     uart_set_pin(UART_NUM_CLIENT, TX_PIN_2, RX_PIN_2, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
     uart_driver_install(UART_NUM_CLIENT, 1024, 0, 0, NULL, 0);
+}
+
+
+void init_console_uart(void) {
+    uart_config_t uart_config3 = {
+        .baud_rate = 115200,
+        .data_bits = UART_DATA_8_BITS,
+        .parity    = UART_PARITY_DISABLE,
+        .stop_bits = UART_STOP_BITS_1,
+        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
+        .source_clk = UART_SCLK_DEFAULT,
+    };
+
+    uart_param_config(UART_CONSOLE, &uart_config3);
+    //uart_set_pin(UART_CONSOLE, TX_PIN_3, RX_PIN_3, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+    uart_driver_install(UART_CONSOLE, 1024, 0, 0, NULL, 0);
 }
 
 static void IRAM_ATTR button_isr_handler(void* arg) {
@@ -415,14 +433,17 @@ void uartCommandTask(void *pvParameters) {
     int index = 0;
 
     while (1) {
+        
         uint8_t ch;
         // Читаємо по одному байту з UART1 (або іншого порту) з таймаутом 50 мс
-        int len = uart_read_bytes(UART_NUM, &ch, 1, pdMS_TO_TICKS(50));
+        int len = uart_read_bytes(UART_CONSOLE, &ch, 1, pdMS_TO_TICKS(50));
 
         if (len <= 0) {
             vTaskDelay(pdMS_TO_TICKS(50));
             continue; // Нічого не прийшло, йдемо далі
         }
+
+        // int ch = getchar();
 
         // if (ch == EOF) {
         //     vTaskDelay(pdMS_TO_TICKS(50));
@@ -548,6 +569,7 @@ void app_main(void) {
     oledInit();
     init_uart();
     init_text_uart();
+    init_console_uart();
 
     // Створюємо Event Group
     //displayEventGroup = xEventGroupCreate();
