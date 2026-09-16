@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "author": "Олег І",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-esp32-s3-devkitc-1",
+      "id": "esp",
+      "top": 0,
+      "left": 0,
+      "attrs": { "builder": "esp-idf" }
+    },
+    {
+      "type": "board-ssd1306",
+      "id": "oled1",
+      "top": 204.74,
+      "left": -210.97,
+      "attrs": { "i2cAddress": "0x3c" }
+    },
+    { "type": "wokwi-mpu6050", "id": "imu1", "top": -140.18, "left": 194.32, "attrs": {} },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn1",
+      "top": 6.2,
+      "left": -297.6,
+      "attrs": { "color": "green", "xray": "1" }
+    },
+    { "type": "wokwi-logic-analyzer", "id": "logic1", "top": -143.65, "left": -384, "attrs": {} }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "oled1:VCC", "esp:3V3.1", "red", [ "v-249.6", "h168.43" ] ],
+    [ "imu1:VCC", "esp:3V3.1", "red", [ "v67.2", "h-263.64" ] ],
+    [ "imu1:GND", "esp:GND.1", "black", [ "v451.2", "h-254.04" ] ],
+    [ "esp:GND.1", "oled1:GND", "black", [ "h-53.08", "v-48.18", "h-124.8" ] ],
+    [ "imu1:SCL", "esp:9", "yellow", [ "v-48", "h-278.32", "v345.78" ] ],
+    [ "oled1:SCL", "esp:9", "yellow", [ "v-336", "h125.1", "v288.18" ] ],
+    [ "esp:8", "oled1:SDA", "green", [ "h0" ] ],
+    [ "esp:8", "imu1:SDA", "green", [ "h-72.28", "v-297.78", "h307.12" ] ],
+    [ "esp:GND.1", "btn1:2.l", "black", [ "h0" ] ],
+    [ "btn1:1.r", "esp:4", "red", [ "v-19.2", "h235.68" ] ],
+    [ "esp:17", "logic1:D0", "green", [ "h-408.28", "v-249.78" ] ],
+    [ "esp:GND.1", "logic1:GND", "black", [ "h0" ] ],
+    [ "esp:18", "logic1:D1", "green", [ "h-437.08", "v-249.78" ] ],
+    [ "esp:18", "esp:17", "green", [ "h0" ] ],
+    [ "esp:20", "esp:21", "green", [ "h0" ] ],
+    [ "logic1:D2", "esp:21", "green", [ "h547.2", "v307.38" ] ],
+    [ "logic1:D3", "esp:20", "green", [ "h576", "v307.2", "h-100.57" ] ]
+  ],
+  "dependencies": {}
+}
