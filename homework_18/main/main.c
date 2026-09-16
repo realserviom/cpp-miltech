@@ -259,7 +259,7 @@ static void oledText(int page, const char* s) {
 static void sensorTask(void* pvParameters) {
     TickType_t wake = xTaskGetTickCount();
     for (;;) {
-        vTaskDelayUntil(&wake, pdMS_TO_TICKS(100));
+        vTaskDelayUntil(&wake, pdMS_TO_TICKS(sensor_period_ms));
         GyroSample s = mpuReadGyro();
 
         // Число 0 — це час очікування (таймаут) у тактах системного таймера (Ticks), 
