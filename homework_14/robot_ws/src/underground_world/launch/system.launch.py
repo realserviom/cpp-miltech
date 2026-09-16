@@ -40,9 +40,21 @@ def generate_launch_description():
             ),
             DeclareLaunchArgument(
                 "move_commit_period_ms",
-                default_value="50",
+                default_value="10",
                 description="Delay before applying queued move commands",
             ),
             world_node,
+            Node(
+                package='underground_world',
+                executable='payload_action_node',
+                name='payload_action_node',
+                output='screen'
+            ),
+            Node(
+                package='underground_world',
+                executable='mission_explorer_node',
+                name='mission_explorer_node',
+                output='screen'
+            ),
         ]
     )

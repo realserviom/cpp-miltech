@@ -13,6 +13,7 @@
 #include "underground_world/msg/robot_metrics.hpp"
 #include "underground_world/msg/robot_result.hpp"
 #include "underground_world/scenario_loader.hpp"
+#include "underground_world/state_qos.hpp"
 #include "underground_world/world_model.hpp"
 
 namespace {
@@ -91,17 +92,20 @@ public:
     , move_commit_period_(read_move_commit_period())
     , world_(underground_world::load_scenario(scenario_path_))
   {
-    const auto qos = rclcpp::QoS{10};
+    const auto state_qos = underground_world::make_state_qos();
+    const auto event_qos = rclcpp::QoS{10};
 
-    scan_pub_ = create_publisher<LocalScan>(kScanTopic, qos);
-    metrics_pub_ = create_publisher<RobotMetrics>(kMetricsTopic, qos);
-    result_pub_ = create_publisher<RobotResult>(kResultTopic, qos);
+    scan_pub_ = create_publisher<LocalScan>(kScanTopic, state_qos);
+    metrics_pub_ = create_publisher<RobotMetrics>(kMetricsTopic, state_qos);
+    result_pub_ = create_publisher<RobotResult>(kResultTopic, state_qos);
+    
+    move_sub_ = create_subscription<MoveCommand>(kMoveTopic, event_qos, [this](const MoveCommand::SharedPtr msg) { on_move(*msg); });
 
-    move_sub_ = create_subscription<MoveCommand>(kMoveTopic, qos, [this](const MoveCommand::SharedPtr msg) { on_move(*msg); });
-
-    enemy_down_sub_ = create_subscription<EnemyDown>(kEnemyDownTopic, qos, [this](const EnemyDown::SharedPtr msg) { on_enemy_down(*msg); });
+    enemy_down_sub_ =
+      create_subscription<EnemyDown>(kEnemyDownTopic, event_qos, [this](const EnemyDown::SharedPtr msg) { on_enemy_down(*msg); });
 
     move_commit_timer_ = create_wall_timer(move_commit_period_, [this]() { commit_next_move(); });
+
     initial_publish_timer_ = create_wall_timer(std::chrono::milliseconds{250}, [this]() {
       publish_state();
       initial_publish_timer_->cancel();
@@ -127,14 +131,17 @@ private:
   void on_move(const MoveCommand& msg)
   {
     pending_moves_.push_back(msg.direction);
-    RCLCPP_INFO(get_logger(), "queued move direction=%u pending_moves=%zu", static_cast<unsigned>(msg.direction), pending_moves_.size());
+    RCLCPP_INFO(get_logger(),
+                "Рух в напрямку direction=%s pending_moves=%zu",
+                underground_world::direction_to_string(msg.direction),
+                pending_moves_.size());
   }
 
   void on_enemy_down(const EnemyDown& msg)
   {
     const auto outcome = world_.apply_enemy_down(msg.contact_id, {msg.x, msg.y});
     RCLCPP_INFO(get_logger(),
-                "enemy_down contact_id=%d accepted=%s reason=%s",
+                "Ворог знешкоджений contact_id=%d accepted=%s reason=%s",
                 msg.contact_id,
                 outcome.accepted ? "true" : "false",
                 outcome.reason.c_str());
@@ -157,8 +164,8 @@ private:
 
     const auto moved = world_.apply_move(direction);
     RCLCPP_INFO(get_logger(),
-                "committed move direction=%u accepted=%s pending_moves=%zu",
-                static_cast<unsigned>(direction),
+                "Здійснений рух direction=%s accepted=%s pending_moves=%zu",
+                underground_world::direction_to_string(direction),
                 moved ? "true" : "false",
                 pending_moves_.size());
     publish_state();
@@ -172,7 +179,7 @@ private:
     result_pub_->publish(make_result_msg(state.result));
 
     RCLCPP_INFO(get_logger(),
-                "published state scenario=%s robot=(%d,%d) result=%s",
+                "Публікація стану scenario=%s robot=(%d,%d) result=%s",
                 state.scan.scenario_name.c_str(),
                 state.scan.robot.x,
                 state.scan.robot.y,

@@ -5,8 +5,10 @@
 #include <fstream>
 #include <stdexcept>
 #include <string>
+#include <cstdint>
 
 namespace underground_world {
+
 namespace {
 
 std::string trim(std::string value)
