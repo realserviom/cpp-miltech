@@ -61,7 +61,6 @@ target_link_libraries(targets3 PRIVATE
 )
 target_link_options(targets3 PRIVATE -fsanitize=address)
 
-<<<<<<< HEAD
 # Встановлюємо назву бінарника
 set_target_properties(targets3 PROPERTIES OUTPUT_NAME "targets3")
 
@@ -72,6 +71,3 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clan
         -Wno-pedantic
     )
 endif()
-=======
-set_target_properties(targets3 PROPERTIES OUTPUT_NAME "targets3")
->>>>>>> feature/homework-011
